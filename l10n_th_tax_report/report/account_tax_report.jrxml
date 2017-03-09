@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vat_report" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.3636363636363658"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
@@ -35,25 +35,30 @@
 		</box>
 	</style>
 	<parameter name="doc_type" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="report_period_id" class="java.lang.Integer"/>
-	<parameter name="tax_id" class="java.lang.Integer"/>
+	<parameter name="tax_id" class="java.lang.Integer" isForPrompting="false"/>
 	<parameter name="branch_name" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="branch_vat" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="branch_taxbranch" class="java.lang.String" isForPrompting="false"/>
 	<parameter name="company_name" class="java.lang.String" isForPrompting="false"/>
-	<parameter name="advance_sequence" class="java.lang.Boolean"/>
+	<parameter name="advance_sequence" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="period_ids" class="java.lang.Object" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="period_pids" class="java.util.List" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[$P{period_ids}.toList()]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select * from account_tax_report
 where doc_type = $P{doc_type}
 and tax_id = $P{tax_id}
-and report_period_id = $P{report_period_id}]]>
+and $X{IN, report_period_id, period_pids}]]>
 	</queryString>
 	<field name="doc_type" class="java.lang.String"/>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="period_id" class="java.lang.Integer"/>
 	<field name="year" class="java.lang.String"/>
 	<field name="month" class="java.lang.String"/>
-	<field name="report_period_id" class="java.lang.Integer"/>
 	<field name="tax_sequence" class="java.lang.Integer"/>
 	<field name="tax_id" class="java.lang.Integer"/>
 	<field name="tax_sequence_display" class="java.lang.String"/>
@@ -151,8 +156,7 @@ and report_period_id = $P{report_period_id}]]>
 					<textElement>
 						<font fontName="Monospaced" size="10" isBold="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$P{branch_taxbranch}.toString().equals("00000") ?
-"สำนักงานใหญ่" : $P{branch_taxbranch}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$P{branch_taxbranch}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement x="0" y="61" width="47" height="15"/>
@@ -327,12 +331,11 @@ $F{partner_title} + " " + $F{partner_name}]]></textFieldExpression>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{vat}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement style="table2" stretchType="RelativeToTallestObject" x="393" y="0" width="45" height="15"/>
+				<reportElement style="table2" stretchType="RelativeToTallestObject" x="394" y="0" width="44" height="15"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="Monospaced" size="9" isBold="false" isStrikeThrough="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{taxbranch}.toString().equals("00000") ?
-"สนงญ." : $F{taxbranch}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{taxbranch}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement style="table2" stretchType="RelativeToTallestObject" x="419" y="0" width="74" height="15"/>
