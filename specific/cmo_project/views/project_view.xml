@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+        # Project
+        <record id="edit_project" model="ir.ui.view">
+            <field name="name">edit.project</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.edit_project"/>
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet/group" position="after">
+                    <group>
+                        <group>
+                            <field name="project_place"/>
+                            <field name="client_type"/>
+                            <field name="obligation"/>
+                            <field name="function_id"/>
+                        </group>
+                        <group>
+                            <field name="lead_source"/>
+                            <field name="location"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        # Project Function
+        <record id="view_project_function_form" model="ir.ui.view">
+            <field name="name">project.function.form</field>
+            <field name="model">project.function</field>
+            <field name="arch" type="xml">
+                <form string="Project Function">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_project_function_tree" model="ir.ui.view">
+            <field name="name">project.function.tree</field>
+            <field name="model">project.function</field>
+            <field name="arch" type="xml">
+                <tree string="Project Function">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_project_function_form" model="ir.actions.act_window">
+            <field name="name">Project Function</field>
+            <field name="res_model">project.function</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new Project Function
+                </p>
+                <p>
+                    Manage project function you want to be used in the system.
+                </p>
+            </field>
+        </record>
+        <menuitem action="action_project_function_form" id="menu_action_project_function_form" parent="base.menu_definitions" sequence="50" groups="project.group_project_manager"/>
+    </data>
+</openerp>

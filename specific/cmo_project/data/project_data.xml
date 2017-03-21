@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record model="project.function" id="project_function_1">
+            <field name="name">Anniversary</field>
+        </record>
+        <record model="project.function" id="project_function_2">
+            <field name="name">Art Management</field>
+        </record>
+        <record model="project.function" id="project_function_3">
+            <field name="name">Award Presentation</field>
+        </record>
+        <record model="project.function" id="project_function_4">
+            <field name="name">Concert</field>
+        </record>
+        <record model="project.function" id="project_function_5">
+            <field name="name">Contest</field>
+        </record>
+        <record model="project.function" id="project_function_6">
+            <field name="name">Conventions</field>
+        </record>
+        <record model="project.function" id="project_function_7">
+            <field name="name">Exhibitions</field>
+        </record>
+        <record model="project.function" id="project_function_8">
+            <field name="name">Fashion Show</field>
+        </record>
+        <record model="project.function" id="project_function_9">
+            <field name="name">Interior Design</field>
+        </record>
+        <record model="project.function" id="project_function_10">
+            <field name="name">Launches</field>
+        </record>
+        <record model="project.function" id="project_function_11">
+            <field name="name">Luxury &amp; Premium Services</field>
+        </record>
+        <record model="project.function" id="project_function_12">
+            <field name="name">Museum</field>
+        </record>
+        <record model="project.function" id="project_function_13">
+            <field name="name">Party</field>
+        </record>
+        <record model="project.function" id="project_function_14">
+            <field name="name">PCO</field>
+        </record>
+        <record model="project.function" id="project_function_15">
+            <field name="name">PEO</field>
+        </record>
+        <record model="project.function" id="project_function_16">
+            <field name="name">Press Conference</field>
+        </record>
+        <record model="project.function" id="project_function_17">
+            <field name="name">Promotion &amp; Roadshow</field>
+        </record>
+        <record model="project.function" id="project_function_18">
+            <field name="name">Public Complain Campaign</field>
+        </record>
+        <record model="project.function" id="project_function_19">
+            <field name="name">Public Event</field>
+        </record>
+        <record model="project.function" id="project_function_20">
+            <field name="name">Seminar</field>
+        </record>
+        <record model="project.function" id="project_function_21">
+            <field name="name">Trip &amp; Tour</field>
+        </record>
+        <record model="project.function" id="project_function_22">
+            <field name="name">Video</field>
+        </record>
+        <record model="project.function" id="project_function_23">
+            <field name="name">Visitor Center</field>
+        </record>
+        <record model="project.function" id="project_function_24">
+            <field name="name">Website &amp; Application</field>
+        </record>
+        <record model="project.function" id="project_function_25">
+            <field name="name">Workshop</field>
+        </record>
+    </data>
+</openerp>
