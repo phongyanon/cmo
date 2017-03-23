@@ -9,6 +9,10 @@ class ProjectProject(models.Model):
         string='Project Place',
         states={'close': [('readonly', True)]},
     )
+    agency = fields.Many2one(
+        'res.partner',
+        string="Agency",
+    )
     client_type = fields.Selection(
         [('unknown', 'Unknown'),
          ('government', 'Government'),
@@ -58,7 +62,82 @@ class ProjectProject(models.Model):
     description = fields.Text(
         string='Description',
     )
-
+    # Team tab
+    client_service = fields.Many2one(
+        'project.department',
+        string="Client Service",
+        states={'close': [('readonly', True)]},
+    )
+    designer = fields.Many2one(
+        'res.partner',
+        string="Designer"
+    )
+    procurement = fields.Many2one(
+        'res.partner',
+        string="Procurement"
+    )
+    production = fields.Many2one(
+        'res.partner',
+        string="Production"
+    )
+    project_manager = fields.Many2one(
+        'res.partner',
+        string="Product Manager"
+    )
+    creative = fields.Many2one(
+        'res.partner',
+        string="Creative"
+    )
+    graphic = fields.Many2one(
+        'res.partner',
+        string="Graphic"
+    )
+    producer = fields.Many2one(
+        'res.partner',
+        string="Produce"
+    )
+    asst_production = fields.Many2one(
+        'res.partner',
+        string="Asst. Production"
+    )
+    # Others Info tab
+    project_from = fields.Selection(
+        [('unknow', 'Unknow'),
+         ('call_in', 'Call in'),
+         ('new_prospect', 'New Prospect'),
+         ('existing_account', 'Existing Account'),
+         ('ceo_office', 'CEO Office'),
+         ],
+        string='Project From',
+        states={'close': [('readonly', True)]},
+    )
+    project_type = fields.Selection(
+        [('unknow', 'Unknow'),
+         ('event', 'Event'),
+         ('imc_campaign', 'IMC Campaign'),
+        ],
+        string='Project Type',
+        states={'close': [('readonly', True)]},
+    )
+    department = fields.Many2one(
+        'project.department',
+        string='Department',
+        states={'close': [('readonly', True)]},
+    )
+    project_budget = fields.Float(
+        string='Project Budget'
+    )
+    estimate_cost = fields.Float(
+        string='Estimate cost'
+    )
+    brief_date = fields.Date(
+        string='Brief date',
+        default=fields.Date.today
+    )
+    competitor =fields.Many2many(
+        'res.company',
+        string="Competitors"
+    )
 
 class ProjectFunction(models.Model):
     _name = 'project.function'
@@ -75,4 +154,24 @@ class ProjectFunction(models.Model):
     )
     _sql_constraints = [
         ('name_uniq', 'UNIQUE(name)', 'Project Function must be unique!'),
+    ]
+
+class ProjectDepartment(models.Model):
+    _name = 'project.department'
+    _description = 'Project Department'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=False,
+    )
+    show = fields.Boolean(
+        string='Show',
+        default=False,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Department must be unique!'),
     ]
