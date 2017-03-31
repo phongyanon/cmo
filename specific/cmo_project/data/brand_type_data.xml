@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record model="project.brand.type" id="project_brand_type_1">
+            <field name="name">Normal Corporate</field>
+        </record>
+        <record model="project.brand.type" id="project_brand_type_2">
+            <field name="name">Thai Super Brand</field>
+        </record>
+        <record model="project.brand.type" id="project_brand_type_3">
+            <field name="name">International Brand</field>
+        </record>
+    </data>
+</openerp>

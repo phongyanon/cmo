@@ -1,144 +1,118 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-        # Project
+        # Project  # TODO Administration selection only public and access
         <record id="edit_project" model="ir.ui.view">
             <field name="name">edit.project</field>
             <field name="model">project.project</field>
             <field name="inherit_id" ref="project.edit_project"/>
             <field name="arch" type="xml">
+                <xpath expr="/form/header/button[@name='set_open']" position="before">
+                    <button name="action_approve" type="object"
+                            string="approve"
+                            state="draft"
+                            attrs="{'invisible':[['state', 'not in', ['draft']]]}"/>
+                    <button name="action_back_to_draft" type="object"
+                            string="back to draft"
+                            state="open, pending"
+                            attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"/>
+                </xpath>
+                <xpath expr="/form/header/button[@name='set_pending']" position="attributes">
+                    <attribute name="string">Hold</attribute>
+                </xpath>
+                <xpath expr="/form/header/field[@name='state']" position="attributes">
+                    <attribute name="statusbar_visible">draft, open, close</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/field[@name='analytic_account_id']" position="before">
+                  <div>
+                      <h1>
+                          <label for="name" class="oe_edit_only" string="Project Number"/>
+                          <field name="project_number" string="Project Number" class="oe_inline"/>
+                      </h1>
+                  </div>
+                </xpath>
+                <xpath expr="/form/sheet/group/group/field[@string='Project Manager']" position="attributes">
+                      <attribute name="invisible">0</attribute>
+                      <attribute name="string">Project manager(no use)</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/group/group/field[@string='Customer']" position="attributes">
+                      <attribute name="invisible">0</attribute>
+                      <attribute name="string">Customer(no use)</attribute>
+                </xpath>
                 <xpath expr="/form/sheet/group" position="after">
                     <group>
-                        <group>
-                            <field name="project_place"/>
-                            <field name="agency"/>
-                            <field name="client_type"/>
-                            <field name="obligation"/>
-                            <field name="function_id"/>
-                        </group>
-                        <group>
-                            <field name="lead_source"/>
-                            <field name="location"/>
-                            <field name="description"/>
-                        </group>
+                        <field name="description"/>
+                        <field name="brief_date"/>
+                        <field name="date_start" string="Start Date"/>
+                        <field name="date" string="End Date"/>
+                        <field name="close_reason" string="Close Reason"/>
+                        <field name="parent_id"
+                              string="Parent"
+                              help="Append this project to another one using analytic accounts hierarchy"
+                              domain="[('id','!=',analytic_account_id)]"
+                              context="{'current_model': 'project.project'}"
+                              />
                     </group>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Team']/field[@name='members']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Team']/field[@name='members']" position="inside">
+                    <attribute name="string">(no use)</attribute>
                 </xpath>
                 <xpath expr="/form/sheet/notebook/page[@string='Team']" position="inside">
-                        <group>
-                          <group>
-                              <field name="client_service"/>
-                              <field name="designer"/>
-                              <field name="procurement"/>
-                              <field name="production"/>
-                              <field name="project_manager"/>
-                          </group>
-                          <group>
-                              <field name="creative"/>
-                              <field name="graphic"/>
-                              <field name="producer"/>
-                              <field name="asst_production"/>
-                          </group>
-                        </group>
+                    <field name="project_members" nolabel="1" widget="one2many_list">
+                        <tree string="Team member" editable="bottom">
+                            <field name="member_position"/>
+                            <field name="team_member"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </tree>
+                    </field>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Administration']" position="before">
-                    <group string="Overview">
-                        <field name="department"/>
-                        <field name="project_budget"/>
-                        <field name="estimate_cost"/>
-                        <field name="brief_date"/>
-                        <field name="project_from"/>
-                        <field name="project_type"/>
-                        <field name="competitor"/>
-                    </group>
+                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Start Date']" position="attributes">
+                   <attribute name="invisible">0</attribute>
+                   <attribute name="string">Start Date(no use)</attribute>
                 </xpath>
-            </field>
-        </record>
-
-        # Project Function
-        <record id="view_project_function_form" model="ir.ui.view">
-            <field name="name">project.function.form</field>
-            <field name="model">project.function</field>
-            <field name="arch" type="xml">
-                <form string="Project Function">
-                    <group>
+                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='End Date']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                    <attribute name="string">End Date(no use)</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='sequence']" position="attributes">
+                     <attribute name="invisible">0</attribute>
+                     <attribute name="string">Sequence(no use)</attribute>
+                </xpath>
+                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Parent']" position="attributes">
+                   <attribute name="invisible">0</attribute>
+                   <attribute name="string">Parent(no use)</attribute>
+                 </xpath>
+                 <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="inside">
+                      <field name="project_from"/>
+                      <field name="project_type"/>
+                      <field name="partner_id" on_change="onchange_partner_id(partner_id)" string="Customer"/>
+                      <field name="agency"/>
+                      <field name="client_type"/>
+                      <field name="brand_type"/>
+                      <field name="industry"/>
+                      <field name="obligation"/>
+                      <field name="function_id"/>
+                      <field name="location"/>
+                      <field name="project_place"/>
+                      <field name="competitor"/>
+                  </xpath>
+                 <xpath expr="/form/sheet/notebook/page[@string='Project Stages']" position="after">
+                    <page string="Budget &amp; Cost">
                         <group>
-                            <field name="name"/>
+                            <field name="project_budget"/>
+                            <field name="actual_price"/>
+                            <field name="estimate_cost"/>
+                            <field name="actual_po"/>
+                            <field name="remain_advance"/>
+                            <field name="expense"/>
                         </group>
-                        <group>
-                            <field name="active"/>
-                        </group>
-                    </group>
-                </form>
+                    </page>
+                 </xpath>
             </field>
         </record>
-        <record id="view_project_function_tree" model="ir.ui.view">
-            <field name="name">project.function.tree</field>
-            <field name="model">project.function</field>
-            <field name="arch" type="xml">
-                <tree string="Project Function">
-                    <field name="name"/>
-                </tree>
-            </field>
-        </record>
-        <record id="action_project_function_form" model="ir.actions.act_window">
-            <field name="name">Project Function</field>
-            <field name="res_model">project.function</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-                <p class="oe_view_nocontent_create">
-                    Click to create a new Project Function
-                </p>
-                <p>
-                    Manage project function you want to be used in the system.
-                </p>
-            </field>
-        </record>
-        <menuitem action="action_project_function_form" id="menu_action_project_function_form" parent="base.menu_definitions" sequence="50" groups="project.group_project_manager"/>
-
-        # Project Department
-        <record id="view_project_function_form" model="ir.ui.view">
-            <field name="name">project.department.form</field>
-            <field name="model">project.department</field>
-            <field name="arch" type="xml">
-                <form string="Project Department">
-                    <group>
-                        <group>
-                            <field name="name"/>
-                        </group>
-                        <group>
-                            <field name="active"/>
-                            <field name="show"/>
-                        </group>
-                    </group>
-                </form>
-            </field>
-        </record>
-        <record id="view_project_department_tree" model="ir.ui.view">
-            <field name="name">project.department.tree</field>
-            <field name="model">project.department</field>
-            <field name="arch" type="xml">
-                <tree string="Project department">
-                    <field name="name"/>
-                    <field name="active"/>
-                    <field name="show"/>
-                </tree>
-            </field>
-        </record>
-        <record id="action_project_department_form" model="ir.actions.act_window">
-            <field name="name">Project Department</field>
-            <field name="res_model">project.department</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-                <p class="oe_view_nocontent_create">
-                    Click to create a new Project Department
-                </p>
-                <p>
-                    Manage project Department you want to be used in the system.
-                </p>
-            </field>
-        </record>
-        <menuitem action="action_project_department_form" id="menu_action_project_department_form" parent="base.menu_definitions" sequence="55" groups="project.group_project_manager"/>
     </data>
 </openerp>

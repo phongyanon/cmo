@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+      <record model="project.client.type" id="project_client_type_1">
+          <field name="name">Unknow</field>
+      </record>
+      <record model="project.client.type" id="project_client_type_2">
+          <field name="name">Government</field>
+      </record>
+      <record model="project.client.type" id="project_client_type_3">
+          <field name="name">Private Sector (Agency)</field>
+      </record>
+      <record model="project.client.type" id="project_client_type_4">
+          <field name="name">Private Sector (Direct)</field>
+      </record>
+    </data>
+</openerp>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data noupdate="1">
+        <record model="project.type" id="project_type_1">
+            <field name="name">Unknow</field>
+        </record>
+        <record model="project.type" id="project_type_2">
+            <field name="name">Event</field>
+        </record>
+        <record model="project.type" id="project_type_3">
+            <field name="name">IMC Campaign</field>
+        </record>
+    </data>
+</openerp>
