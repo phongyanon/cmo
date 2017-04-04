@@ -1,6 +1,22 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        # Project list view
+        <record id="project.open_view_project_all" model="ir.actions.act_window">
+            <field name="view_mode">tree,form,gantt</field>
+        </record>
+
+        <record id="view_project" model="ir.ui.view">
+            <field name="name">project.project.tree</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project"/>
+            <field name="arch" type="xml">
+              <xpath expr="/tree/field[@name='name']" position="before">
+                  <field name="project_number"/>
+              </xpath>
+            </field>
+        </record>
+
         # Project  # TODO Administration selection only public and access
         <record id="edit_project" model="ir.ui.view">
             <field name="name">edit.project</field>
@@ -17,13 +33,23 @@
                             state="open, pending"
                             attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"/>
                 </xpath>
+                <xpath expr="/form/header/button[@name='set_cancel']" position="after">
+                    <button name="%(action_project_close_reason)d"
+                            type="action"
+                            string="Close project"
+                            states="open, pending"/>
+                </xpath>
+                <xpath expr="/form/header/button[@name='set_done']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                    <attribute name="string">Close Project(old no use)</attribute>
+                </xpath>
                 <xpath expr="/form/header/button[@name='set_pending']" position="attributes">
                     <attribute name="string">Hold</attribute>
                 </xpath>
                 <xpath expr="/form/header/field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft, open, close</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/field[@name='analytic_account_id']" position="before">
+                <xpath expr="//field[@name='analytic_account_id']" position="before">
                   <div>
                       <h1>
                           <label for="name" class="oe_edit_only" string="Project Number"/>
@@ -31,15 +57,15 @@
                       </h1>
                   </div>
                 </xpath>
-                <xpath expr="/form/sheet/group/group/field[@string='Project Manager']" position="attributes">
+                <xpath expr="//group/group/field[@string='Project Manager']" position="attributes">
                       <attribute name="invisible">0</attribute>
                       <attribute name="string">Project manager(no use)</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/group/group/field[@string='Customer']" position="attributes">
+                <xpath expr="//group/group/field[@string='Customer']" position="attributes">
                       <attribute name="invisible">0</attribute>
                       <attribute name="string">Customer(no use)</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/group" position="after">
+                <xpath expr="//group" position="after">
                     <group>
                         <field name="description"/>
                         <field name="brief_date"/>
@@ -54,13 +80,13 @@
                               />
                     </group>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Team']/field[@name='members']" position="attributes">
+                <xpath expr="//notebook/page[@string='Team']/field[@name='members']" position="attributes">
                     <attribute name="invisible">0</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Team']/field[@name='members']" position="inside">
+                <xpath expr="//notebook/page[@string='Team']/field[@name='members']" position="inside">
                     <attribute name="string">(no use)</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Team']" position="inside">
+                <xpath expr="//notebook/page[@string='Team']" position="inside">
                     <field name="project_members" nolabel="1" widget="one2many_list">
                         <tree string="Team member" editable="bottom">
                             <field name="member_position"/>
@@ -70,37 +96,47 @@
                         </tree>
                     </field>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Start Date']" position="attributes">
-                   <attribute name="invisible">0</attribute>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Start Date']" position="attributes">
+                   <attribute name="invisible">1</attribute>
                    <attribute name="string">Start Date(no use)</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='End Date']" position="attributes">
-                    <attribute name="invisible">0</attribute>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='End Date']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                     <attribute name="string">End Date(no use)</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='sequence']" position="attributes">
-                     <attribute name="invisible">0</attribute>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='sequence']" position="attributes">
+                     <attribute name="invisible">1</attribute>
                      <attribute name="string">Sequence(no use)</attribute>
                 </xpath>
-                <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Parent']" position="attributes">
-                   <attribute name="invisible">0</attribute>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Parent']" position="attributes">
+                   <attribute name="invisible">1</attribute>
                    <attribute name="string">Parent(no use)</attribute>
                  </xpath>
-                 <xpath expr="/form/sheet/notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="inside">
-                      <field name="project_from"/>
-                      <field name="project_type"/>
-                      <field name="partner_id" on_change="onchange_partner_id(partner_id)" string="Customer"/>
-                      <field name="agency"/>
-                      <field name="client_type"/>
-                      <field name="brand_type"/>
-                      <field name="industry"/>
-                      <field name="obligation"/>
-                      <field name="function_id"/>
-                      <field name="location"/>
-                      <field name="project_place"/>
-                      <field name="competitor"/>
+                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="inside">
+                      <group>
+                          <group>
+                            <field name="project_from"/>
+                            <field name="project_type"/>
+                            <field name="partner_id" on_change="onchange_partner_id(partner_id)" string="Customer"/>
+                            <field name="agency"/>
+                            <field name="client_type"/>
+                            <field name="brand_type"/>
+                          </group>
+                          <group>
+                            <field name="industry"/>
+                            <field name="obligation"/>
+                            <field name="function_id"/>
+                            <field name="location"/>
+                            <field name="project_place"/>
+                          </group>
+                      </group>
                   </xpath>
-                 <xpath expr="/form/sheet/notebook/page[@string='Project Stages']" position="after">
+                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="after">
+                    <group>
+                        <field name="competitor"/>
+                    </group>        
+                 </xpath>
+                 <xpath expr="//notebook/page[@string='Project Stages']" position="before">
                     <page string="Budget &amp; Cost">
                         <group>
                             <field name="project_budget"/>

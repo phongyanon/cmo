@@ -119,7 +119,6 @@ class ProjectProject(models.Model):
     project_number = fields.Char(
         string='Project Code',
         readonly=True,
-        default=lambda self: self.env['ir.sequence'].get('cmo.project'), # create sequence nummber
         states={'close': [('readonly', True)]},
     )
     project_members = fields.One2many(
@@ -132,15 +131,22 @@ class ProjectProject(models.Model):
         ('close', "Closed"),
         ('reject', "Reject"),
         ('lost', "Lost"),
-    ], states={'close': [('readonly', True)]},)
-
-    state = fields.Selection(selection_add=[('complete', 'Completed')])
+        ],
+        states={'close': [('readonly', True)]},
+    )
+    state = fields.Selection(
+        selection_add=[
+            ('draft','Draft'),
+            ('complete', 'Completed'),
+            ]
+    )
     _defaults = {
         'state': 'draft',
     }
 
     @api.model
     def create(self, vals):
+        vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence nummber
         project = super(ProjectProject, self).create(vals)
         task_obj = self.env['project.task']
         task_list = [
@@ -157,23 +163,24 @@ class ProjectProject(models.Model):
 
     @api.multi
     def action_approve(self):
-        self.state = 'open'
+        self.write({'state': 'open'})
 
     @api.multi
     def action_back_to_draft(self):
-        self.state = 'draft'
+        self.write({'state': 'draft'})
 
-    @api.multi
-    def set_done(self, context=None):
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Reason for close project',
-            'src_model': 'project.project',
-            'res_model': 'project.close.reason',
-            'view_mode': 'form',
-            'target': 'new',
-            'ref': "view_project_close_reason",
-        }
+    # @api.multi TODO: if all state task are complete then project is complete
+    # def write(self, vals):
+    #     super().write()
+    #     if vals.get('state') == 'Completed':
+    #         for task in self:
+    #             project = task.project_id
+    #             tasks = project.task_ids
+    #             not_done_tasks = tasks.filtered(lambda l: l.state != 'Completed')
+    #             if not_done_tasks:
+    #                 continue
+    #             else:
+    #                 project.state = 'Completed'
 
 class ProjectDepartment(models.Model): # TODO not use, use odoo standard instead.
     _name = 'project.department'
@@ -200,7 +207,7 @@ class ProjectTeamMember(models.Model):
     _description = 'Project Team Member'
 
     project_ids = fields.Many2one(
-        'project.position',
+        'project.project',
     )
     member_position = fields.Many2one(
         'project.position',
@@ -218,3 +225,7 @@ class ProjectTeamMember(models.Model):
     date_end = fields.Date(
         string='End date',
     )
+
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Team Member must be unique!'),
+    ]

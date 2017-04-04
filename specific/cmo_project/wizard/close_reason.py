@@ -6,18 +6,16 @@ class ProjectCloseReason(models.TransientModel):
     _name = 'project.close.reason'
 
     close_reason = fields.Selection([
-        ('close', "Closed"),
-        ('reject', "Reject"),
-        ('lost', "Lost"),
+        ('close', 'Closed'),
+        ('reject', 'Reject'),
+        ('lost', 'Lost'),
     ])
 
-    @api.one
+    @api.multi
     def confirm_close(self, context=None):
-        reason = self.browse(self.id)
+        self.ensure_one()
         Project = self.env['project.project']
         project = Project.browse(context.get('active_id'))
-
-        project.write({'state': 'close',
-                       'close_reason': reason.close_reason,
-                       })
-        return {}
+        project.close_reason = self.close_reason
+        project.set_done()
+        return {'type': 'ir.actions.act_window_close'}

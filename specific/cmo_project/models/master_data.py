@@ -35,7 +35,7 @@ class ProjectClientType(models.Model):
 
 class Projectindustry(models.Model):
     _name = 'project.industry'
-    _description = 'Project industry'
+    _description = 'Project Industry'
 
     name = fields.Char(
         string='industry',
@@ -46,7 +46,7 @@ class Projectindustry(models.Model):
         default=True,
     )
     _sql_constraints = [
-        ('name_uniq', 'UNIQUE(name)', 'Project industry must be unique!'),
+        ('name_uniq', 'UNIQUE(name)', 'Project Industry must be unique!'),
     ]
 
 class ProjectLocation(models.Model):
@@ -129,6 +129,7 @@ class ProjectPosition(models.Model):
     _sql_constraints = [
         ('name_uniq', 'UNIQUE(name)', 'Project Position must be unique!'),
     ]
+
 
 class ProjectType(models.Model):
     _name = 'project.type'
