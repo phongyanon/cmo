@@ -62,11 +62,6 @@ class ProjectProject(models.Model):
         string='Description',
         states={'close': [('readonly', True)]},
     )
-    client_service = fields.Many2one(
-        'project.department',
-        string="Client Service",
-        states={'close': [('readonly', True)]},
-    )
     project_from = fields.Many2one(
         'project.from',
         string='Project From',
@@ -75,11 +70,6 @@ class ProjectProject(models.Model):
     project_type = fields.Many2one(
         'project.type',
         string='Project Type',
-        states={'close': [('readonly', True)]},
-    )
-    department = fields.Many2one(
-        'project.department',
-        string='Department',
         states={'close': [('readonly', True)]},
     )
     project_budget = fields.Float(
@@ -181,26 +171,6 @@ class ProjectProject(models.Model):
     #                 continue
     #             else:
     #                 project.state = 'Completed'
-
-class ProjectDepartment(models.Model): # TODO not use, use odoo standard instead.
-    _name = 'project.department'
-    _description = 'Project Department'
-
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    active = fields.Boolean(
-        string='Active',
-        default=False,
-    )
-    show = fields.Boolean(
-        string='Show',
-        default=False,
-    )
-    _sql_constraints = [
-        ('name_uniq', 'UNIQUE(name)', 'Project Department must be unique!'),
-    ]
 
 class ProjectTeamMember(models.Model):
     _name = 'project.team.member'

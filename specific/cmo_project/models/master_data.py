@@ -146,3 +146,17 @@ class ProjectType(models.Model):
     _sql_constraints = [
         ('name_uniq', 'UNIQUE(name)', 'Project Position must be unique!'),
     ]
+
+
+class ProjectDepartment(models.Model): # TODO not use, use odoo standard instead.
+    _inherit = 'hr.department'
+    _description = 'Project Department'
+
+    active = fields.Boolean(
+        string='Active',
+        default=False,
+    )
+    show = fields.Boolean(
+        string='Show',
+        default=False,
+    )
