@@ -96,6 +96,9 @@
                         </tree>
                     </field>
                 </xpath>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='active']" position="attributes">
+                   <attribute name="invisible">1</attribute>
+                </xpath>
                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Start Date']" position="attributes">
                    <attribute name="invisible">1</attribute>
                    <attribute name="string">Start Date(no use)</attribute>
@@ -114,6 +117,7 @@
                  </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="inside">
                       <group>
+                          <field name="active"/>
                           <group>
                             <field name="project_from"/>
                             <field name="project_type"/>
@@ -134,7 +138,7 @@
                  <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="after">
                     <group>
                         <field name="competitor"/>
-                    </group>        
+                    </group>
                  </xpath>
                  <xpath expr="//notebook/page[@string='Project Stages']" position="before">
                     <page string="Budget &amp; Cost">
