@@ -48,26 +48,23 @@
                 groups="project.group_project_manager"/>
 
       # TODO Project Department (not use, use odoo standard instead)
-      <record id="view_project_function_form" model="ir.ui.view">
-          <field name="name">project.department.form</field>
-          <field name="model">project.department</field>
+      <record id="view_department_form" model="ir.ui.view">
+          <field name="name">hr.department.form</field>
+          <field name="model">hr.department</field>
+          <field name="inherit_id" ref="hr.view_department_form"/>
           <field name="arch" type="xml">
-              <form string="Project Department">
-                  <group>
-                      <group>
-                          <field name="name"/>
-                      </group>
-                      <group>
-                          <field name="active"/>
-                          <field name="show"/>
-                      </group>
-                  </group>
-              </form>
+              <xpath expr="//group" position="after">
+                <group>
+                  <field name="active"/>
+                  <field name="show"/>
+                </group>
+              </xpath>
           </field>
       </record>
+
       <record id="view_project_department_tree" model="ir.ui.view">
           <field name="name">project.department.tree</field>
-          <field name="model">project.department</field>
+          <field name="model">hr.department</field>
           <field name="arch" type="xml">
               <tree string="Project department">
                   <field name="name"/>
@@ -78,7 +75,7 @@
       </record>
       <record id="action_project_department_form" model="ir.actions.act_window">
           <field name="name">Project Department</field>
-          <field name="res_model">project.department</field>
+          <field name="res_model">hr.department</field>
           <field name="view_type">form</field>
           <field name="view_mode">tree,form</field>
           <field name="help" type="html">
