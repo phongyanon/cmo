@@ -26,12 +26,19 @@
                 <xpath expr="/form/header/button[@name='set_open']" position="before">
                     <button name="action_approve" type="object"
                             string="approve"
-                            state="draft"
+                            states="draft"
                             attrs="{'invisible':[['state', 'not in', ['draft']]]}"/>
                     <button name="action_back_to_draft" type="object"
                             string="back to draft"
-                            state="open, pending"
+                            states="open,pending,received,billing"
                             attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"/>
+                    <button name="action_billing" type="object"
+                            string="Billing"
+                            states="open,pending,received,billing"/>
+                    <button name="action_received" type="object"
+                            string="Received(dummy)"
+                            states="open,pending,received,billing"
+                            class="oe_highlight"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="after">
                     <button name="%(action_project_close_reason)d"
@@ -67,7 +74,6 @@
                 </xpath>
                 <xpath expr="//group" position="after">
                     <group>
-                        <field name="description"/>
                         <field name="brief_date"/>
                         <field name="date_start" string="Start Date"/>
                         <field name="date" string="End Date"/>
@@ -146,11 +152,17 @@
                             <field name="project_budget"/>
                             <field name="actual_price"/>
                             <field name="estimate_cost"/>
+                            <field name="pre_cost"/>
                             <field name="actual_po"/>
                             <field name="remain_advance"/>
                             <field name="expense"/>
                         </group>
                     </page>
+                 </xpath>
+                 <xpath expr="//notebook" position="after">
+                    <group>
+                        <field name="description"/>
+                    </group>
                  </xpath>
             </field>
         </record>

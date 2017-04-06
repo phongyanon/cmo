@@ -84,6 +84,10 @@ class ProjectProject(models.Model):
         string='Estimate cost',
         states={'close': [('readonly', True)]},
     )
+    pre_cost = fields.Float(
+        string='Pre-project',
+        states={'close': [('readonly', True)]},
+    )
     actual_po = fields.Float(
         string='Actual PO',
         states={'close': [('readonly', True)]},
@@ -127,7 +131,9 @@ class ProjectProject(models.Model):
     state = fields.Selection(
         selection_add=[
             ('draft','Draft'),
-            ('complete', 'Completed'),
+            #('complete', 'Completed'),
+            ('billing', 'Billing'),
+            ('received', 'Received'),
             ]
     )
     _defaults = {
@@ -140,14 +146,12 @@ class ProjectProject(models.Model):
         project = super(ProjectProject, self).create(vals)
         task_obj = self.env['project.task']
         task_list = [
-                        {'name': 'ONE'},
-                        {'name': 'Billing'},
-                        {'name': 'Received'}
+                        {'name': u"Task {}".format(vals['name'])},
                     ]
         for task in task_list:
             task_obj.create({
                             'name': task.get('name', False),
-                            'project_id': project.id
+                            'project_id': project.id,
                         })
         return project
 
@@ -158,6 +162,14 @@ class ProjectProject(models.Model):
     @api.multi
     def action_back_to_draft(self):
         self.write({'state': 'draft'})
+
+    @api.multi
+    def action_billing(self):
+        self.write({'state': 'billing'})
+
+    @api.multi
+    def action_received(self):
+        self.write({'state': 'received'})
 
     # @api.multi TODO: if all state task are complete then project is complete
     # def write(self, vals):

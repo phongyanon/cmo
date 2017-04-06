@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="1">
+        <delete model="project.task.type" id="project.project_tt_specification"/>
+        <delete model="project.task.type" id="project.project_tt_design"/>
+        <delete model="project.task.type" id="project.project_tt_development"/>
+        <delete model="project.task.type" id="project.project_tt_testing"/>
+        <delete model="project.task.type" id="project.project_tt_merge"/>
+        <delete model="project.task.type" id="project.project_tt_cancel"/>
+
+        <record model="project.task.type" id="project.project_tt_analysis">
+            <field name="name">In progress</field>
+        </record>
+    </data>
+</openerp>
