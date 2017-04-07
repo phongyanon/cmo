@@ -44,7 +44,10 @@
                     <button name="%(action_project_close_reason)d"
                             type="action"
                             string="Close project"
-                            states="open, pending"/>
+                            states="draft,open,pending,received,billing"/>
+                </xpath>
+                <xpath expr="/form/header/button[@name='set_cancel']" position="attributes">
+                    <attribute name="states">draft,open,pending,billing</attribute>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_done']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -54,7 +57,7 @@
                     <attribute name="string">Hold</attribute>
                 </xpath>
                 <xpath expr="/form/header/field[@name='state']" position="attributes">
-                    <attribute name="statusbar_visible">draft, open, close</attribute>
+                    <attribute name="statusbar_visible">draft,open,close</attribute>
                 </xpath>
                 <xpath expr="//field[@name='analytic_account_id']" position="before">
                   <div>
@@ -65,11 +68,11 @@
                   </div>
                 </xpath>
                 <xpath expr="//group/group/field[@string='Project Manager']" position="attributes">
-                      <attribute name="invisible">0</attribute>
+                      <attribute name="invisible">1</attribute>
                       <attribute name="string">Project manager(no use)</attribute>
                 </xpath>
                 <xpath expr="//group/group/field[@string='Customer']" position="attributes">
-                      <attribute name="invisible">0</attribute>
+                      <attribute name="invisible">1</attribute>
                       <attribute name="string">Customer(no use)</attribute>
                 </xpath>
                 <xpath expr="//group" position="after">
@@ -87,7 +90,7 @@
                     </group>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Team']/field[@name='members']" position="attributes">
-                    <attribute name="invisible">0</attribute>
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Team']/field[@name='members']" position="inside">
                     <attribute name="string">(no use)</attribute>

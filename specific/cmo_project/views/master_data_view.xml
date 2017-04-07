@@ -87,11 +87,6 @@
               </p>
           </field>
       </record>
-      <menuitem action="action_project_department_form"
-                id="menu_action_project_department_form"
-                parent="base.menu_definitions"
-                sequence="55"
-                groups="project.group_project_manager"/>
 
       # Project position
       <record id="view_project_position_form" model="ir.ui.view">
