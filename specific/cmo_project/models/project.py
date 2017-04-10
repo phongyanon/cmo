@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
 
+
 class ProjectProject(models.Model):
-    _inherit = 'project.project'
+    _inherit = "project.project"
     # TODO match all selection field with master data
     project_place = fields.Char(
         string='Project Place',
-        states={'close': [('readonly', True)]},
+        states={'close': [('readonly', True)]}
     )
-    agency = fields.Many2one( # TODO filter res.partner where is agency=1
+    agency = fields.Many2one(
         'res.partner',
         string="Agency",
         states={'close': [('readonly', True)]},
+        domain=[('category_id', 'like', 'Agency'), ],
     )
     brand_type = fields.Many2one(
         'project.brand.type',
@@ -106,9 +108,10 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
     )
     competitor =fields.Many2many(
-        'res.company',
+        'res.partner',
         string='Competitors',
         states={'close': [('readonly', True)]},
+        domain=[('category_id', 'like', 'Competitor'), ],
     )
     project_number = fields.Char(
         string='Project Code',
@@ -128,6 +131,12 @@ class ProjectProject(models.Model):
         ],
         states={'close': [('readonly', True)]},
     )
+    department = fields.One2many(
+        'hr.department',
+        'hr_ids',
+        string='Department',
+        states={'close': [('readonly', True)]},
+    )
     state = fields.Selection(
         selection_add=[
             ('draft','Draft'),
@@ -144,33 +153,32 @@ class ProjectProject(models.Model):
     def create(self, vals):
         vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence nummber
         project = super(ProjectProject, self).create(vals)
-        task_obj = self.env['project.task']
-        task_list = [
-                        {'name': u"Task {}".format(vals['name'])},
-                    ]
+        Task = self.env['project.task']
+        task_list = [{'name': u"Task {}".format(vals['name'])}, ]
         for task in task_list:
-            task_obj.create({
-                            'name': task.get('name', False),
-                            'project_id': project.id,
-                        })
+            Task.create({'name': task.get('name', False),
+                         'project_id': project.id, })
         return project
 
     @api.multi
     def action_approve(self):
-        self.write({'state': 'open'})
+        res = self.write({'state': 'open'})
+        return res
 
     @api.multi
     def action_back_to_draft(self):
-        self.write({'state': 'draft'})
+        res = self.write({'state': 'draft'})
+        return res
 
     @api.multi
     def action_billing(self):
-        self.write({'state': 'billing'})
+        res = self.write({'state': 'billing'})
+        return res
 
     @api.multi
     def action_received(self):
-        self.write({'state': 'received'})
-
+        res = self.write({'state': 'received'})
+        return res
     # @api.multi TODO: if all state task are complete then project is complete
     # def write(self, vals):
     #     super().write()
@@ -185,8 +193,8 @@ class ProjectProject(models.Model):
     #                 project.state = 'Completed'
 
 class ProjectTeamMember(models.Model):
-    _name = 'project.team.member'
-    _description = 'Project Team Member'
+    _name = "project.team.member"
+    _description = "Project Team Member"
 
     project_ids = fields.Many2one(
         'project.project',
@@ -210,4 +218,150 @@ class ProjectTeamMember(models.Model):
 
     _sql_constraints = [
         ('name_uniq', 'UNIQUE(name)', 'Project Team Member must be unique!'),
+    ]
+
+class ProjectBrandType(models.Model):
+    _name = "project.brand.type"
+    _description = "Project Brand Type"
+
+    name = fields.Char(
+        string='Brand Type',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Brand Type must be unique!'),
+    ]
+
+class ProjectClientType(models.Model):
+    _name = "project.client.type"
+    _description = "Project Client Type"
+
+    name = fields.Char(
+        string='Client Type',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Client Type must be unique!'),
+    ]
+
+class Projectindustry(models.Model):
+    _name = "project.industry"
+    _description = "Project Industry"
+
+    name = fields.Char(
+        string='industry',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Industry must be unique!'),
+    ]
+
+class ProjectLocation(models.Model):
+    _name = "project.location"
+    _description = "Project Location"
+
+    name = fields.Char(
+        string='Location',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Location must be unique!'),
+    ]
+
+class ProjectObligation(models.Model):
+    _name = "project.obligation"
+    _description = "Project Obligation"
+
+    name = fields.Char(
+        string='Obligation',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Obligation must be unique!'),
+    ]
+
+class ProjectFrom(models.Model):
+    _name = "project.from"
+    _description = "Project From"
+
+    name = fields.Char(
+        string='Project From',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project From must be unique!'),
+    ]
+
+class ProjectFunction(models.Model):
+    _name = "project.function"
+    _description = "Project Function"
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+        size=128,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Function must be unique!'),
+    ]
+
+class ProjectPosition(models.Model):
+    _name = "project.position"
+    _description = "Project Position"
+
+    name = fields.Char(
+        string='Position',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Position must be unique!'),
+    ]
+
+
+class ProjectType(models.Model):
+    _name = "project.type"
+    _description = "Project Type"
+
+    name = fields.Char(
+        string='Project Type',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Position must be unique!'),
     ]

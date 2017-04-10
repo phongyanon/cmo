@@ -27,5 +27,13 @@
             <field name="case_default" eval="True"/>
             <field name="fold" eval="False"/>
         </record>
+        <record model="res.partner.category" id="partner_category_1">
+            <field name="name">Agency</field>
+            <field name="active" eval="True"/>
+        </record>
+        <record model="res.partner.category" id="partner_category_2">
+            <field name="name">Competitor</field>
+            <field name="active" eval="True"/>
+        </record>
     </data>
 </openerp>

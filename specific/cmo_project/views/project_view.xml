@@ -14,6 +14,51 @@
               <xpath expr="/tree/field[@name='name']" position="before">
                   <field name="project_number"/>
               </xpath>
+              <xpath expr="/tree/field[@name='user_id']" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath>
+              <xpath expr="/tree/field[@name='partner_id']" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath>
+              <xpath expr="/tree/field[@name='planned_hours']" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath>
+              <xpath expr="/tree/field[@name='total_hours']" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath>
+              <xpath expr="/tree/field[@name='effective_hours']" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath>
+              <xpath expr="/tree/field[@name='progress_rate']" position="attributes">
+                  <attribute name="invisible">1</attribute>
+              </xpath>
+              <xpath expr="/tree/field[@name='state']" position="attributes">
+                  <attribute name="string">Project Status</attribute>
+              </xpath>
+              <xpath expr="/tree/field[@name='state']" position="before">
+                  <field name="brief_date"/>
+                  <field name="date_start"/>
+              </xpath>
+              <xpath expr="/tree/field[@name='state']" position="after">
+                  <field name="department"/>
+                  <field name="partner_id" string="Customer"/>
+                  <field name="project_from"/>
+                  <field name="project_type"/>
+                  <field name="agency"/>
+                  <field name="client_type"/>
+                  <field name="brand_type"/>
+                  <field name="industry"/>
+                  <field name="obligation"/>
+                  <field name="function_id"/>
+                  <field name="location"/>
+                  <field name="project_place"/>
+                  <field name="project_budget"/>
+                  <field name="actual_price"/>
+                  <field name="estimate_cost"/>
+                  <field name="pre_cost"/>
+                  <field name="actual_po"/>
+                  <field name="close_reason"/>
+              </xpath>
             </field>
         </record>
 
