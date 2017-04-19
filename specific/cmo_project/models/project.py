@@ -74,53 +74,6 @@ class ProjectProject(models.Model):
         string='Project From',
         states={'close': [('readonly', True)]},
     )
-    ##################3
-    # project_from = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    # project_type = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    # obligation = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    # brand_type = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    # industry = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    # agency = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    # client_type = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    # location = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    # department = fields.Many2one(
-    #     'project.from',
-    #     string='Project From',
-    #     states={'close': [('readonly', True)]},
-    # )
-    ######################
     project_type_id = fields.Many2one(
         'project.type',
         string='Project Type',
