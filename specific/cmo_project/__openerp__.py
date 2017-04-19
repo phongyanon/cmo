@@ -16,6 +16,8 @@
         'project',
     ],
     "data": [
+        'security/security.xml',
+        'security/ir.model.access.csv',
         'data/project_data.xml',
         'data/brand_type_data.xml',
         'data/client_type_data.xml',

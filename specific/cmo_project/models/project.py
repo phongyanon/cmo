@@ -1,36 +1,41 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
 
+# TODO: many2one use id, many2many/one2many us ids
+# use single quotation
+# foreign key use, idex and ondelete
+
 
 class ProjectProject(models.Model):
-    _inherit = "project.project"
+    _inherit = 'project.project'
     # TODO match all selection field with master data
+
     project_place = fields.Char(
         string='Project Place',
         states={'close': [('readonly', True)]}
     )
-    agency = fields.Many2one(
+    agency_partner_id = fields.Many2one(
         'res.partner',
-        string="Agency",
+        string='Agency',
         states={'close': [('readonly', True)]},
         domain=[('category_id', 'like', 'Agency'), ],
     )
-    brand_type = fields.Many2one(
+    brand_type_id = fields.Many2one(
         'project.brand.type',
-        string="Brand type",
+        string='Brand type',
         states={'close': [('readonly', True)]},
     )
-    industry = fields.Many2one(
+    industry_id = fields.Many2one(
         'project.industry',
-        string="Industry",
+        string='Industry',
         states={'close':[('readonly', True)]},
     )
-    client_type = fields.Many2one(
+    client_type_id = fields.Many2one(
         'project.client.type',
         string='Client Type',
         states={'close': [('readonly', True)]},
     )
-    obligation = fields.Many2one(
+    obligation_id = fields.Many2one(
         'project.obligation',
         string='Obligation',
         states={'close': [('readonly', True)]},
@@ -55,7 +60,7 @@ class ProjectProject(models.Model):
         string='Lead Source',
         states={'close': [('readonly', True)]},
     )
-    location = fields.Many2one(
+    location_id = fields.Many2one(
         'project.location',
         string='Location',
         states={'close': [('readonly', True)]},
@@ -64,12 +69,59 @@ class ProjectProject(models.Model):
         string='Description',
         states={'close': [('readonly', True)]},
     )
-    project_from = fields.Many2one(
+    project_from_id = fields.Many2one(
         'project.from',
         string='Project From',
         states={'close': [('readonly', True)]},
     )
-    project_type = fields.Many2one(
+    ##################3
+    # project_from = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    # project_type = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    # obligation = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    # brand_type = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    # industry = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    # agency = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    # client_type = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    # location = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    # department = fields.Many2one(
+    #     'project.from',
+    #     string='Project From',
+    #     states={'close': [('readonly', True)]},
+    # )
+    ######################
+    project_type_id = fields.Many2one(
         'project.type',
         string='Project Type',
         states={'close': [('readonly', True)]},
@@ -107,8 +159,9 @@ class ProjectProject(models.Model):
         default=fields.Date.today,
         states={'close': [('readonly', True)]},
     )
-    competitor =fields.Many2many(
+    competitor_ids = fields.Many2many(
         'res.partner',
+        'res_partner_rel', 'project_id', 'competitor_id',
         string='Competitors',
         states={'close': [('readonly', True)]},
         domain=[('category_id', 'like', 'Competitor'), ],
@@ -118,46 +171,69 @@ class ProjectProject(models.Model):
         readonly=True,
         states={'close': [('readonly', True)]},
     )
-    project_members = fields.One2many(
+    project_member_ids = fields.One2many(
         'project.team.member',
-        'project_ids',
+        'project_id',
         string='Team Member',
         states={'close': [('readonly', True)]},
     )
-    close_reason = fields.Selection([
-        ('close', "Closed"),
-        ('reject', "Reject"),
-        ('lost', "Lost"),
+    close_reason = fields.Selection(
+        [('close', 'Closed'),
+         ('reject', 'Reject'),
+         ('lost', 'Lost'),
         ],
+        string='Close Reason',
         states={'close': [('readonly', True)]},
     )
-    department = fields.One2many(
+    department_id = fields.Many2one(
         'hr.department',
-        'hr_ids',
         string='Department',
         states={'close': [('readonly', True)]},
     )
-    state = fields.Selection(
-        selection_add=[
-            ('draft','Draft'),
-            #('complete', 'Completed'),
-            ('billing', 'Billing'),
-            ('received', 'Received'),
-            ]
+    operating_unit_ids = fields.Many2many(
+        'operating.unit',
+        'project_operating_unit_rel', 'project_id', 'operating_unit_id',
+        string='Operating Unit',
+        default=lambda self: self.env.user.default_operating_unit_id,
+        states={'close': [('readonly', True)]},
+        groups='base.group_erp_manager',
     )
-    _defaults = {
-        'state': 'draft',
-    }
+    state = fields.Selection(
+        [('template', 'Template'),
+         ('draft','Draft'),
+         ('open','In Progress'),
+         ('invoices', 'Invoices'),
+         ('received', 'Received'),
+         ('cancelled', 'Cancelled'),
+         ('pending','Pending'),
+         ('close','Closed'), ],
+         string='Status',
+         required=True,
+         copy=False,
+         default='draft',
+    )
 
+    # TODO create tab to show invoices of project.
+    # invoice_ids = fields.Many2many(
+    #     'account.invoice',
+    #     string='Invoices',
+    #     compute='_compute_invoice_ids',
+    #     help="This field show invoices related to this project",
+    # )
+    #
+    # @api.multi
+    # @api.depends()
+    # def _compute_invoice_ids(self):
+    #     self.invoice_ids = []
     @api.model
     def create(self, vals):
-        vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence nummber
+        if vals.get('project_number', '/') == '/':
+            vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence nummber
+        #vals['operating_unit_id'] = self.env.user.default_operating_unit_id.id
         project = super(ProjectProject, self).create(vals)
         Task = self.env['project.task']
-        task_list = [{'name': u"Task {}".format(vals['name'])}, ]
-        for task in task_list:
-            Task.create({'name': task.get('name', False),
-                         'project_id': project.id, })
+        Task.create({'name': u"Task {}".format(vals['name']),
+                     'project_id': project.id, })
         return project
 
     @api.multi
@@ -171,40 +247,33 @@ class ProjectProject(models.Model):
         return res
 
     @api.multi
-    def action_billing(self):
-        res = self.write({'state': 'billing'})
+    def action_invoices(self):
+        res = self.write({'state': 'invoices'})
         return res
 
     @api.multi
     def action_received(self):
         res = self.write({'state': 'received'})
         return res
-    # @api.multi TODO: if all state task are complete then project is complete
-    # def write(self, vals):
-    #     super().write()
-    #     if vals.get('state') == 'Completed':
-    #         for task in self:
-    #             project = task.project_id
-    #             tasks = project.task_ids
-    #             not_done_tasks = tasks.filtered(lambda l: l.state != 'Completed')
-    #             if not_done_tasks:
-    #                 continue
-    #             else:
-    #                 project.state = 'Completed'
+
 
 class ProjectTeamMember(models.Model):
-    _name = "project.team.member"
-    _description = "Project Team Member"
+    _name = 'project.team.member'
+    _description = 'Project Team Member'
+    _rec_name = 'employee_id'
 
-    project_ids = fields.Many2one(
+    project_id = fields.Many2one(
         'project.project',
+        string='Project',
+        ondelete='cascade',
+        index=True,
     )
-    member_position = fields.Many2one(
+    position_id = fields.Many2one(
         'project.position',
         string='Member Position',
         required=True,
     )
-    team_member = fields.Many2one(
+    employee_id = fields.Many2one(
         'hr.employee',
         string='Name',
         required=True,
@@ -221,8 +290,8 @@ class ProjectTeamMember(models.Model):
     ]
 
 class ProjectBrandType(models.Model):
-    _name = "project.brand.type"
-    _description = "Project Brand Type"
+    _name = 'project.brand.type'
+    _description = 'Project Brand Type'
 
     name = fields.Char(
         string='Brand Type',
@@ -237,8 +306,8 @@ class ProjectBrandType(models.Model):
     ]
 
 class ProjectClientType(models.Model):
-    _name = "project.client.type"
-    _description = "Project Client Type"
+    _name = 'project.client.type'
+    _description = 'Project Client Type'
 
     name = fields.Char(
         string='Client Type',
@@ -252,12 +321,12 @@ class ProjectClientType(models.Model):
         ('name_uniq', 'UNIQUE(name)', 'Project Client Type must be unique!'),
     ]
 
-class Projectindustry(models.Model):
-    _name = "project.industry"
-    _description = "Project Industry"
+class ProjectIndustry(models.Model):
+    _name = 'project.industry'
+    _description = 'Project Industry'
 
     name = fields.Char(
-        string='industry',
+        string='Industry',
         required=True,
     )
     active = fields.Boolean(
@@ -269,8 +338,8 @@ class Projectindustry(models.Model):
     ]
 
 class ProjectLocation(models.Model):
-    _name = "project.location"
-    _description = "Project Location"
+    _name = 'project.location'
+    _description = 'Project Location'
 
     name = fields.Char(
         string='Location',
@@ -285,8 +354,8 @@ class ProjectLocation(models.Model):
     ]
 
 class ProjectObligation(models.Model):
-    _name = "project.obligation"
-    _description = "Project Obligation"
+    _name = 'project.obligation'
+    _description = 'Project Obligation'
 
     name = fields.Char(
         string='Obligation',
@@ -301,8 +370,8 @@ class ProjectObligation(models.Model):
     ]
 
 class ProjectFrom(models.Model):
-    _name = "project.from"
-    _description = "Project From"
+    _name = 'project.from'
+    _description = 'Project From'
 
     name = fields.Char(
         string='Project From',
@@ -317,8 +386,8 @@ class ProjectFrom(models.Model):
     ]
 
 class ProjectFunction(models.Model):
-    _name = "project.function"
-    _description = "Project Function"
+    _name = 'project.function'
+    _description = 'Project Function'
 
     name = fields.Char(
         string='Name',
@@ -334,8 +403,8 @@ class ProjectFunction(models.Model):
     ]
 
 class ProjectPosition(models.Model):
-    _name = "project.position"
-    _description = "Project Position"
+    _name = 'project.position'
+    _description = 'Project Position'
 
     name = fields.Char(
         string='Position',
@@ -351,8 +420,8 @@ class ProjectPosition(models.Model):
 
 
 class ProjectType(models.Model):
-    _name = "project.type"
-    _description = "Project Type"
+    _name = 'project.type'
+    _description = 'Project Type'
 
     name = fields.Char(
         string='Project Type',

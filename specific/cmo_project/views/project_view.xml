@@ -6,6 +6,45 @@
             <field name="view_mode">tree,form,gantt</field>
         </record>
 
+        <record id="project_search_view" model="ir.ui.view">
+            <field name="name">project.project.select</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="project.view_project_project_filter"/>
+            <field name="arch" type="xml">
+                  <xpath expr="//field[@name='name']" position="before">
+                        <filter string="Draft" name="Draft" domain="[('state','=','draft')]"/>
+                        <filter string="Invoices" name="Invoices" domain="[('state','=','invoices')]"/>
+                        <filter string="Received" name="Received" domain="[('state','=','received')]"/>
+                        <filter string="Cancelled" name="Cancelled" domain="[('state','=','cancelled')]"/>
+                        <filter string="Closed" name="Closed" domain="[('state','=','close')]"/>
+                        <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>
+                  </xpath>
+                  <xpath expr="//group/filter[@name='Parent']" position="after">
+                        <filter string="Department" name="Department" context="{'group_by':'department_id'}"/>
+                        <filter string="Agency" name="Agency" context="{'group_by':'agency_partner_id'}"/>
+                        <filter string="Brand type" name="Brand type" context="{'group_by':'brand_type_id'}"/>
+                        <filter string="Industry" name="Industry" context="{'group_by':'industry_id'}"/>
+                        <filter string="Client type" name="Client type" context="{'group_by':'client_type_id'}"/>
+                        <filter string="Obligation" name="Obligation" context="{'group_by':'obligation_id'}"/>
+                        <filter string="Function" name="Function" context="{'group_by':'function_id'}"/>
+                        <filter string="Lead source" name="Lead source" context="{'group_by':'lead_source'}"/>
+                        <filter string="Location" name="Location" context="{'group_by':'location_id'}"/>
+                        <filter string="Project from" name="Project from" context="{'group_by':'project_from_id'}"/>
+                        <filter string="Project type" name="Project type" context="{'group_by':'project_type_id'}"/>
+                        <filter string="Close reason" name="Close reason" context="{'group_by':'close_reason'}"/>
+                  </xpath>
+                  <xpath expr="//filter[@string='New Mail']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                  </xpath>
+                  <xpath expr="//group/filter[@string='Contact']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                  </xpath>
+                  <xpath expr="//group/filter[@string='Manager']" position="attributes">
+                        <attribute name="invisible">1</attribute>
+                  </xpath>
+            </field>
+        </record>
+
         <record id="view_project" model="ir.ui.view">
             <field name="name">project.project.tree</field>
             <field name="model">project.project</field>
@@ -40,17 +79,17 @@
                   <field name="date_start"/>
               </xpath>
               <xpath expr="/tree/field[@name='state']" position="after">
-                  <field name="department"/>
+                  <field name="department_id"/>
                   <field name="partner_id" string="Customer"/>
-                  <field name="project_from"/>
-                  <field name="project_type"/>
-                  <field name="agency"/>
-                  <field name="client_type"/>
-                  <field name="brand_type"/>
-                  <field name="industry"/>
-                  <field name="obligation"/>
+                  <field name="project_from_id"/>
+                  <field name="project_type_id"/>
+                  <field name="agency_partner_id"/>
+                  <field name="client_type_id"/>
+                  <field name="brand_type_id"/>
+                  <field name="industry_id"/>
+                  <field name="obligation_id"/>
                   <field name="function_id"/>
-                  <field name="location"/>
+                  <field name="location_id"/>
                   <field name="project_place"/>
                   <field name="project_budget"/>
                   <field name="actual_price"/>
@@ -75,24 +114,24 @@
                             attrs="{'invisible':[['state', 'not in', ['draft']]]}"/>
                     <button name="action_back_to_draft" type="object"
                             string="back to draft"
-                            states="open,pending,received,billing"
+                            states="open,pending,received,invoices"
                             attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"/>
-                    <button name="action_billing" type="object"
-                            string="Billing"
-                            states="open,pending,received,billing"/>
+                    <button name="action_invoices" type="object"
+                            string="Invoices"
+                            states="open,pending,received,invoices"/>
                     <button name="action_received" type="object"
                             string="Received(dummy)"
-                            states="open,pending,received,billing"
+                            states="open,pending,received,invoices"
                             class="oe_highlight"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="after">
                     <button name="%(action_project_close_reason)d"
                             type="action"
                             string="Close project"
-                            states="draft,open,pending,received,billing"/>
+                            states="draft,open,pending,received,invoices"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="attributes">
-                    <attribute name="states">draft,open,pending,billing</attribute>
+                    <attribute name="states">draft,open,pending,invoices</attribute>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_done']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -105,12 +144,10 @@
                     <attribute name="statusbar_visible">draft,open,close</attribute>
                 </xpath>
                 <xpath expr="//field[@name='analytic_account_id']" position="before">
-                  <div>
                       <h1>
-                          <label for="name" class="oe_edit_only" string="Project Number"/>
-                          <field name="project_number" string="Project Number" class="oe_inline"/>
+                          <label for="name" string="Project Number"/>
+                          <field name="project_number" string="Project Number" class="oe_inline" readonly="1"/>
                       </h1>
-                  </div>
                 </xpath>
                 <xpath expr="//group/group/field[@string='Project Manager']" position="attributes">
                       <attribute name="invisible">1</attribute>
@@ -122,16 +159,21 @@
                 </xpath>
                 <xpath expr="//group" position="after">
                     <group>
-                        <field name="brief_date"/>
-                        <field name="date_start" string="Start Date"/>
-                        <field name="date" string="End Date"/>
-                        <field name="close_reason" string="Close Reason"/>
-                        <field name="parent_id"
-                              string="Parent"
-                              help="Append this project to another one using analytic accounts hierarchy"
-                              domain="[('id','!=',analytic_account_id)]"
-                              context="{'current_model': 'project.project'}"
-                              />
+                        <group>
+                            <field name="brief_date"/>
+                            <field name="date_start" string="Start Date"/>
+                            <field name="date" string="End Date"/>
+                        </group>
+                        <group>
+                            <field name="close_reason" string="Close Reason" readonly="1"/>
+                            <field name="parent_id"
+                                  string="Parent"
+                                  help="Append this project to another one using analytic accounts hierarchy"
+                                  domain="[('id','!=',analytic_account_id)]"
+                                  context="{'current_model': 'project.project'}"
+                                  />
+                            <field name="operating_unit_ids" widget="many2many_tags"/> 
+                        </group>
                     </group>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Team']/field[@name='members']" position="attributes">
@@ -141,10 +183,10 @@
                     <attribute name="string">(no use)</attribute>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Team']" position="inside">
-                    <field name="project_members" nolabel="1" widget="one2many_list">
+                    <field name="project_member_ids" nolabel="1" widget="one2many_list">
                         <tree string="Team member" editable="bottom">
-                            <field name="member_position"/>
-                            <field name="team_member"/>
+                            <field name="position_id"/>
+                            <field name="employee_id"/>
                             <field name="date_start"/>
                             <field name="date_end"/>
                         </tree>
@@ -171,39 +213,40 @@
                  </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="inside">
                       <group>
-                          <field name="active"/>
+                          <field name="active" invisible="1"/>
                           <group>
-                            <field name="project_from"/>
-                            <field name="project_type"/>
+                            <field name="project_from_id"/>
+                            <field name="project_type_id"/>
                             <field name="partner_id" on_change="onchange_partner_id(partner_id)" string="Customer"/>
-                            <field name="agency"/>
-                            <field name="client_type"/>
-                            <field name="brand_type"/>
+                            <field name="agency_partner_id"/>
+                            <field name="client_type_id"/>
+                            <field name="brand_type_id"/>
                           </group>
                           <group>
-                            <field name="industry"/>
-                            <field name="obligation"/>
+                            <field name="industry_id"/>
+                            <field name="obligation_id"/>
                             <field name="function_id"/>
-                            <field name="location"/>
+                            <field name="location_id"/>
                             <field name="project_place"/>
+                            <field name="department_id"/>
                           </group>
                       </group>
                   </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="after">
                     <group>
-                        <field name="competitor"/>
+                        <field name="competitor_ids"/>
                     </group>
                  </xpath>
                  <xpath expr="//notebook/page[@string='Project Stages']" position="before">
                     <page string="Budget &amp; Cost">
                         <group>
                             <field name="project_budget"/>
-                            <field name="actual_price"/>
-                            <field name="estimate_cost"/>
+                            <field name="actual_price" readonly="1"/>
+                            <field name="estimate_cost" readonly="1"/>
                             <field name="pre_cost"/>
-                            <field name="actual_po"/>
-                            <field name="remain_advance"/>
-                            <field name="expense"/>
+                            <field name="actual_po" readonly="1"/>
+                            <field name="remain_advance" readonly="1"/>
+                            <field name="expense" readonly="1"/>
                         </group>
                     </page>
                  </xpath>
