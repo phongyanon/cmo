@@ -165,9 +165,6 @@
                             <field name="date"/>
                             <!-- TODO: date_start and date(End Date) cann't be
                             search because store in analytic_account -->
-                        </group>
-                        <group>
-                            <field name="close_reason" string="Close Reason" readonly="1"/>
                             <field name="parent_id"
                                   string="Parent Project"
                                   help="Append this project to another one using analytic accounts hierarchy"
@@ -175,6 +172,12 @@
                                   context="{'current_model': 'project.project'}"
                                   />
                             <field name="operating_unit_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="close_reason" string="Close Reason" readonly="1" attrs="{'invisible': [('close_reason','=',False)]}"/>
+                            <field name="lost_reason" readonly="1" attrs="{'invisible': ['!',('close_reason','=','lost')]}"/>
+                            <field name="lost_by" readonly="1" attrs="{'invisible': ['!',('close_reason','=','lost')]}"/>
+                            <field name="reject_reason" readonly="1" attrs="{'invisible': ['!',('close_reason','=','reject')]}"/>
                         </group>
                     </group>
                 </xpath>
@@ -236,7 +239,7 @@
                             <field name="project_place"/>
                             <field name="industry_id" readonly="1"/>
                             <field name="brand_type_id" readonly="1"/>
-                            <field name="department_id" invisible="1"/>
+                            <field name="department_id" attrs="{'invisible': [('close_reason','=','close')]}"/>
                           </group>
                       </group>
                   </xpath>

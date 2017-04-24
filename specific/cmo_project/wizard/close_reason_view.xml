@@ -11,7 +11,14 @@
                       Select reason for close project.
                   </p>
                   <group>
-                      <field name="close_reason" required="1"/>
+                      <group>
+                          <field name="close_reason" required="1"/>
+                      </group>
+                      <group>
+                          <field name="lost_reason" attrs="{'invisible': ['!',('close_reason','=','lost')]}"/>
+                          <field name="lost_by" attrs="{'invisible': ['!',('close_reason','=','lost')]}"/>
+                          <field name="reject_reason" attrs="{'invisible': ['!',('close_reason','=','reject')]}"/>
+                      </group>
                   </group>
                   <footer>
                     <button string="Confirm" name="confirm_close" type="object" class="oe_highlight"/>

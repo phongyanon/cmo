@@ -121,6 +121,7 @@ class ProjectProject(models.Model):
         string='Project Code',
         readonly=True,
         states={'close': [('readonly', True)]},
+        copy=False,
     )
     project_member_ids = fields.One2many(
         'project.team.member',
@@ -129,7 +130,7 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
     )
     close_reason = fields.Selection(
-        [('close', 'Closed'),
+        [('close', 'Completed'),
          ('reject', 'Reject'),
          ('lost', 'Lost'),
         ],
@@ -162,6 +163,19 @@ class ProjectProject(models.Model):
          required=True,
          copy=False,
          default='draft',
+    )
+    lost_reason = fields.Many2one(
+        'project.lost.reason',
+        string='Lost Reason',
+    )
+    lost_by = fields.Many2one(
+        'res.partner',
+        string='Lost By',
+        domain=[('category_id', 'like', 'Competitor'), ],
+    )
+    reject_reason = fields.Many2one(
+        'project.reject.reason',
+        string='Reject Reason',
     )
 
     # TODO create tab to show invoices of project.
