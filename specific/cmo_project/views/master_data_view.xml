@@ -134,12 +134,12 @@
                 sequence="60"
                 groups="project.group_project_manager"/>
 
-      # Brand type
+      # Brand Type
       <record id="view_project_brand_type_form" model="ir.ui.view">
           <field name="name">project.brand.type.form</field>
           <field name="model">project.brand.type</field>
           <field name="arch" type="xml">
-              <form string="Project Brand type">
+              <form string="Project Brand Type">
                   <group>
                       <group>
                           <field name="name"/>
@@ -155,13 +155,13 @@
           <field name="name">project.brand.type.tree</field>
           <field name="model">project.brand.type</field>
           <field name="arch" type="xml">
-              <tree string="Project Brand type">
+              <tree string="Project Brand Type">
                   <field name="name"/>
               </tree>
           </field>
       </record>
       <record id="action_project_brand_type_form" model="ir.actions.act_window">
-          <field name="name">Project Brand type</field>
+          <field name="name">Project Brand Type</field>
           <field name="res_model">project.brand.type</field>
           <field name="view_type">form</field>
           <field name="view_mode">tree,form</field>
@@ -180,12 +180,12 @@
                 sequence="55"
                 groups="project.group_project_manager"/>
 
-      # Client type
+      # Client Type
       <record id="view_project_client_type_form" model="ir.ui.view">
           <field name="name">project.client.type.form</field>
           <field name="model">project.client.type</field>
           <field name="arch" type="xml">
-              <form string="Project Client type">
+              <form string="Project Client Type">
                   <group>
                       <group>
                           <field name="name"/>
@@ -201,13 +201,13 @@
           <field name="name">project.client.type.tree</field>
           <field name="model">project.client.type</field>
           <field name="arch" type="xml">
-              <tree string="Project Client type">
+              <tree string="Project Client Type">
                   <field name="name"/>
               </tree>
           </field>
       </record>
       <record id="action_project_client_type_form" model="ir.actions.act_window">
-          <field name="name">Project Client type</field>
+          <field name="name">Project Client Type</field>
           <field name="res_model">project.client.type</field>
           <field name="view_type">form</field>
           <field name="view_mode">tree,form</field>
@@ -364,12 +364,12 @@
                 sequence="55"
                 groups="project.group_project_manager"/>
 
-      # Project from
+      # Project From
       <record id="view_project_from_form" model="ir.ui.view">
           <field name="name">project.from.form</field>
           <field name="model">project.from</field>
           <field name="arch" type="xml">
-              <form string="Project from">
+              <form string="Project From">
                   <group>
                       <group>
                           <field name="name"/>
@@ -385,13 +385,13 @@
           <field name="name">project.from.tree</field>
           <field name="model">project.from</field>
           <field name="arch" type="xml">
-              <tree string="Project from">
+              <tree string="Project From">
                   <field name="name"/>
               </tree>
           </field>
       </record>
       <record id="action_project_from_form" model="ir.actions.act_window">
-          <field name="name">Project from</field>
+          <field name="name">Project From</field>
           <field name="res_model">project.from</field>
           <field name="view_type">form</field>
           <field name="view_mode">tree,form</field>
@@ -410,12 +410,12 @@
                 sequence="55"
                 groups="project.group_project_manager"/>
 
-      # Project type
+      # Project Type
       <record id="view_project_type_form" model="ir.ui.view">
           <field name="name">project.type.form</field>
           <field name="model">project.type</field>
           <field name="arch" type="xml">
-              <form string="Project type">
+              <form string="Project Type">
                   <group>
                       <group>
                           <field name="name"/>
@@ -431,13 +431,13 @@
           <field name="name">project.type.tree</field>
           <field name="model">project.type</field>
           <field name="arch" type="xml">
-              <tree string="Project type">
+              <tree string="Project Type">
                   <field name="name"/>
               </tree>
           </field>
       </record>
       <record id="action_project_type_form" model="ir.actions.act_window">
-          <field name="name">Project type</field>
+          <field name="name">Project Type</field>
           <field name="res_model">project.type</field>
           <field name="view_type">form</field>
           <field name="view_mode">tree,form</field>
@@ -456,5 +456,130 @@
                 sequence="55"
                 groups="project.group_project_manager"/>
 
+        # Competitor
+        <record id="view_project_competitor_form" model="ir.ui.view">
+            <field name="name">project.competitor.form</field>
+            <field name="model">project.competitor</field>
+            <field name="arch" type="xml">
+                <form string="Competitor">
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="company"/>
+                        </group>
+                        <group>
+                            <field name="remark"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+        <record id="view_project_competitor_tree" model="ir.ui.view">
+            <field name="name">project.competitor.tree</field>
+            <field name="model">project.competitor</field>
+            <field name="arch" type="xml">
+                <tree string="Competitor">
+                    <field name="name"/>
+                    <field name="company"/>
+                    <field name="remark"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_project_competitor_form" model="ir.actions.act_window">
+            <field name="name">Project Competitor</field>
+            <field name="res_model">project.competitor</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new Project Competitor
+                </p>
+                <p>
+                    Manage project competitor you want to be used in the system.
+                </p>
+            </field>
+        </record>
+        <menuitem action="action_project_competitor_form"
+                  id="menu_action_project_competitor_form"
+                  parent="base.menu_definitions"
+                  sequence="55"
+                  groups="project.group_project_manager"/>
+
+        # Lost reason
+        <record id="view_project_lost_reason_form" model="ir.ui.view">
+            <field name="name">project.lost.reason.form</field>
+            <field name="model">project.lost.reason</field>
+            <field name="arch" type="xml">
+                <form string="Lost Reason">
+                    <field name="name"/>
+                </form>
+            </field>
+        </record>
+        <record id="view_project_lost_reason_tree" model="ir.ui.view">
+            <field name="name">project.lost.reason.tree</field>
+            <field name="model">project.lost.reason</field>
+            <field name="arch" type="xml">
+                <tree string="Lost Reason">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_project_lost_reason_form" model="ir.actions.act_window">
+            <field name="name">Project Lost Reason</field>
+            <field name="res_model">project.lost.reason</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new Project Lost Reason
+                </p>
+                <p>
+                    Manage project lost reason you want to be used in the system.
+                </p>
+            </field>
+        </record>
+        <menuitem action="action_project_lost_reason_form"
+                  id="menu_action_project_lost_reason_form"
+                  parent="base.menu_definitions"
+                  sequence="55"
+                  groups="project.group_project_manager"/>
+        <!-- # TODO create Lost reason form, tree view  -->
+        <record id="view_project_reject_reason_form" model="ir.ui.view">
+            <field name="name">project.reject.reason.form</field>
+            <field name="model">project.reject.reason</field>
+            <field name="arch" type="xml">
+                <form string="Reject Reason">
+                    <field name="name"/>
+                </form>
+            </field>
+        </record>
+        <record id="view_project_reject_reason_tree" model="ir.ui.view">
+            <field name="name">project.reject.reason.tree</field>
+            <field name="model">project.reject.reason</field>
+            <field name="arch" type="xml">
+                <tree string="Reject Reason">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="action_project_reject_reason_form" model="ir.actions.act_window">
+            <field name="name">Project Reject Reason</field>
+            <field name="res_model">project.reject.reason</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new Project Reject Reason
+                </p>
+                <p>
+                    Manage project Reject reason you want to be used in the system.
+                </p>
+            </field>
+        </record>
+        <menuitem action="action_project_reject_reason_form"
+                  id="menu_action_project_reject_reason_form"
+                  parent="base.menu_definitions"
+                  sequence="55"
+                  groups="project.group_project_manager"/>
     </data>
 </openerp>

@@ -16,7 +16,7 @@
                         <filter string="Invoices" name="Invoices" domain="[('state','=','invoices')]"/>
                         <filter string="Received" name="Received" domain="[('state','=','received')]"/>
                         <filter string="Cancelled" name="Cancelled" domain="[('state','=','cancelled')]"/>
-                        <filter string="Closed" name="Closed" domain="[('state','=','close')]"/>
+                        <filter string="Completed" name="Closed" domain="['&amp;',('state','=','close'),('close_reason','=','close')]"/>
                         <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>
                   </xpath>
                   <xpath expr="//group/filter[@name='Parent']" position="after">
@@ -161,36 +161,44 @@
                     <group>
                         <group>
                             <field name="brief_date"/>
-                            <field name="date_start" string="Start Date"/>
-                            <field name="date" string="End Date"/>
+                            <field name="date_start"/>
+                            <field name="date"/>
+                            <!-- TODO: date_start and date(End Date) cann't be
+                            search because store in analytic_account -->
                         </group>
                         <group>
                             <field name="close_reason" string="Close Reason" readonly="1"/>
                             <field name="parent_id"
-                                  string="Parent"
+                                  string="Parent Project"
                                   help="Append this project to another one using analytic accounts hierarchy"
                                   domain="[('id','!=',analytic_account_id)]"
                                   context="{'current_model': 'project.project'}"
                                   />
-                            <field name="operating_unit_ids" widget="many2many_tags"/> 
+                            <field name="operating_unit_ids" widget="many2many_tags"/>
                         </group>
                     </group>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Team']/field[@name='members']" position="attributes">
+                <xpath expr="//notebook/page[@string='Team']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Team']/field[@name='members']" position="inside">
-                    <attribute name="string">(no use)</attribute>
+                <xpath expr="//notebook/page[@string='Project Stages']" position="before">
+                    <page string="Team" name="team_tab">
+                        <field name="project_member_ids" nolabel="1" widget="one2many_list">
+                            <tree string="Team member" editable="bottom">
+                                <field name="position_id"/>
+                                <field name="employee_id"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </tree>
+                        </field>
+                    </page>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Team']" position="inside">
-                    <field name="project_member_ids" nolabel="1" widget="one2many_list">
-                        <tree string="Team member" editable="bottom">
-                            <field name="position_id"/>
-                            <field name="employee_id"/>
-                            <field name="date_start"/>
-                            <field name="date_end"/>
-                        </tree>
-                    </field>
+                <xpath expr="//notebook/page[@string='Project Stages']" position="before">
+                    <page string="Competitors">
+                        <group>
+                            <field name="competitor_ids" nolabel="1"/>
+                        </group>
+                    </page>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='active']" position="attributes">
                    <attribute name="invisible">1</attribute>
@@ -215,29 +223,26 @@
                       <group>
                           <field name="active" invisible="1"/>
                           <group>
-                            <field name="project_from_id"/>
-                            <field name="project_type_id"/>
                             <field name="partner_id" on_change="onchange_partner_id(partner_id)" string="Customer"/>
                             <field name="agency_partner_id"/>
                             <field name="client_type_id"/>
-                            <field name="brand_type_id"/>
+                            <field name="project_from_id"/>
+                            <field name="project_type_id"/>
+                            <field name="obligation_id"/>
                           </group>
                           <group>
-                            <field name="industry_id"/>
-                            <field name="obligation_id"/>
                             <field name="function_id"/>
                             <field name="location_id"/>
                             <field name="project_place"/>
-                            <field name="department_id"/>
+                            <field name="industry_id" readonly="1"/>
+                            <field name="brand_type_id" readonly="1"/>
+                            <field name="department_id" invisible="1"/>
                           </group>
                       </group>
                   </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="after">
-                    <group>
-                        <field name="competitor_ids"/>
-                    </group>
                  </xpath>
-                 <xpath expr="//notebook/page[@string='Project Stages']" position="before">
+                 <xpath expr="//notebook/page[@string='Other Info']" position="after">
                     <page string="Budget &amp; Cost">
                         <group>
                             <field name="project_budget"/>
@@ -250,9 +255,13 @@
                         </group>
                     </page>
                  </xpath>
+                 <xpath expr="//notebook/page[@string='Other Info']" position="attributes">
+                     <attribute name="string">Project Info</attribute>
+                     <attribute name="name">project_info</attribute>
+                 </xpath>
                  <xpath expr="//notebook" position="after">
                     <group>
-                        <field name="description"/>
+                        <field name="description" string="Description / Remark"/>
                     </group>
                  </xpath>
             </field>

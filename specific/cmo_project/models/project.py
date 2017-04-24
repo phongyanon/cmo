@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
 
-# TODO: many2one use id, many2many/one2many us ids
-# use single quotation
-# foreign key use, idex and ondelete
+# TODO: foreign key use, idex and ondelete
 
 
 class ProjectProject(models.Model):
@@ -108,7 +106,7 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
     )
     brief_date = fields.Date(
-        string='Brief date',
+        string='Brief Date',
         default=fields.Date.today,
         states={'close': [('readonly', True)]},
     )
@@ -387,3 +385,41 @@ class ProjectType(models.Model):
     _sql_constraints = [
         ('name_uniq', 'UNIQUE(name)', 'Project Position must be unique!'),
     ]
+
+class ProjectCompetitor(models.Model):
+    _name = 'project.competitor'
+    _description = 'Project Competitor'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    company = fields.Char(
+        string='Company',
+    )
+    remark = fields.Text(
+        string='Remark',
+    )
+
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Lost by must be unique!'),
+    ]
+
+class ProjectLostReason(models.Model):
+    _name = 'project.lost.reason'
+    _description = 'Project Lost Reason'
+
+    name = fields.Char(
+        string='Reason',
+        required=True,
+    )
+
+
+class ProjectRejectReason(models.Model):
+    _name = 'project.reject.reason'
+    _description = 'Project Reject Reason'
+
+    name = fields.Char(
+        string='Reason',
+        required=True,
+    )
