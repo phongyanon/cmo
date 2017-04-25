@@ -14,3 +14,4 @@ access_project_competitor,access_project_competitor,model_project_competitor,,1,
 access_project_lost_reason,access_project_lost_reason,model_project_lost_reason,,1,0,0,0
 access_project_reject_reason,access_project_reject_reason,model_project_reject_reason,,1,0,0,0
 access_project_task_type,access_project_task_type,project.model_project_task_type,,1,0,0,0
+access_project_team_member,access_project_team_member,model_project_team_member,,1,0,0,0
