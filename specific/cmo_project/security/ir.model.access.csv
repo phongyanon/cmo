@@ -1,1 +1,16 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_project_project,access_project_project,model_project_project,,1,0,0,0
+access_project_team_member,access_project_team_member,model_project_team_member,,1,0,0,0
+access_project_brand_type,access_project_brand_type,model_project_brand_type,,1,0,0,0
+access_project_client_type,access_project_client_type,model_project_client_type,,1,0,0,0
+access_project_industry,access_project_industry,model_project_industry,,1,0,0,0
+access_project_location,access_project_location,model_project_location,,1,0,0,0
+access_project_obligation,access_project_obligation,model_project_obligation,,1,0,0,0
+access_project_from,access_project_from,model_project_from,,1,0,0,0
+access_project_function,access_project_function,model_project_function,,1,0,0,0
+access_project_position,access_project_position,model_project_position,,1,0,0,0
+access_project_type,access_project_type,model_project_type,,1,0,0,0
+access_project_competitor,access_project_competitor,model_project_competitor,,1,0,0,0
+access_project_lost_reason,access_project_lost_reason,model_project_lost_reason,,1,0,0,0
+access_project_reject_reason,access_project_reject_reason,model_project_reject_reason,,1,0,0,0
+access_project_task_type,access_project_task_type,project.model_project_task_type,,1,0,0,0

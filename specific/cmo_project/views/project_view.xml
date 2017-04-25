@@ -111,31 +111,41 @@
                     <button name="action_validate" type="object"
                             string="Validate"
                             states="draft"
-                            attrs="{'invisible':[['state', 'not in', ['draft']]]}"/>
+                            attrs="{'invisible':[['state', 'not in', ['draft']]]}"
+                            groups="project.group_project_admin,project.group_project_manager"/>
                     <button name="action_approve" type="object"
                             string="Approve"
-                            states="validate"/>
+                            states="validate"
+                            groups="project.group_project_admin,project.group_project_manager"/>
                     <button name="action_back_to_draft" type="object"
                             string="Back to draft"
                             states="validate,open,received,invoices"
-                            attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"/>
+                            attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"
+                            groups="project.group_project_admin,project.group_project_manager"/>
                     <button name="action_invoices" type="object"
                             string="Invoices"
                             states="open,received,invoices"
-                            class="oe_highlight"/>
+                            class="oe_highlight"
+                            groups="project.group_project_admin,project.group_project_manager"/>
                     <button name="action_received" type="object"
                             string="Received"
                             states="open,received,invoices"
-                            class="oe_highlight"/>
+                            class="oe_highlight"
+                            groups="project.group_project_admin,project.group_project_manager"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="after">
                     <button name="%(action_project_close_reason)d"
                             type="action"
                             string="Close project"
-                            states="draft,validate,open,received,invoices"/>
+                            states="draft,validate,open,received,invoices"
+                            groups="project.group_project_admin,project.group_project_manager"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="attributes">
                     <attribute name="states">draft,validate,open,invoices</attribute>
+                    <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute>
+                </xpath>
+                <xpath expr="/form/header/button[@name='set_template']" position="attributes">
+                    <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_done']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -146,6 +156,7 @@
                     <attribute name="name">%(action_project_hold_reason)d</attribute>
                     <attribute name="type">action</attribute>
                     <attribute name="states">open,validate,received,invoices</attribute>
+                    <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_open']" position="attributes">
                     <attribute name="name">action_released</attribute>
@@ -215,6 +226,9 @@
                         </group>
                     </page>
                 </xpath>
+                <xpath expr="//notebook/page[@string='Project Stages']" position="attributes">
+                      <attribute name="groups">project.group_project_admin</attribute>
+                </xpath>
                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Administration']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -252,7 +266,7 @@
                      <attribute name="string"></attribute>
                  </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']" position="after">
-                    <page string="Budget &amp; Cost">
+                    <page string="Budget &amp; Cost" groups="project.group_project_admin,project.group_project_readonly,project.group_project_manager">
                         <group>
                             <field name="project_budget"/>
                             <field name="actual_price" readonly="1"/>

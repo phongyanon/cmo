@@ -88,11 +88,11 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
     )
     estimate_cost = fields.Float(
-        string='Estimate cost',
+        string='Estimate Cost',
         states={'close': [('readonly', True)]},
     )
     pre_cost = fields.Float(
-        string='Pre-project',
+        string='Pre-Project',
         states={'close': [('readonly', True)]},
     )
     actual_po = fields.Float(
@@ -148,7 +148,6 @@ class ProjectProject(models.Model):
         string='Operating Unit',
         default=lambda self: self.env.user.default_operating_unit_id,
         states={'close': [('readonly', True)]},
-        groups='base.group_erp_manager',
     )
     state = fields.Selection(
         [('template', 'Template'),
