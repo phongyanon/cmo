@@ -181,7 +181,7 @@
                                   domain="[('id','!=',analytic_account_id)]"
                                   context="{'current_model': 'project.project'}"
                                   />
-                            <field name="operating_unit_id"/>
+                            <field name="operating_unit_id" string="Department"/>
                         </group>
                         <group>
                             <field name="hold_reason" attrs="{'invisible':[('state','not in','pending')]}"/>
@@ -218,17 +218,17 @@
                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Administration']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='active']" position="attributes">
+                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@name='active']" position="attributes">
                    <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Start Date']" position="replace"/>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='End Date']" position="replace"/>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='sequence']" position="attributes">
+                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@string='Start Date']" position="replace"/>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@string='End Date']" position="replace"/>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@name='sequence']" position="attributes">
                      <attribute name="invisible">1</attribute>
                      <attribute name="string">Sequence(no use)</attribute>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Parent']" position="replace"/>
-                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="inside">
+                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@string='Parent']" position="replace"/>
+                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']" position="inside">
                       <group>
                           <field name="active" invisible="1"/>
                           <group>
@@ -248,7 +248,8 @@
                           </group>
                       </group>
                   </xpath>
-                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="after">
+                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']" position="attributes">
+                     <attribute name="string"></attribute>
                  </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']" position="after">
                     <page string="Budget &amp; Cost">
