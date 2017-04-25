@@ -18,6 +18,7 @@
     "data": [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'data/cmo_project_sequence.xml',
         'data/project_data.xml',
         'data/brand_type_data.xml',
         'data/client_type_data.xml',
@@ -34,7 +35,6 @@
         'views/project_view.xml',
         'views/master_data_view.xml',
         'views/customer_view.xml',
-        'cmo_project_sequence.xml',
     ],
     "application": False,
     "installable": True,

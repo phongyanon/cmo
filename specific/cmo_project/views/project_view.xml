@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+
+        <menuitem id="base.menu_main_pm" name="Project"
+            groups="project.group_project_manager,project.group_project_user,project.group_project_readonly"/>
+
+
         # Project list view
         <record id="project.open_view_project_all" model="ir.actions.act_window">
             <field name="view_mode">tree,form,gantt</field>
