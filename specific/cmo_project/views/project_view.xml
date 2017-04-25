@@ -20,6 +20,7 @@
                         <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>
                   </xpath>
                   <xpath expr="//group/filter[@name='Parent']" position="after">
+                        <filter string="Department" name="Department" context="{'group_by':'operating_unit_id'}"/>
                         <filter string="Agency" name="Agency" context="{'group_by':'agency_partner_id'}"/>
                         <filter string="Brand type" name="Brand type" context="{'group_by':'brand_type_id'}"/>
                         <filter string="Industry" name="Industry" context="{'group_by':'industry_id'}"/>
@@ -78,7 +79,7 @@
                   <field name="date_start"/>
               </xpath>
               <xpath expr="/tree/field[@name='state']" position="after">
-                  <field name="department_id"/>
+                  <field name="operating_unit_id" string="Department"/>
                   <field name="partner_id" string="Customer"/>
                   <field name="project_from_id"/>
                   <field name="project_type_id"/>
@@ -180,7 +181,7 @@
                                   domain="[('id','!=',analytic_account_id)]"
                                   context="{'current_model': 'project.project'}"
                                   />
-                            <field name="operating_unit_ids" widget="many2many_tags"/>
+                            <field name="operating_unit_id"/>
                         </group>
                         <group>
                             <field name="hold_reason" attrs="{'invisible':[('state','not in','pending')]}"/>
@@ -220,27 +221,18 @@
                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='active']" position="attributes">
                    <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Start Date']" position="attributes">
-                   <attribute name="invisible">1</attribute>
-                   <attribute name="string">Start Date(no use)</attribute>
-                </xpath>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='End Date']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                    <attribute name="string">End Date(no use)</attribute>
-                </xpath>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Start Date']" position="replace"/>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='End Date']" position="replace"/>
                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='sequence']" position="attributes">
                      <attribute name="invisible">1</attribute>
                      <attribute name="string">Sequence(no use)</attribute>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Parent']" position="attributes">
-                   <attribute name="invisible">1</attribute>
-                   <attribute name="string">Parent(no use)</attribute>
-                 </xpath>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@string='Parent']" position="replace"/>
                  <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']" position="inside">
                       <group>
                           <field name="active" invisible="1"/>
                           <group>
-                            <field name="partner_id" on_change="onchange_partner_id(partner_id)" string="Customer"/>
+                            <field name="partner_id" string="Customer" on_change="onchange_partner_id(partner_id)"/>
                             <field name="agency_partner_id"/>
                             <field name="client_type_id"/>
                             <field name="project_from_id"/>
@@ -253,7 +245,6 @@
                             <field name="project_place"/>
                             <field name="industry_id" readonly="1"/>
                             <field name="brand_type_id" readonly="1"/>
-                            <field name="department_id" attrs="{'invisible': [('close_reason','=','close')]}"/>
                           </group>
                       </group>
                   </xpath>

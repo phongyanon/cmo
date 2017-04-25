@@ -21,11 +21,13 @@ class ProjectProject(models.Model):
     brand_type_id = fields.Many2one(
         'project.brand.type',
         string='Brand type',
+        related='partner_id.brand_type_id',
         states={'close': [('readonly', True)]},
     )
     industry_id = fields.Many2one(
         'project.industry',
         string='Industry',
+        related='partner_id.industry_id',
         states={'close':[('readonly', True)]},
     )
     client_type_id = fields.Many2one(
@@ -136,14 +138,13 @@ class ProjectProject(models.Model):
         string='Close Reason',
         states={'close': [('readonly', True)]},
     )
-    department_id = fields.Many2one(
+    department_id = fields.Many2one( # no use
         'hr.department',
         string='Department',
         states={'close': [('readonly', True)]},
     )
-    operating_unit_ids = fields.Many2many(
+    operating_unit_id = fields.Many2one(
         'operating.unit',
-        'project_operating_unit_rel', 'project_id', 'operating_unit_id',
         string='Operating Unit',
         default=lambda self: self.env.user.default_operating_unit_id,
         states={'close': [('readonly', True)]},
@@ -205,19 +206,12 @@ class ProjectProject(models.Model):
         Task = self.env['project.task']
         Task.create({'name': u"Task {}".format(vals['name']),
                      'project_id': project.id, })
-        print("=============  Create  =============")
         return project
 
     @api.multi
     def write(self, vals):
         if ('state' in vals) and (vals['state'] != 'pending'):
             vals['latest_state'] = vals['state']
-        analytic_account = self.analytic_account_id
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>>")
-        print(vals)
-        print(analytic_account.date_start)
-        print(analytic_account.type)
-        print(analytic_account.code)
         return super(ProjectProject, self).write(vals)
 
     @api.multi
@@ -252,6 +246,7 @@ class ProjectProject(models.Model):
         else:
             res = self.write({'state':'open'})
         return res
+
 
 class ProjectTeamMember(models.Model):
     _name = 'project.team.member'

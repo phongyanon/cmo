@@ -33,6 +33,7 @@
         'wizard/hold_reason_view.xml',
         'views/project_view.xml',
         'views/master_data_view.xml',
+        'views/customer_view.xml',
         'cmo_project_sequence.xml',
     ],
     "application": False,
