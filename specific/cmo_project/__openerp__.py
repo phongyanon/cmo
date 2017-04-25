@@ -30,6 +30,7 @@
         'data/project_type_data.xml',
         'data/tag_type_data.xml',
         'wizard/close_reason_view.xml',
+        'wizard/hold_reason_view.xml',
         'views/project_view.xml',
         'views/master_data_view.xml',
         'cmo_project_sequence.xml',

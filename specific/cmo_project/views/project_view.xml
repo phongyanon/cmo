@@ -16,7 +16,7 @@
                         <filter string="Invoices" name="Invoices" domain="[('state','=','invoices')]"/>
                         <filter string="Received" name="Received" domain="[('state','=','received')]"/>
                         <filter string="Cancelled" name="Cancelled" domain="[('state','=','cancelled')]"/>
-                        <filter string="Completed" name="Closed" domain="['&amp;',('state','=','close'),('close_reason','=','close')]"/>
+                        <filter string="Completed" name="Completed" domain="['&amp;',('state','=','close'),('close_reason','=','close')]"/>
                         <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>
                   </xpath>
                   <xpath expr="//group/filter[@name='Parent']" position="after">
@@ -108,30 +108,34 @@
             <field name="inherit_id" ref="project.edit_project"/>
             <field name="arch" type="xml">
                 <xpath expr="/form/header/button[@name='set_open']" position="before">
-                    <button name="action_approve" type="object"
-                            string="approve"
+                    <button name="action_validate" type="object"
+                            string="Validate"
                             states="draft"
                             attrs="{'invisible':[['state', 'not in', ['draft']]]}"/>
+                    <button name="action_approve" type="object"
+                            string="Approve"
+                            states="validate"/>
                     <button name="action_back_to_draft" type="object"
-                            string="back to draft"
-                            states="open,pending,received,invoices"
+                            string="Back to draft"
+                            states="validate,open,received,invoices"
                             attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"/>
                     <button name="action_invoices" type="object"
                             string="Invoices"
-                            states="open,pending,received,invoices"/>
+                            states="open,received,invoices"
+                            class="oe_highlight"/>
                     <button name="action_received" type="object"
-                            string="Received(dummy)"
-                            states="open,pending,received,invoices"
+                            string="Received"
+                            states="open,received,invoices"
                             class="oe_highlight"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="after">
                     <button name="%(action_project_close_reason)d"
                             type="action"
                             string="Close project"
-                            states="draft,open,pending,received,invoices"/>
+                            states="draft,validate,open,received,invoices"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="attributes">
-                    <attribute name="states">draft,open,pending,invoices</attribute>
+                    <attribute name="states">draft,validate,open,invoices</attribute>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_done']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -139,6 +143,12 @@
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_pending']" position="attributes">
                     <attribute name="string">Hold</attribute>
+                    <attribute name="name">%(action_project_hold_reason)d</attribute>
+                    <attribute name="type">action</attribute>
+                    <attribute name="states">open,validate,received,invoices</attribute>
+                </xpath>
+                <xpath expr="/form/header/button[@name='set_open']" position="attributes">
+                    <attribute name="name">action_released</attribute>
                 </xpath>
                 <xpath expr="/form/header/field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft,open,close</attribute>
@@ -174,10 +184,11 @@
                             <field name="operating_unit_ids" widget="many2many_tags"/>
                         </group>
                         <group>
+                            <field name="hold_reason" attrs="{'invisible':[('state','not in','pending')]}"/>
                             <field name="close_reason" string="Close Reason" readonly="1" attrs="{'invisible': [('close_reason','=',False)]}"/>
-                            <field name="lost_reason" readonly="1" attrs="{'invisible': ['!',('close_reason','=','lost')]}"/>
-                            <field name="lost_by" readonly="1" attrs="{'invisible': ['!',('close_reason','=','lost')]}"/>
-                            <field name="reject_reason" readonly="1" attrs="{'invisible': ['!',('close_reason','=','reject')]}"/>
+                            <field name="lost_reason" readonly="1" attrs="{'invisible': [('close_reason','not in','lost')]}"/>
+                            <field name="lost_by" readonly="1" attrs="{'invisible': [('close_reason','not in','lost')]}"/>
+                            <field name="reject_reason" readonly="1" attrs="{'invisible': [('close_reason','not in','reject')]}"/>
                         </group>
                     </group>
                 </xpath>

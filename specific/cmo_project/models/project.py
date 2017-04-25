@@ -153,16 +153,20 @@ class ProjectProject(models.Model):
     state = fields.Selection(
         [('template', 'Template'),
          ('draft','Draft'),
+         ('validate', 'Validate'),
          ('open','In Progress'),
          ('invoices', 'Invoices'),
          ('received', 'Received'),
          ('cancelled', 'Cancelled'),
          ('pending','Pending'),
-         ('close','Closed'), ],
+         ('close','Completed'), ],
          string='Status',
          required=True,
          copy=False,
          default='draft',
+    )
+    latest_state = fields.Char(
+        string='Latest State',
     )
     lost_reason = fields.Many2one(
         'project.lost.reason',
@@ -176,6 +180,10 @@ class ProjectProject(models.Model):
     reject_reason = fields.Many2one(
         'project.reject.reason',
         string='Reject Reason',
+    )
+    hold_reason = fields.Text(
+        string='Hold Reason',
+        states={'close': [('readonly', True)]},
     )
 
     # TODO create tab to show invoices of project.
@@ -193,13 +201,24 @@ class ProjectProject(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
-            vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence nummber
+            vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence number
         #vals['operating_unit_id'] = self.env.user.default_operating_unit_id.id
         project = super(ProjectProject, self).create(vals)
         Task = self.env['project.task']
         Task.create({'name': u"Task {}".format(vals['name']),
                      'project_id': project.id, })
         return project
+
+    @api.multi
+    def write(self, vals):
+        if ('state' in vals) and (vals['state'] != 'pending'):
+            vals['latest_state'] = vals['state']
+        return super(ProjectProject, self).write(vals)
+
+    @api.multi
+    def action_validate(self):
+        res = self.write({'state':'validate'})
+        return res
 
     @api.multi
     def action_approve(self):
@@ -221,6 +240,10 @@ class ProjectProject(models.Model):
         res = self.write({'state': 'received'})
         return res
 
+    @api.multi
+    def action_released(self):
+        res = self.write({'state':self.latest_state})
+        return res
 
 class ProjectTeamMember(models.Model):
     _name = 'project.team.member'
