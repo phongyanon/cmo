@@ -20,7 +20,6 @@
                         <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>
                   </xpath>
                   <xpath expr="//group/filter[@name='Parent']" position="after">
-                        <filter string="Department" name="Department" context="{'group_by':'department_id'}"/>
                         <filter string="Agency" name="Agency" context="{'group_by':'agency_partner_id'}"/>
                         <filter string="Brand type" name="Brand type" context="{'group_by':'brand_type_id'}"/>
                         <filter string="Industry" name="Industry" context="{'group_by':'industry_id'}"/>
@@ -172,7 +171,7 @@
                         <group>
                             <field name="brief_date"/>
                             <field name="date_start"/>
-                            <field name="date"/>
+                            <field name="date" string="End Date"/>
                             <!-- TODO: date_start and date(End Date) cann't be
                             search because store in analytic_account -->
                             <field name="parent_id"
@@ -203,6 +202,7 @@
                                 <field name="employee_id"/>
                                 <field name="date_start"/>
                                 <field name="date_end"/>
+                                <field name="remark"/>
                             </tree>
                         </field>
                     </page>
@@ -213,6 +213,9 @@
                             <field name="competitor_ids" nolabel="1"/>
                         </group>
                     </page>
+                </xpath>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@string='Administration']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Other Info']/group[@string='Miscellaneous']/field[@name='active']" position="attributes">
                    <attribute name="invisible">1</attribute>

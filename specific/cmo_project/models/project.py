@@ -111,11 +111,10 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
     )
     competitor_ids = fields.Many2many(
-        'res.partner',
-        'res_partner_rel', 'project_id', 'competitor_id',
+        'project.competitor',
+        'res_competitor_rel', 'project_id', 'competitor_id',
         string='Competitors',
         states={'close': [('readonly', True)]},
-        domain=[('category_id', 'like', 'Competitor'), ],
     )
     project_number = fields.Char(
         string='Project Code',
@@ -202,17 +201,23 @@ class ProjectProject(models.Model):
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
             vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence number
-        #vals['operating_unit_id'] = self.env.user.default_operating_unit_id.id
         project = super(ProjectProject, self).create(vals)
         Task = self.env['project.task']
         Task.create({'name': u"Task {}".format(vals['name']),
                      'project_id': project.id, })
+        print("=============  Create  =============")
         return project
 
     @api.multi
     def write(self, vals):
         if ('state' in vals) and (vals['state'] != 'pending'):
             vals['latest_state'] = vals['state']
+        analytic_account = self.analytic_account_id
+        print(">>>>>>>>>>>>>>>>>>>>>>>>>>")
+        print(vals)
+        print(analytic_account.date_start)
+        print(analytic_account.type)
+        print(analytic_account.code)
         return super(ProjectProject, self).write(vals)
 
     @api.multi
@@ -242,7 +247,10 @@ class ProjectProject(models.Model):
 
     @api.multi
     def action_released(self):
-        res = self.write({'state':self.latest_state})
+        if self.latest_state:
+            res = self.write({'state':self.latest_state})
+        else:
+            res = self.write({'state':'open'})
         return res
 
 class ProjectTeamMember(models.Model):
@@ -271,6 +279,9 @@ class ProjectTeamMember(models.Model):
     )
     date_end = fields.Date(
         string='End date',
+    )
+    remark = fields.Text(
+        string="Remark"
     )
 
     _sql_constraints = [
