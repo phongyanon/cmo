@@ -10,7 +10,7 @@
         <record id="project.open_view_project_all" model="ir.actions.act_window">
             <field name="view_mode">tree,form,gantt</field>
         </record>
-
+        # TODO: filter won
         <record id="project_search_view" model="ir.ui.view">
             <field name="name">project.project.select</field>
             <field name="model">project.project</field>
@@ -23,6 +23,7 @@
                         <filter string="Cancelled" name="Cancelled" domain="[('state','=','cancelled')]"/>
                         <filter string="Completed" name="Completed" domain="['&amp;',('state','=','close'),('close_reason','=','close')]"/>
                         <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>
+                        <filter string="Won" name="Won" domain="[('state','!=','cancelled'),('state','!=','draft')]"/>
                   </xpath>
                   <xpath expr="//group/filter[@name='Parent']" position="after">
                         <filter string="Department" name="Department" context="{'group_by':'operating_unit_id'}"/>
@@ -266,7 +267,8 @@
                      <attribute name="string"></attribute>
                  </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']" position="after">
-                    <page string="Budget &amp; Cost" groups="project.group_project_admin,project.group_project_readonly,project.group_project_manager">
+                    <page string="Budget &amp; Cost">
+                        <!-- groups="project.group_project_admin,project.group_project_readonly,project.group_project_manager"> -->
                         <group>
                             <field name="project_budget"/>
                             <field name="actual_price" readonly="1"/>

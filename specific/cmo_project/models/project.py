@@ -152,7 +152,7 @@ class ProjectProject(models.Model):
     state = fields.Selection(
         [('template', 'Template'),
          ('draft','Draft'),
-         ('validate', 'Validate'),
+         ('validate', 'Validated'),
          ('open','In Progress'),
          ('invoices', 'Invoices'),
          ('received', 'Received'),
