@@ -128,12 +128,12 @@
                             attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"
                             groups="project.group_project_admin,project.group_project_manager"/>
                     <button name="action_invoices" type="object"
-                            string="Invoices"
+                            string="Invoice"
                             states="open,received,invoices"
                             class="oe_highlight"
                             groups="project.group_project_admin,project.group_project_manager"/>
                     <button name="action_received" type="object"
-                            string="Received"
+                            string="Receive"
                             states="open,received,invoices"
                             class="oe_highlight"
                             groups="project.group_project_admin,project.group_project_manager"/>
@@ -141,7 +141,7 @@
                 <xpath expr="/form/header/button[@name='set_cancel']" position="after">
                     <button name="%(action_project_close_reason)d"
                             type="action"
-                            string="Close project"
+                            string="Close Project"
                             states="draft,validate,open,received,invoices"
                             groups="project.group_project_admin,project.group_project_manager"/>
                 </xpath>
@@ -189,14 +189,11 @@
                             <field name="brief_date"/>
                             <field name="date_start"/>
                             <field name="date" string="End Date"/>
-                            <!-- TODO: date_start and date(End Date) cann't be
-                            search because store in analytic_account -->
                             <field name="parent_id"
                                   string="Parent Project"
                                   help="Append this project to another one using analytic accounts hierarchy"
                                   domain="[('id','!=',analytic_account_id)]"
-                                  context="{'current_model': 'project.project'}"
-                                  />
+                                  context="{'current_model': 'project.project'}"/>
                             <field name="operating_unit_id" string="Department"/>
                         </group>
                         <group>
@@ -208,9 +205,7 @@
                         </group>
                     </group>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Team']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
+                <xpath expr="//notebook/page[@string='Team']" position="replace"/>
                 <xpath expr="//notebook/page[@string='Project Stages']" position="before">
                     <page string="Team" name="team_tab">
                         <field name="project_member_ids" nolabel="1" widget="one2many_list">
@@ -246,7 +241,7 @@
                      <attribute name="invisible">1</attribute>
                      <attribute name="string">Sequence(no use)</attribute>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@string='Parent']" position="replace"/>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@name='parent_id']" position="replace"/>
                  <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']" position="inside">
                       <group>
                           <field name="active" invisible="1"/>
@@ -285,7 +280,6 @@
                  </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']" position="attributes">
                      <attribute name="string">Project Info</attribute>
-                     <attribute name="name">project_info</attribute>
                  </xpath>
                  <xpath expr="//notebook" position="after">
                     <group>

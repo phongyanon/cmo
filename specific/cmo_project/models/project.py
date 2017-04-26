@@ -282,6 +282,7 @@ class ProjectTeamMember(models.Model):
         ('name_uniq', 'UNIQUE(name)', 'Project Team Member must be unique!'),
     ]
 
+
 class ProjectBrandType(models.Model):
     _name = 'project.brand.type'
     _description = 'Project Brand Type'
