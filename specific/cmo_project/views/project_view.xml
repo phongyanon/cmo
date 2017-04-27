@@ -10,6 +10,10 @@
         <record id="project.open_view_project_all" model="ir.actions.act_window">
             <field name="view_mode">tree,form,gantt</field>
         </record>
+        # TODO: Task view bring kanban out
+        <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
+            <field name="view_mode">tree,form</field>
+        </record>
         # TODO: filter won
         <record id="project_search_view" model="ir.ui.view">
             <field name="name">project.project.select</field>
@@ -23,7 +27,7 @@
                         <filter string="Cancelled" name="Cancelled" domain="[('state','=','cancelled')]"/>
                         <filter string="Completed" name="Completed" domain="['&amp;',('state','=','close'),('close_reason','=','close')]"/>
                         <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>
-                        <filter string="Won" name="Won" domain="[('state','!=','cancelled'),('state','!=','draft')]"/>
+                        <!-- <filter string="Won" name="Won" domain="[('state','!=','cancelled'),('state','!=','draft')]"/> -->
                   </xpath>
                   <xpath expr="//group/filter[@name='Parent']" position="after">
                         <filter string="Department" name="Department" context="{'group_by':'operating_unit_id'}"/>
@@ -195,7 +199,7 @@
                                   help="Append this project to another one using analytic accounts hierarchy"
                                   domain="[('id','!=',analytic_account_id)]"
                                   context="{'current_model': 'project.project'}"/>
-                            <field name="operating_unit_id" string="Department"/>
+                            <field name="operating_unit_id" string="Department" readonly="1"/>
                         </group>
                         <group>
                             <field name="hold_reason" attrs="{'invisible':[('state','not in','pending')]}"/>
@@ -287,6 +291,17 @@
                     <group>
                         <field name="description" string="Description / Remark"/>
                     </group>
+                 </xpath>
+            </field>
+        </record>
+        <record id="edit_project_admin" model="ir.ui.view">
+            <field name="name">edit.project</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="edit_project"/>
+            <field name="groups_id" eval="[(6,0,[ref('project.group_project_admin')])]"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//group/field[@name='operating_unit_id']" position="attributes">
+                     <attribute name="readonly">0</attribute>
                  </xpath>
             </field>
         </record>
