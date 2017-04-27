@@ -10,7 +10,6 @@
         <record id="project.open_view_project_all" model="ir.actions.act_window">
             <field name="view_mode">tree,form,gantt</field>
         </record>
-        # TODO: Task view bring kanban out
         <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
             <field name="view_mode">tree,form</field>
         </record>
@@ -31,8 +30,8 @@
                   </xpath>
                   <xpath expr="//group/filter[@name='Parent']" position="after">
                         <filter string="Department" name="Department" context="{'group_by':'operating_unit_id'}"/>
-                        <filter string="Agency" name="Agency" context="{'group_by':'agency_partner_id'}"/>
-                        <filter string="Brand type" name="Brand type" context="{'group_by':'brand_type_id'}"/>
+                        <!-- <filter string="Agency" name="Agency" context="{'group_by':'agency_partner_id'}"/>
+                        <filter string="Brand type" name="Brand type" context="{'group_by':'brand_type_id'}"/> -->
                         <filter string="Industry" name="Industry" context="{'group_by':'industry_id'}"/>
                         <filter string="Client type" name="Client type" context="{'group_by':'client_type_id'}"/>
                         <filter string="Obligation" name="Obligation" context="{'group_by':'obligation_id'}"/>

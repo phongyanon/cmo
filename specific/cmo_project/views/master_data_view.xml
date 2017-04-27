@@ -464,8 +464,8 @@
                 <form string="Competitor">
                     <group>
                         <group>
-                            <field name="name"/>
                             <field name="company"/>
+                            <field name="name"/>
                         </group>
                         <group>
                             <field name="remark"/>
@@ -479,8 +479,8 @@
             <field name="model">project.competitor</field>
             <field name="arch" type="xml">
                 <tree string="Competitor">
-                    <field name="name"/>
                     <field name="company"/>
+                    <field name="name"/>
                     <field name="remark"/>
                 </tree>
             </field>

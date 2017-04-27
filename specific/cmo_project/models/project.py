@@ -134,6 +134,8 @@ class ProjectProject(models.Model):
         [('close', 'Completed'),
          ('reject', 'Reject'),
          ('lost', 'Lost'),
+         ('cancel', 'Cancelled'),
+         ('terminate', 'Terminated')
         ],
         string='Close Reason',
         states={'close': [('readonly', True)]},
@@ -435,10 +437,10 @@ class ProjectCompetitor(models.Model):
 
     name = fields.Char(
         string='Name',
-        required=True,
     )
     company = fields.Char(
         string='Company',
+        required=True,
     )
     remark = fields.Text(
         string='Remark',

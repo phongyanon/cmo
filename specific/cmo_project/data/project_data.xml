@@ -261,5 +261,35 @@
             <field name="active" eval="True"/>
             <field name="show" eval="True"/>
         </record>
+        <record model="project.lost.reason" id="project_lost_reason_1">
+            <field name="name">Unknow</field>
+        </record>
+        <record model="project.lost.reason" id="project_lost_reason_1">
+            <field name="name">Cost</field>
+        </record>
+        <record model="project.lost.reason" id="project_lost_reason_1">
+            <field name="name">Creative</field>
+        </record>
+        <record model="project.lost.reason" id="project_lost_reason_1">
+            <field name="name">Relationships</field>
+        </record>
+        <record model="project.lost.reason" id="project_lost_reason_1">
+            <field name="name">Unqualify</field>
+        </record>
+        <record model="project.reject.reason" id="project_reject_reason_1">
+            <field name="name">Full Capacity</field>
+        </record>
+        <record model="project.reject.reason" id="project_reject_reason_1">
+            <field name="name">Not Event</field>
+        </record>
+        <record model="project.reject.reason" id="project_reject_reason_1">
+            <field name="name">Low Budget</field>
+        </record>
+        <record model="project.reject.reason" id="project_reject_reason_1">
+            <field name="name">Too Much Competitors</field>
+        </record>
+        <record model="project.reject.reason" id="project_reject_reason_1">
+            <field name="name">Others</field>
+        </record>
     </data>
 </openerp>
