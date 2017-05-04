@@ -24,7 +24,7 @@
                 <field name="perm_read" eval="1"/>
                 <field name="perm_write" eval="1"/>
                 <field name="perm_create" eval="1"/>
-                <field name="perm_unlink" eval="1"/>
+                <field name="perm_unlink" eval="0"/>
                 <field name="domain_force">
                     ['|',('operating_unit_id','=',False), ('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]
                 </field>
@@ -36,7 +36,7 @@
                 <field name="perm_read" eval="1"/>
                 <field name="perm_write" eval="1"/>
                 <field name="perm_create" eval="1"/>
-                <field name="perm_unlink" eval="1"/>
+                <field name="perm_unlink" eval="0"/>
                 <field name="domain_force">
                     [(1, '=', 1)]
                 </field>

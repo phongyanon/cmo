@@ -23,12 +23,14 @@ class ProjectProject(models.Model):
         string='Brand type',
         related='partner_id.brand_type_id',
         states={'close': [('readonly', True)]},
+        store=True,
     )
     industry_id = fields.Many2one(
         'project.industry',
         string='Industry',
         related='partner_id.industry_id',
         states={'close':[('readonly', True)]},
+        store=True,
     )
     client_type_id = fields.Many2one(
         'project.client.type',
@@ -112,6 +114,10 @@ class ProjectProject(models.Model):
         default=fields.Date.today,
         states={'close': [('readonly', True)]},
     )
+    date = fields.Date(
+        default=fields.Date.today,
+        states={'close': [('readonly', True)]},
+    )
     competitor_ids = fields.Many2many(
         'project.competitor',
         'res_competitor_rel', 'project_id', 'competitor_id',
@@ -186,7 +192,6 @@ class ProjectProject(models.Model):
         string='Hold Reason',
         states={'close': [('readonly', True)]},
     )
-
     # TODO create tab to show invoices of project.
     # invoice_ids = fields.Many2many(
     #     'account.invoice',
@@ -199,20 +204,20 @@ class ProjectProject(models.Model):
     # @api.depends()
     # def _compute_invoice_ids(self):
     #     self.invoice_ids = []
+
     @api.model
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
             vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence number
         project = super(ProjectProject, self).create(vals)
-        Task = self.env['project.task']
-        Task.create({'name': u"Task {}".format(vals['name']),
-                     'project_id': project.id, })
         return project
 
     @api.multi
     def write(self, vals):
-        if ('state' in vals) and (vals['state'] != 'pending'):
-            vals['latest_state'] = vals['state']
+        if ('state' in vals) and \
+           (vals['state'] != 'pending') and \
+           (vals['state'] != 'close'):
+           vals['latest_state'] = vals['state']
         return super(ProjectProject, self).write(vals)
 
     @api.multi
@@ -223,6 +228,9 @@ class ProjectProject(models.Model):
     @api.multi
     def action_approve(self):
         res = self.write({'state': 'open'})
+        Task = self.env['project.task']
+        Task.create({'name': u"Task {0}".format(self.name),
+                     'project_id': self.id, })
         return res
 
     @api.multi
@@ -246,7 +254,15 @@ class ProjectProject(models.Model):
             res = self.write({'state':self.latest_state})
         else:
             res = self.write({'state':'open'})
+        self.write({'close_reason':None})
         return res
+
+    @api.multi
+    @api.constrains('brief_date', 'date')
+    def _check_brief_dates(self):
+        self.ensure_one()
+        if self.brief_date > self.date:
+            return ValidationError("project brief-date must be lower than project end-date.")
 
 
 class ProjectTeamMember(models.Model):
