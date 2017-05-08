@@ -39,7 +39,6 @@
                         <filter string="Client type" name="Client type" context="{'group_by':'client_type_id'}"/>
                         <filter string="Obligation" name="Obligation" context="{'group_by':'obligation_id'}"/>
                         <filter string="Function" name="Function" context="{'group_by':'function_id'}"/>
-                        <filter string="Lead source" name="Lead source" context="{'group_by':'lead_source'}"/>
                         <filter string="Location" name="Location" context="{'group_by':'location_id'}"/>
                         <filter string="Project from" name="Project from" context="{'group_by':'project_from_id'}"/>
                         <filter string="Project type" name="Project type" context="{'group_by':'project_type_id'}"/>
@@ -186,7 +185,7 @@
                     <attribute name="states">open,validate,received,invoices</attribute>
                     <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute>
                 </xpath>
-                <xpath expr="/form/header/button[@name='set_open']" position="before">
+                <xpath expr="/form/header/button[@name='set_open']" position="replace">
                     <button name="action_released" type="object"
                             string="Re-open Project"
                             states="pending"
@@ -194,7 +193,7 @@
                             groups="project.group_project_admin,project.group_project_manager"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_open']" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <attribute name="groups">project.group_project_admin</attribute>
                 </xpath>
                 <xpath expr="/form/header/field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft,open,close</attribute>
