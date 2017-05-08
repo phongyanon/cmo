@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+      # project account tree view
+      <record id="project_for_account_tree" model="ir.ui.view">
+          <field name="name">project.for.account.tree</field>
+          <field name="model">project.project</field>
+          <field name="arch" type="xml">
+              <tree>
+                  <field name="project_number"/>
+                  <field name="name"/>
+                  <field name="state"/>
+                  <field name="assign_id"/>
+                  <field name="partner_id" string="Customer"/>
+                  <field name="project_budget"/>
+                  <field name="actual_price"/>
+                  <field name="estimate_cost"/>
+                  <field name="pre_cost"/>
+                  <field name="actual_po"/>
+                  <field name="brief_date"/>
+                  <field name="date_start"/>
+                  <field name="operating_unit_id" string="Department"/>
+              </tree>
+          </field>
+      </record>
+
+      # project action list empty for account
+      <record id="project_for_account_action" model="ir.actions.act_window">
+          <field name="name">Project List</field>
+          <field name="res_model">project.project</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">tree,form</field>
+          <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                  List project is Null
+              </p>
+          </field>
+      </record>
+
+      # project view menuitem for account
+      <menuitem id="project_for_account_menu" name="Project" parent="account.menu_finance_receivables" action="project_for_account_action" sequence="9"/>
+  </data>
+</openerp>

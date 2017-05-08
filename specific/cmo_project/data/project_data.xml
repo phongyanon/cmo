@@ -607,7 +607,7 @@
             <field name="active" eval="True"/>
         </record>
         # operating_unit
-        <record model="operating.unit" id="operating_unit_1">
+        <!-- <record model="operating.unit" id="operating_unit_1">
             <field name="name">CEO OFFICE(CEO)</field>
             <field name="code">CEO</field>
             <field name="active" eval="True"/>
@@ -666,6 +666,6 @@
             <field name="code">FA</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
-        </record>
+        </record> -->
     </data>
 </openerp>
