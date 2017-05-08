@@ -30,6 +30,20 @@
                 </field>
                 <field name="groups" eval="[(4, ref('project.group_project_manager')), (4, ref('project.group_project_user'))]"/>
             </record>
+
+            <record id="task_cmo_ou_only_editable" model="ir.rule">
+                <field name="name">Task OU Only Editable</field>
+                <field name="model_id" ref="project.model_project_task"/>
+                <field name="perm_read" eval="1"/>
+                <field name="perm_write" eval="1"/>
+                <field name="perm_create" eval="1"/>
+                <field name="perm_unlink" eval="1"/>
+                <field name="domain_force">
+                    ['|',('project_id.operating_unit_id','=',False), ('project_id.operating_unit_id','in',[g.id for g in user.operating_unit_ids])]
+                </field>
+                <field name="groups" eval="[(4, ref('project.group_project_manager')), (4, ref('project.group_project_user'))]"/>
+            </record>
+
             <record id="project_cmo_ou_all_editable" model="ir.rule">
                 <field name="name">Project OU All Editable</field>
                 <field name="model_id" ref="model_project_project"/>

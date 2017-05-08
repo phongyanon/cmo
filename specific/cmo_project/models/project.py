@@ -180,7 +180,6 @@ class ProjectProject(models.Model):
     assign_id = fields.Many2one(
         'res.users',
         string='Assign to',
-        domain=[('default_operating_unit_id', 'like', 'Accounting & Finance'), ],
         states={'close': [('readonly', True)]},
     )
     assign_description = fields.Text(

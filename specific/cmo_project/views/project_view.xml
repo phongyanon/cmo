@@ -164,7 +164,7 @@
                             type="action"
                             string="Close Project"
                             states="draft,validate,open,received,invoices,ready_billing"
-                            groups="project.group_project_admin,project.group_project_manager"/>
+                            groups="project.group_project_admin,project.group_project_manager,project.group_project_user"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="attributes">
                     <!-- <attribute name="states">draft,validate,open,invoices,ready_billing</attribute>
@@ -186,8 +186,15 @@
                     <attribute name="states">open,validate,received,invoices</attribute>
                     <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute>
                 </xpath>
+                <xpath expr="/form/header/button[@name='set_open']" position="before">
+                    <button name="action_released" type="object"
+                            string="Re-open Project"
+                            states="pending"
+                            class="oe_highlight"
+                            groups="project.group_project_admin,project.group_project_manager"/>
+                </xpath>
                 <xpath expr="/form/header/button[@name='set_open']" position="attributes">
-                    <attribute name="name">action_released</attribute>
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="/form/header/field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft,open,close</attribute>
