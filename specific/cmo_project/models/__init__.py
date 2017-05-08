@@ -3,3 +3,4 @@
 from . import hr
 from . import project
 from . import customer
+from . import sale

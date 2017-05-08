@@ -14,6 +14,7 @@
     "license": "AGPL-3",
     "depends": [
         'project',
+        'sale',
     ],
     "data": [
         'security/security.xml',
@@ -26,6 +27,7 @@
         'views/project_view.xml',
         'views/master_data_view.xml',
         'views/customer_view.xml',
+        'views/sale_view.xml',
     ],
     "application": False,
     "installable": True,

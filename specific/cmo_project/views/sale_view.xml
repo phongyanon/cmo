@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="view_order_form_version" model="ir.ui.view">
+            <field name="name">sale.order.form.version</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="client_order_ref" position="after">
+                    <field name="version"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

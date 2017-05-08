@@ -541,32 +541,63 @@
             <field name="name">IMC Campaign</field>
         </record>
         # task_type data
-        <delete model="project.task.type" id="project.project_tt_specification"/>
+        <!-- <delete model="project.task.type" id="project.project_tt_specification"/>
         <delete model="project.task.type" id="project.project_tt_design"/>
         <delete model="project.task.type" id="project.project_tt_development"/>
         <delete model="project.task.type" id="project.project_tt_testing"/>
         <delete model="project.task.type" id="project.project_tt_merge"/>
-        <delete model="project.task.type" id="project.project_tt_cancel"/>
+        <delete model="project.task.type" id="project.project_tt_cancel"/> -->
 
-        <record model="project.task.type" id="project.project_tt_analysis">
+        <!-- <record model="project.task.type" id="project.project_tt_analysis">
             <field name="name">In progress</field>
         </record>
         <record model="project.task.type" id="project.project_tt_deployment">
             <field name="name">Received</field>
             <field name="fold" eval="False"/>
+        </record> -->
+        <record model="project.task.type" id="project.project_tt_analysis">
+            <field name="name">Analysis</field>
+            <field name="sequence">1</field>
+            <field name="case_default" eval="True"/>
+            <field name="fold" eval="False"/>
         </record>
-        <record model="project.task.type" id="project.project_tt_billing">
-            <field name="name">Ready to billing</field>
+        <record model="project.task.type" id="project.project_tt_specification">
+            <field name="name">Specification</field>
             <field name="sequence">2</field>
             <field name="case_default" eval="True"/>
             <field name="fold" eval="False"/>
         </record>
-        <record model="project.task.type" id="project.project_tt_invoiced">
-            <field name="name">Invoiced</field>
+        <record model="project.task.type" id="project.project_tt_design">
+            <field name="name">Design</field>
             <field name="sequence">3</field>
             <field name="case_default" eval="True"/>
             <field name="fold" eval="False"/>
         </record>
+        <record model="project.task.type" id="project.project_tt_deployment">
+            <field name="name">Development</field>
+            <field name="sequence">4</field>
+            <field name="case_default" eval="True"/>
+            <field name="fold" eval="False"/>
+        </record>
+        <record model="project.task.type" id="project.project_tt_testing">
+            <field name="name">Testing</field>
+            <field name="sequence">5</field>
+            <field name="case_default" eval="True"/>
+            <field name="fold" eval="False"/>
+        </record>
+        <record model="project.task.type" id="project.project_tt_merge">
+            <field name="name">Done</field>
+            <field name="sequence">6</field>
+            <field name="case_default" eval="True"/>
+            <field name="fold" eval="False"/>
+        </record>
+        <record model="project.task.type" id="project.project_tt_cancel">
+            <field name="name">Cancelled</field>
+            <field name="sequence">7</field>
+            <field name="case_default" eval="True"/>
+            <field name="fold" eval="False"/>
+        </record>
+        # partner_type
         <record model="res.partner.category" id="partner_category_1">
             <field name="name">Agency</field>
             <field name="active" eval="True"/>
@@ -574,6 +605,67 @@
         <record model="res.partner.category" id="partner_category_2">
             <field name="name">Competitor</field>
             <field name="active" eval="True"/>
+        </record>
+        # operating_unit
+        <record model="operating.unit" id="operating_unit_1">
+            <field name="name">CEO OFFICE(CEO)</field>
+            <field name="code">CEO</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_2">
+            <field name="name">CMEX</field>
+            <field name="code">CMEX</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_3">
+            <field name="name">Museum</field>
+            <field name="code">Museum</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_4">
+            <field name="name">Information Technology</field>
+            <field name="code">IT</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_5">
+            <field name="name">Odyssey</field>
+            <field name="code">Odyssey</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_6">
+            <field name="name">CM Play</field>
+            <field name="code">CM Play</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_7">
+            <field name="name">CM Join</field>
+            <field name="code">CM Join</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_8">
+            <field name="name">Business Development</field>
+            <field name="code">BD</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_9">
+            <field name="name">CM One</field>
+            <field name="code">CM One</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_10">
+            <field name="name">Accounting &amp; Finance</field>
+            <field name="code">FA</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
         </record>
     </data>
 </openerp>

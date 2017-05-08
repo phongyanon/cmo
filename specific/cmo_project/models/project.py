@@ -6,7 +6,6 @@ from openerp import fields, models, api
 
 class ProjectProject(models.Model):
     _inherit = 'project.project'
-    # TODO match all selection field with master data
 
     project_place = fields.Char(
         string='Project Place',
@@ -45,21 +44,6 @@ class ProjectProject(models.Model):
     function_id = fields.Many2one(
         'project.function',
         string='Function',
-        states={'close': [('readonly', True)]},
-    )
-    lead_source = fields.Selection(
-        [('compaign', 'Campaign'),
-         ('cold_call', 'Cold Call'),
-         ('comference', 'Conference'),
-         ('direct_mail', 'Direct Mail'),
-         ('email', 'Email'),
-         ('employee', 'Employee'),
-         ('existing_customer', 'Existing Customer'),
-         ('other', 'Others'),
-         ('partner', 'Partner'),
-         ('campaign', 'Campaign'),
-         ],
-        string='Lead Source',
         states={'close': [('readonly', True)]},
     )
     location_id = fields.Many2one(
@@ -162,6 +146,7 @@ class ProjectProject(models.Model):
          ('draft','Draft'),
          ('validate', 'Validated'),
          ('open','In Progress'),
+         ('ready_billing', 'Ready to Billing'),
          ('invoices', 'Invoices'),
          ('received', 'Received'),
          ('cancelled', 'Cancelled'),
@@ -192,6 +177,17 @@ class ProjectProject(models.Model):
         string='Hold Reason',
         states={'close': [('readonly', True)]},
     )
+    assign_id = fields.Many2one(
+        'res.users',
+        string='Assign to',
+        domain=[('default_operating_unit_id', 'like', 'Accounting & Finance'), ],
+        states={'close': [('readonly', True)]},
+    )
+    assign_description = fields.Text(
+        string='Description',
+        states={'close': [('readonly', True)]},
+    )
+
     # TODO create tab to show invoices of project.
     # invoice_ids = fields.Many2many(
     #     'account.invoice',
@@ -228,9 +224,6 @@ class ProjectProject(models.Model):
     @api.multi
     def action_approve(self):
         res = self.write({'state': 'open'})
-        Task = self.env['project.task']
-        Task.create({'name': u"Task {0}".format(self.name),
-                     'project_id': self.id, })
         return res
 
     @api.multi
@@ -246,6 +239,16 @@ class ProjectProject(models.Model):
     @api.multi
     def action_received(self):
         res = self.write({'state': 'received'})
+        return res
+
+    @api.multi
+    def action_ready_billing(self):
+        res = self.write({'state': 'ready_billing'})
+        return res
+
+    @api.multi
+    def action_back_to_open(self):
+        res = self.write({'state': 'open'})
         return res
 
     @api.multi
@@ -295,10 +298,6 @@ class ProjectTeamMember(models.Model):
     remark = fields.Text(
         string="Remark"
     )
-
-    _sql_constraints = [
-        ('name_uniq', 'UNIQUE(name)', 'Project Team Member must be unique!'),
-    ]
 
 
 class ProjectBrandType(models.Model):
