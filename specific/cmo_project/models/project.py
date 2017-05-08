@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import fields, models, api
-
+from openerp.exceptions import ValidationError
 # TODO: foreign key use, idex and ondelete
 
 
@@ -125,7 +125,7 @@ class ProjectProject(models.Model):
          ('reject', 'Reject'),
          ('lost', 'Lost'),
          ('cancel', 'Cancelled'),
-         ('terminate', 'Terminated')
+         ('terminate', 'Terminated'),
         ],
         string='Close Reason',
         states={'close': [('readonly', True)]},
@@ -188,6 +188,9 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
     )
 
+    _defaults = {
+        'use_tasks': False
+    }
     # TODO create tab to show invoices of project.
     # invoice_ids = fields.Many2many(
     #     'account.invoice',

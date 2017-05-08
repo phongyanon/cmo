@@ -143,7 +143,7 @@
                     <button name="action_ready_billing" type="object"
                             string="Ready to Billing"
                             states="open"
-                            groups="project.group_project_admin,project.group_project_manager"/>
+                            groups="project.group_project_admin,project.group_project_manager,project.group_project_user"/>
                     <button name="action_back_to_open" type="object"
                             string="Back to In-Progress"
                             states="ready_billing"
@@ -167,11 +167,13 @@
                             groups="project.group_project_admin,project.group_project_manager"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="attributes">
-                    <attribute name="states">draft,validate,open,invoices,ready_billing</attribute>
-                    <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute>
+                    <!-- <attribute name="states">draft,validate,open,invoices,ready_billing</attribute>
+                    <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute> -->
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_template']" position="attributes">
-                    <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute>
+                    <!-- <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute> -->
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_done']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -187,11 +189,14 @@
                 <xpath expr="/form/header/button[@name='set_open']" position="attributes">
                     <attribute name="name">action_released</attribute>
                 </xpath>
-                <xpath expr="/form/header/button[@name='set_open']" position="attributes">
-                    <attribute name="name">action_released</attribute>
-                </xpath>
                 <xpath expr="/form/header/field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft,open,close</attribute>
+                </xpath>
+                <xpath expr="///field[@name='doc_count']" position="attributes">
+                    <!-- <attribute name="groups"></attribute> TODO: no set group yet may be use with others-->
+                </xpath>
+                <xpath expr="//p" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='analytic_account_id']" position="before">
                       <h1>
@@ -250,7 +255,7 @@
                             <field name="competitor_ids" nolabel="1"/>
                         </group>
                     </page>
-                    <page string="Billing Info">
+                    <page string="Billing Info" attrs="{'invisible':['!', ['state', 'not in', ['draft'], ['validate'], ['open']]]}">
                         <group>
                             <group>
                                 <field name="assign_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
@@ -301,8 +306,7 @@
                      <attribute name="string"></attribute>
                  </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']" position="after">
-                    <page string="Budget &amp; Cost">
-                        <!-- groups="project.group_project_admin,project.group_project_readonly,project.group_project_manager"> -->
+                    <page string="Budget &amp; Cost" groups="project.group_project_admin,project.group_project_readonly,project.group_project_manager">
                         <group>
                             <field name="actual_price" readonly="1"/>
                             <field name="estimate_cost" readonly="1"/>

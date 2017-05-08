@@ -9,6 +9,8 @@ class ProjectCloseReason(models.TransientModel):
         ('close', 'Completed'),
         ('reject', 'Reject'),
         ('lost', 'Lost'),
+        ('cancel', 'Cancelled'),
+        ('terminate', 'Terminated'),
     ])
     lost_by = fields.Many2one(
         'res.partner',
@@ -29,17 +31,29 @@ class ProjectCloseReason(models.TransientModel):
         Project = self.env['project.project']
         project = Project.browse(context.get('active_id'))
         project.close_reason = self.close_reason
-        if self.close_reason == 'lost':
+        if self.close_reason == 'lost': # project.write doesn't work
             project.lost_reason = self.lost_reason
             project.lost_by = self.lost_by
             project.reject_reason = None
+            project.set_cancel()
         elif self.close_reason == 'reject':
             project.reject_reason = self.reject_reason
             project.lost_reason = None
             project.lost_by = None
-        else:
+            project.set_cancel()
+        elif self.close_reason == 'cancel':
             project.lost_reason = None
             project.lost_by = None
             project.reject_reason = None
-        project.set_done()
+            project.set_cancel()
+        elif self.close_reason == 'terminate':
+            project.lost_reason = None
+            project.lost_by = None
+            project.reject_reason = None
+            project.set_cancel()
+        elif self.close_reason == 'close':
+            project.lost_reason = None
+            project.lost_by = None
+            project.reject_reason = None
+            project.set_done()
         return {'type': 'ir.actions.act_window_close'}
