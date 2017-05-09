@@ -225,11 +225,7 @@
                             <field name="brief_date"/>
                             <field name="date_start"/>
                             <field name="date" string="End Date"/>
-                            <field name="parent_id"
-                                  string="Parent Project"
-                                  help="Append this project to another one using analytic accounts hierarchy"
-                                  domain="[('id','!=',analytic_account_id)]"
-                                  context="{'current_model': 'project.project'}"/>
+                            <field name="project_parent_id"/>
                             <field name="operating_unit_id" string="Department" readonly="1"/>
                         </group>
                         <group>
@@ -261,7 +257,7 @@
                             <field name="competitor_ids" nolabel="1"/>
                         </group>
                     </page>
-                    <page string="Billing Info" attrs="{'invisible':['!', ['state', 'not in', ['draft'], ['validate'], ['open']]]}">
+                    <page string="Billing Info" states="ready_billing,cancelled,close,pending,received,invoices">
                         <sheet>
                             <group>
                                 <field name="assign_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>

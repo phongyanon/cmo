@@ -186,6 +186,11 @@ class ProjectProject(models.Model):
         string='Description',
         states={'close': [('readonly', True)]},
     )
+    project_parent_id = fields.Many2one(
+        'project.project',
+        string='Parent Project',
+        states={'close': [('readonly', True)]},
+    )
 
     _defaults = {
         'use_tasks': False
