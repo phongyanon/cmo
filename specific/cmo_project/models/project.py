@@ -149,7 +149,7 @@ class ProjectProject(models.Model):
          ('ready_billing', 'Ready to Billing'),
          ('invoices', 'Invoices'),
          ('received', 'Received'),
-         ('cancelled', 'Cancelled'),
+         ('cancelled', 'Incompleted'),
          ('pending','Pending'),
          ('close','Completed'), ],
          string='Status',

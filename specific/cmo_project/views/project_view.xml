@@ -142,7 +142,7 @@
                     <button name="action_ready_billing" type="object"
                             string="Ready to Billing"
                             states="open"
-                            groups="project.group_project_admin,project.group_project_manager,project.group_project_user"/>
+                            groups="project.group_project_admin,project.group_project_manager"/>
                     <button name="action_back_to_open" type="object"
                             string="Back to In-Progress"
                             states="ready_billing"
@@ -262,14 +262,12 @@
                         </group>
                     </page>
                     <page string="Billing Info" attrs="{'invisible':['!', ['state', 'not in', ['draft'], ['validate'], ['open']]]}">
-                        <group>
+                        <sheet>
                             <group>
                                 <field name="assign_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
+                                <field name="assign_description" string="Note to FA"/>
                             </group>
-                            <group>
-                                <field name="assign_description"/>
-                            </group>
-                        </group>
+                        </sheet>
                     </page>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Project Stages']" position="attributes">
@@ -280,6 +278,10 @@
                 </xpath>
                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@name='active']" position="attributes">
                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='project_stages']" position="attributes">
+                   <attribute name="groups">project.group_project_admin,project.group_project_manager</attribute>
+                   <attribute name="string">Tasks States</attribute>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@string='Start Date']" position="replace"/>
                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@string='End Date']" position="replace"/>
@@ -328,7 +330,7 @@
                  </xpath>
                  <xpath expr="//notebook" position="after">
                     <group>
-                        <field name="description" string="Description / Remark"/>
+                        <field name="description" string="Project Description"/>
                     </group>
                  </xpath>
             </field>
