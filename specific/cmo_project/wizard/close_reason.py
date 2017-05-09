@@ -4,14 +4,12 @@ from openerp import models, fields, api
 
 class ProjectCloseReason(models.TransientModel):
     _name = 'project.close.reason'
+    
 
-    close_reason = fields.Selection([
-        ('close', 'Completed'),
-        ('reject', 'Reject'),
-        ('lost', 'Lost'),
-        ('cancel', 'Cancelled'),
-        ('terminate', 'Terminated'),
-    ])
+    close_reason = fields.Selection(
+        selection="_get_close_reason_list",
+    )
+
     lost_by = fields.Many2one(
         'res.partner',
         domain=[('category_id', 'like', 'Competitor'), ],
@@ -57,3 +55,27 @@ class ProjectCloseReason(models.TransientModel):
             project.reject_reason = None
             project.set_done()
         return {'type': 'ir.actions.act_window_close'}
+
+    @api.model
+    def _get_close_reason_list(self):
+        Project = self.env['project.project']
+        context = self.env.context
+        project_id = context.get('active_ids', False)
+        project = Project.browse(project_id[0])
+        vals = []
+        if (project.state == "draft") or (project.state == "validate") :
+            vals = [
+                ('reject', 'Reject'),
+                ('lost', 'Lost'),
+                ('cancel', 'Cancelled'),
+            ]
+        elif (project.state == "open") or (project.state == "ready_billing") or (project.state == "invoices"):
+            vals = [
+                ('cancel', 'Cancelled'),
+                ('terminate', 'Terminated'),
+            ]
+        elif (project.state == "received"):
+            vals = [
+                ('close', 'Completed'),
+            ]
+        return vals
