@@ -15,6 +15,8 @@
     "depends": [
         'project',
         'sale',
+        'sale_stock',
+        'sale_analytic_plans',
     ],
     "data": [
         'security/security.xml',

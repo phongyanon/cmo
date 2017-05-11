@@ -33,9 +33,15 @@ class ProjectCloseReason(models.TransientModel):
         project = Project.browse(context.get('active_id'))
         project.close_reason = self.close_reason
         if self.close_reason == 'lost': # project.write doesn't work
-            project.lost_reason = self.lost_reason
-            project.lost_by = self.lost_by
-            project.reject_reason = None
+            # project.lost_reason = self.lost_reason
+            # project.lost_by = self.lost_by
+            # project.reject_reason = None
+            print self.lost_reason
+            project.write({
+                'lost_reason': self.lost_reason.id,
+                'lost_by': self.lost_by.id,
+                'reject_reason': False,
+            })
             project.set_cancel()
         elif self.close_reason == 'reject':
             project.reject_reason = self.reject_reason

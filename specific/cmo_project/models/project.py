@@ -261,7 +261,7 @@ class ProjectProject(models.Model):
     @api.multi
     def action_released(self):
         if self.latest_state:
-            res = self.write({'state':self.latest_state})
+            res = self.write({'state':self.latest_state})  # state_bf_hold
         else:
             res = self.write({'state':'open'})
         self.write({'close_reason':None})
