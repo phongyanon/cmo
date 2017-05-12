@@ -2,5 +2,5 @@
 
 from . import hr
 from . import project
-from . import customer
+from . import partner
 from . import sale

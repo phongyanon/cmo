@@ -19,9 +19,6 @@
                 <xpath expr="//field[@name='order_line']/form/group/group/field[@name='sale_layout_cat_id']" position="after">
                     <field name="product_id"/>
                 </xpath>
-                <xpath expr="//field[@name='order_line']/form/group/group/field[@name='price_unit']" position="attributes">
-                    <attribute name="string">Estimate Cost</attribute>
-                </xpath>
                 <xpath expr="//field[@name='order_line']/form/group/group/field[@name='address_allotment_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -34,9 +31,9 @@
                 <xpath expr="//field[@name='order_line']/form/group/group/div/field[@name='delay']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='order_line']/form/group/group/div" position="attributes">
+                <!-- <xpath expr="//field[@name='order_line']/form/group/group/div" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </xpath>
+                </xpath> -->
             </field>
         </record>
         <record id="view_order_form_sale_stock" model="ir.ui.view">
@@ -46,6 +43,17 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='warehouse_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="sale_margin_sale_order_line" model="ir.ui.view">
+            <field name="name">sale.order.line.margin.view.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale_margin.sale_margin_sale_order_line"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/form//field[@name='purchase_price']" position="attributes">
+                    <attribute name="string">Estimate Cost</attribute>
                 </xpath>
             </field>
         </record>

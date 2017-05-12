@@ -16,6 +16,7 @@
         'project',
         'sale',
         'sale_stock',
+        'sale_margin',
         'sale_analytic_plans',
     ],
     "data": [
