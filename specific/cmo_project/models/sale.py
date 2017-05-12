@@ -6,16 +6,19 @@ from openerp import fields, models, api
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    version = fields.Integer(
+    # version = fields.Integer(
+    #     string='Version',
+    #     size=4,
+    #     default=None,
+    # )
+    version = fields.Char(
         string='Version',
-        size=4,
-        default=None,
     )
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
-    
+
     order_lines_level = fields.Selection(
         [('A', 'A'),
          ('B', 'B'),
