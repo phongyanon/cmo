@@ -46,7 +46,7 @@
                         <!-- end -->
                         <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
                             type="action" states="manual" class="oe_highlight" groups="base.group_user"/>
-                        <!--button name="copy_quotation" states="cancel" string="New Copy of Order" type="object"/-->
+                        <button name="copy_quotation" states="cancel" string="New Copy of Order" type="object"/>
                         <button name="cancel" states="draft,sent" string="Cancel Order" groups="base.group_user"/>
                         <button name="action_cancel" states="manual,progress" string="Cancel Order" type="object" groups="base.group_user"/>
                         <!-- from sale_stock.view_order_form -->
@@ -66,7 +66,7 @@
                         <button name="print_quotation" string="Print" type="object" states="sent" groups="base.group_user"/> -->
 	            		<button name="action_button_convert_to_order" states="draft"
 	            				class="oe_highlight" type="object" string="Convert to Order" groups="base.group_user"/>
-                        <!--button name="copy_quotation" states="cancel" string="New Copy of Quotation" type="object"/-->
+                        <button name="copy_quotation" states="cancel" string="New Copy of Quotation" type="object"/>
                         <button name="cancel" states="draft" string="Cancel Quotation" groups="base.group_user"/>
                         <field name="state2" widget="statusbar" statusbar_visible="draft,done" invisible="context.get('order_type', 'sale_order') == 'sale_order'"/>
                 	</header>
