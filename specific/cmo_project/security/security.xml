@@ -17,6 +17,9 @@
             </record>
 
             <delete model="ir.rule" search="[('model_id','=', ref('project.model_project_project'))]"/>
+            <delete model="ir.rule" search="[('model_id', '=', ref('project.task_visibility_rule'))]"/>
+            <delete model="ir.rule" search="[('model_id', '=', ref('portal_project.task_public_rule'))]"/>
+            <delete model="ir.rule" search="[('model_id', '=', ref('portal_project.portal_task_rule'))]"/>
 
             <record id="project_cmo_ou_only_editable" model="ir.rule">
                 <field name="name">Project OU Only Editable</field>

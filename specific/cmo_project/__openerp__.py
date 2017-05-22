@@ -26,7 +26,6 @@
         'data/project_data.xml',
         'wizard/close_reason_view.xml',
         'wizard/hold_reason_view.xml',
-        'views/login_view.xml',
         'views/project_view.xml',
         'views/master_data_view.xml',
         'views/customer_view.xml',

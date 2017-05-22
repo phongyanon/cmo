@@ -188,12 +188,13 @@
                 <xpath expr="/form/header/button[@name='set_open']" position="replace">
                     <button name="action_released" type="object"
                             string="Re-open Project"
-                            states="pending"
+                            states="pending,cancelled,close"
                             class="oe_highlight"
                             groups="project.group_project_admin,project.group_project_manager"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_open']" position="attributes">
                     <attribute name="groups">project.group_project_admin</attribute>
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="/form/header/field[@name='state']" position="attributes">
                     <attribute name="statusbar_visible">draft,open,close</attribute>
@@ -231,9 +232,9 @@
                         <group>
                             <field name="hold_reason" attrs="{'invisible':[('state','not in','pending')]}"/>
                             <field name="close_reason" string="Close Reason" readonly="1" attrs="{'invisible': [('close_reason','=',False)]}"/>
-                            <field name="lost_reason" readonly="1" attrs="{'invisible': [('close_reason','not in','lost')]}"/>
-                            <field name="lost_by" readonly="1" attrs="{'invisible': [('close_reason','not in','lost')]}"/>
-                            <field name="reject_reason" readonly="1" attrs="{'invisible': [('close_reason','not in','reject')]}"/>
+                            <field name="lost_reason_id" readonly="1" attrs="{'invisible': [('close_reason','not in','lost')]}"/>
+                            <field name="lost_by_id" readonly="1" attrs="{'invisible': [('close_reason','not in','lost')]}"/>
+                            <field name="reject_reason_id" readonly="1" attrs="{'invisible': [('close_reason','not in','reject')]}"/>
                         </group>
                     </group>
                 </xpath>
@@ -258,12 +259,10 @@
                         </group>
                     </page>
                     <page string="Billing Info" states="ready_billing,cancelled,close,pending,received,invoices">
-                        <sheet>
-                            <group>
-                                <field name="assign_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
-                                <field name="assign_description" string="Note to FA"/>
-                            </group>
-                        </sheet>
+                        <group>
+                            <field name="assign_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
+                            <field name="assign_description" string="Note to FA"/>
+                        </group>
                     </page>
                 </xpath>
                 <xpath expr="//notebook/page[@string='Project Stages']" position="attributes">
@@ -321,13 +320,13 @@
                         </group>
                     </page>
                  </xpath>
-                 <xpath expr="//notebook/page[@string='Other Info']" position="attributes">
-                     <attribute name="string">Project Info</attribute>
-                 </xpath>
-                 <xpath expr="//notebook" position="after">
+                 <xpath expr="//notebook/page[@string='Other Info']/group[2]" position="after">
                     <group>
                         <field name="description" string="Project Description"/>
                     </group>
+                 </xpath>
+                 <xpath expr="//notebook/page[@string='Other Info']" position="attributes">
+                     <attribute name="string">Project Info</attribute>
                  </xpath>
             </field>
         </record>

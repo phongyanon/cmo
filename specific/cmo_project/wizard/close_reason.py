@@ -13,15 +13,16 @@ class ProjectCloseReason(models.TransientModel):
         # ('cancel', 'Cancelled'),]
     )
 
-    lost_by = fields.Many2one(
+    lost_by_id = fields.Many2one(
         'res.partner',
+        string='Lost By',
         domain=[('category_id', 'like', 'Competitor'), ],
     )
-    lost_reason = fields.Many2one(
+    lost_reason_id = fields.Many2one(
         'project.lost.reason',
         string='Lost Reason',
     )
-    reject_reason = fields.Many2one(
+    reject_reason_id = fields.Many2one(
         'project.reject.reason',
         string='Reject Reason',
     )
@@ -31,37 +32,23 @@ class ProjectCloseReason(models.TransientModel):
         self.ensure_one()
         Project = self.env['project.project']
         project = Project.browse(context.get('active_id'))
-        project.close_reason = self.close_reason
-        if self.close_reason == 'lost': # project.write doesn't work
-            # project.lost_reason = self.lost_reason
-            # project.lost_by = self.lost_by
-            # project.reject_reason = None
-            print self.lost_reason
+        project.write({
+            'close_reason': self.close_reason,
+        })
+        if self.close_reason == 'lost':
             project.write({
-                'lost_reason': self.lost_reason.id,
-                'lost_by': self.lost_by.id,
-                'reject_reason': False,
+                'lost_reason_id': self.lost_reason_id.id,
+                'lost_by_id': self.lost_by_id.id,
             })
             project.set_cancel()
         elif self.close_reason == 'reject':
-            project.reject_reason = self.reject_reason
-            project.lost_reason = None
-            project.lost_by = None
+            project.write({
+                'reject_reason_id': self.reject_reason_id.id,
+            })
             project.set_cancel()
-        elif self.close_reason == 'cancel':
-            project.lost_reason = None
-            project.lost_by = None
-            project.reject_reason = None
-            project.set_cancel()
-        elif self.close_reason == 'terminate':
-            project.lost_reason = None
-            project.lost_by = None
-            project.reject_reason = None
+        elif self.close_reason == 'cancel' or self.close_reason == 'terminate':
             project.set_cancel()
         elif self.close_reason == 'close':
-            project.lost_reason = None
-            project.lost_by = None
-            project.reject_reason = None
             project.set_done()
         return {'type': 'ir.actions.act_window_close'}
 

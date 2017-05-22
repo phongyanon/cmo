@@ -157,19 +157,19 @@ class ProjectProject(models.Model):
          copy=False,
          default='draft',
     )
-    latest_state = fields.Char(
+    state_before_inactive = fields.Char(
         string='Latest State',
     )
-    lost_reason = fields.Many2one(
+    lost_reason_id = fields.Many2one(
         'project.lost.reason',
         string='Lost Reason',
     )
-    lost_by = fields.Many2one(
+    lost_by_id = fields.Many2one(
         'res.partner',
         string='Lost By',
         domain=[('category_id', 'like', 'Competitor'), ],
     )
-    reject_reason = fields.Many2one(
+    reject_reason_id = fields.Many2one(
         'project.reject.reason',
         string='Reject Reason',
     )
@@ -212,15 +212,25 @@ class ProjectProject(models.Model):
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
             vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence number
+        if 'project_parent_id' in vals:
+            parent_project = self.env['project.project'].browse(vals['project_parent_id'])
+            vals['parent_id'] = parent_project.analytic_account_id.id
         project = super(ProjectProject, self).create(vals)
+        project.write({
+            'state_before_inactive': project.state
+        })
         return project
 
     @api.multi
     def write(self, vals):
         if ('state' in vals) and \
            (vals['state'] != 'pending') and \
-           (vals['state'] != 'close'):
-           vals['latest_state'] = vals['state']
+           (vals['state'] != 'close') and \
+           (vals['state'] != 'cancelled'):
+           vals['state_before_inactive'] = vals['state']
+        if 'project_parent_id' in vals:
+            parent_project = self.env['project.project'].browse(vals['project_parent_id'])
+            vals['parent_id'] = parent_project.analytic_account_id.id
         return super(ProjectProject, self).write(vals)
 
     @api.multi
@@ -260,11 +270,16 @@ class ProjectProject(models.Model):
 
     @api.multi
     def action_released(self):
-        if self.latest_state:
-            res = self.write({'state':self.latest_state})  # state_bf_hold
+        if self.state_before_inactive:
+            res = self.write({'state':self.state_before_inactive})  # state_bf_hold
         else:
             res = self.write({'state':'open'})
-        self.write({'close_reason':None})
+        self.write({
+            'close_reason': False,
+            'lost_reason_id': False,
+            'lost_by_id': False,
+            'reject_reason_id': False,
+        })
         return res
 
     @api.multi
