@@ -29,7 +29,6 @@
         'views/project_view.xml',
         'views/master_data_view.xml',
         'views/customer_view.xml',
-        'views/sale_view.xml',
         'views/account_view.xml',
     ],
     "application": False,

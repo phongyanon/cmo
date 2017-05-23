@@ -3,4 +3,3 @@
 from . import hr
 from . import project
 from . import partner
-from . import sale
