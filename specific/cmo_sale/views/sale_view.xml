@@ -11,11 +11,10 @@
                         <field name="project_number" string="Project Number" attrs="{'invisible': [('state','not in',('draft','sent'))]}" readonly="1"/>
                         <!-- class="oe_inline"/> -->
                 </field>
-                <field name="client_order_ref" position="after">
-                    <field name="version"/>
-                </field>
                 <xpath expr="///field[@name='project_id']" position="before">
                     <field name="project_related_id"/>
+                    <field name="event_date_description"/>
+                    <field name="venue_description"/>
                 </xpath>
                 <xpath expr="///field[@name='project_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -76,16 +75,8 @@
                 <xpath expr="//field[@name='order_line']/form//field[@name='purchase_price']" position="attributes">
                     <attribute name="string">Estimate Cost</attribute>
                 </xpath>
-            </field>
-        </record>
-
-        <record id="sale_margin_sale_order_line_form" model="ir.ui.view">
-            <field name="name">sale.order.line.tree.margin.view.form</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale_margin.sale_margin_sale_order_line_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='order_line']/tree[@string='Sales Order Lines']/field[@name='purchase_price']" position="attributes">
-                    <attribute name="string">Estimate Cost</attribute>
+                <xpath expr="//field[@name='order_line']/form//field[@name='purchase_price']" position="after">
+                    <field name="sale_order_line_margin"/>
                 </xpath>
             </field>
         </record>

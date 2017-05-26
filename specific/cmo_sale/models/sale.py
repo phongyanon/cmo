@@ -11,17 +11,17 @@ class SaleOrder(models.Model):
         readonly=True,
         copy=False,
     )
-    # version = fields.Integer(
-    #     string='Version',
-    #     size=4,
-    #     default=None,
-    # )
     project_related_id = fields.Many2one(
         'project.project',
         string='Project',
     )
-    version = fields.Char(
-        string='Version',
+    event_date_description = fields.Char(
+        string='Event Date',
+        size=250,
+    )
+    venue_description = fields.Char(
+        string='Venue',
+        size=250,
     )
     amount_before_management_fee = fields.Float(
         string="Before Management Fee",
@@ -78,6 +78,12 @@ class SaleOrderLine(models.Model):
         string='Custom Group',
     )
 
+    sale_order_line_margin = fields.Float(
+        string='Margin',
+        compute='_get_sale_order_line_margin',
+        readonly=True,
+    )
+
     section_code = fields.Selection(
         [('A', 'A'),
          ('B', 'B'),
@@ -100,6 +106,11 @@ class SaleOrderLine(models.Model):
             'type': 'ir.actions.act_window',
             'context': {'order_line_id': self.id, 'view_id': 'view_sale_management_fee',}
         }
+
+    @api.onchange('price_unit', 'purchase_price')
+    def _get_sale_order_line_margin(self):
+        margin = self.price_unit - self.purchase_price
+        self.sale_order_line_margin = margin
 
 class SaleLayoutCustomGroup(models.Model):
     _name = 'sale_layout.custom_group'
