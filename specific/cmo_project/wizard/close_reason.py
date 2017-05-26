@@ -7,12 +7,9 @@ class ProjectCloseReason(models.TransientModel):
 
 
     close_reason = fields.Selection(
+        string='Close Reason',
         selection="_get_close_reason_list",
-        # [('reject', 'Reject'),
-        # ('lost', 'Lost'),
-        # ('cancel', 'Cancelled'),]
     )
-
     lost_by_id = fields.Many2one(
         'res.partner',
         string='Lost By',
@@ -46,27 +43,31 @@ class ProjectCloseReason(models.TransientModel):
                 'reject_reason_id': self.reject_reason_id.id,
             })
             project.set_cancel()
-        elif self.close_reason == 'cancel' or self.close_reason == 'terminate':
+        elif self.close_reason == 'cancel' or \
+             self.close_reason == 'terminate':
             project.set_cancel()
         elif self.close_reason == 'close':
             project.set_done()
         return {'type': 'ir.actions.act_window_close'}
 
     @api.model
-    def _get_close_reason_list(self): # TODO need refactoring
+    def _get_close_reason_list(self):
         Project = self.env['project.project']
         context = self.env.context
         project_id = context.get('active_ids', False)
         vals = []
-        try:
+        if project_id:
             project = Project.browse(project_id[0])
-            if (project.state == "draft") or (project.state == "validate") :
+            if (project.state == "draft") or \
+               (project.state == "validate") :
                 vals = [
                     ('reject', 'Reject'),
                     ('lost', 'Lost'),
                     ('cancel', 'Cancelled'),
                 ]
-            elif (project.state == "open") or (project.state == "ready_billing") or (project.state == "invoices"):
+            elif (project.state == "open") or \
+                 (project.state == "ready_billing") or \
+                 (project.state == "invoices"):
                 vals = [
                     ('cancel', 'Cancelled'),
                     ('terminate', 'Terminated'),
@@ -75,6 +76,4 @@ class ProjectCloseReason(models.TransientModel):
                 vals = [
                     ('close', 'Completed'),
                 ]
-        except Exception:
-            pass
         return vals
