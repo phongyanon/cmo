@@ -2,6 +2,29 @@
 
 from openerp import fields, models, api
 
+class SaleConvenantDescription(models.Model):
+    _name = 'sale.convenant.description'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    description = fields.Text(
+        string='Description',
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    is_eng = fields.Boolean(
+        string='Is English',
+        default=True,
+    )
+
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Name must be unique!'),
+    ]
+
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -96,6 +119,7 @@ class SaleOrder(models.Model):
         if convenants:
             return convenants[0].description
 
+
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
@@ -152,29 +176,6 @@ class SaleLayoutCustomGroup(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
-    )
-
-    _sql_constraints = [
-        ('name_uniq', 'UNIQUE(name)', 'Name must be unique!'),
-    ]
-
-class SaleConvenantDescription(models.Model):
-    _name = 'sale.convenant.description'
-
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
-    active = fields.Boolean(
-        string='Active',
-        default=True,
-    )
-    is_eng = fields.Boolean(
-        string='Is English',
-        default=True,
     )
 
     _sql_constraints = [
