@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from openerp import fields, models, api
 from openerp.exceptions import ValidationError
 # TODO: foreign key use, idex and ondelete
@@ -9,7 +11,7 @@ class ProjectProject(models.Model):
 
     project_place = fields.Char(
         string='Project Place',
-        states={'close': [('readonly', True)]}
+        states={'close': [('readonly', True)]},
     )
     agency_partner_id = fields.Many2one(
         'res.partner',
@@ -21,14 +23,14 @@ class ProjectProject(models.Model):
         'project.brand.type',
         string='Brand type',
         related='partner_id.brand_type_id',
-        states={'close': [('readonly', True)]},
+        readonly=True,
         store=True,
     )
     industry_id = fields.Many2one(
         'project.industry',
         string='Industry',
         related='partner_id.industry_id',
-        states={'close':[('readonly', True)]},
+        readonly=True,
         store=True,
     )
     client_type_id = fields.Many2one(
@@ -95,11 +97,11 @@ class ProjectProject(models.Model):
     )
     brief_date = fields.Date(
         string='Brief Date',
-        default=fields.Date.today,
+        default=lambda self: fields.Date.context_today(self),
         states={'close': [('readonly', True)]},
     )
     date = fields.Date(
-        default=fields.Date.today,
+        default=lambda self: fields.Date.context_today(self),
         states={'close': [('readonly', True)]},
     )
     competitor_ids = fields.Many2many(
@@ -160,6 +162,10 @@ class ProjectProject(models.Model):
     state_before_inactive = fields.Char(
         string='Latest State',
     )
+    is_active_state = fields.Boolean(
+        string='Is Active State',
+        compute='_get_state_before_inactive',
+    )
     lost_reason_id = fields.Many2one(
         'project.lost.reason',
         string='Lost Reason',
@@ -211,23 +217,28 @@ class ProjectProject(models.Model):
     @api.model
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
-            vals['project_number'] = self.env['ir.sequence'].get('cmo.project') # create sequence number
+            ctx = self._context.copy()
+            current_date = datetime.date.today()
+            fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
+            ctx["fiscalyear_id"] = fiscalyear_id
+            vals['project_number'] = self.env['ir.sequence']\
+                .with_context(ctx).get('cmo.project') # create sequence number
         if 'project_parent_id' in vals:
             parent_project = self.env['project.project'].browse(vals['project_parent_id'])
             vals['parent_id'] = parent_project.analytic_account_id.id
         project = super(ProjectProject, self).create(vals)
-        project.write({
-            'state_before_inactive': project.state
-        })
+        # project.write({
+        #     'state_before_inactive': project.state
+        # })
         return project
 
     @api.multi
     def write(self, vals):
-        if ('state' in vals) and \
-           (vals['state'] != 'pending') and \
-           (vals['state'] != 'close') and \
-           (vals['state'] != 'cancelled'):
-           vals['state_before_inactive'] = vals['state']
+        # if ('state' in vals) and \
+        #    (vals['state'] != 'pending') and \
+        #    (vals['state'] != 'close') and \
+        #    (vals['state'] != 'cancelled'):
+        #    vals['state_before_inactive'] = vals['state']
         if 'project_parent_id' in vals:
             parent_project = self.env['project.project'].browse(vals['project_parent_id'])
             vals['parent_id'] = parent_project.analytic_account_id.id
@@ -281,6 +292,15 @@ class ProjectProject(models.Model):
             'reject_reason_id': False,
         })
         return res
+
+    @api.multi
+    def _get_state_before_inactive(self):
+        for project in self:
+            if project.state and \
+               (project.state != 'pending') and \
+               (project.state != 'close') and \
+               (project.state != 'cancelled'):
+               project.write({'state_before_inactive': project.state})
 
     @api.multi
     @api.constrains('brief_date', 'date')
