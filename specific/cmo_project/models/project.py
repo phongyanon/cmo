@@ -195,7 +195,9 @@ class ProjectProject(models.Model):
     project_parent_id = fields.Many2one(
         'project.project',
         string='Parent Project',
+        inverse='_set_project_analytic_account',
         states={'close': [('readonly', True)]},
+        store=True,
     )
 
     _defaults = {
@@ -223,25 +225,11 @@ class ProjectProject(models.Model):
             ctx["fiscalyear_id"] = fiscalyear_id
             vals['project_number'] = self.env['ir.sequence']\
                 .with_context(ctx).get('cmo.project') # create sequence number
-        if 'project_parent_id' in vals:
-            parent_project = self.env['project.project'].browse(vals['project_parent_id'])
-            vals['parent_id'] = parent_project.analytic_account_id.id
         project = super(ProjectProject, self).create(vals)
-        # project.write({
-        #     'state_before_inactive': project.state
-        # })
         return project
 
     @api.multi
     def write(self, vals):
-        # if ('state' in vals) and \
-        #    (vals['state'] != 'pending') and \
-        #    (vals['state'] != 'close') and \
-        #    (vals['state'] != 'cancelled'):
-        #    vals['state_before_inactive'] = vals['state']
-        if 'project_parent_id' in vals:
-            parent_project = self.env['project.project'].browse(vals['project_parent_id'])
-            vals['parent_id'] = parent_project.analytic_account_id.id
         return super(ProjectProject, self).write(vals)
 
     @api.multi
@@ -301,6 +289,12 @@ class ProjectProject(models.Model):
                (project.state != 'close') and \
                (project.state != 'cancelled'):
                project.write({'state_before_inactive': project.state})
+
+    @api.multi
+    def _set_project_analytic_account(self):
+        for project in self:
+            parent_project = self.env['project.project'].browse(project.project_parent_id.id)
+            project.parent_id = parent_project.analytic_account_id.id
 
     @api.multi
     @api.constrains('brief_date', 'date')

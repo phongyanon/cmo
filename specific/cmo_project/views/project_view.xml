@@ -228,6 +228,8 @@
                             <field name="date" string="End Date"/>
                             <field name="project_parent_id"/>
                             <field name="operating_unit_id" string="Department" readonly="1"/>
+                            <field name="state_before_inactive" invisible="0"/>
+                            <field name="is_active_state" invisible="0"/>
                         </group>
                         <group>
                             <field name="hold_reason" attrs="{'invisible':[('state','not in','pending')]}"/>
@@ -284,7 +286,9 @@
                      <attribute name="invisible">1</attribute>
                      <attribute name="string">Sequence(no use)</attribute>
                 </xpath>
-                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@name='parent_id']" position="replace"/>
+                <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@name='parent_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
                  <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']" position="inside">
                       <group>
                           <field name="active" invisible="1"/>

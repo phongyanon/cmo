@@ -7,9 +7,9 @@ class HrDepartment(models.Model):
 
     active = fields.Boolean(
         string='Active',
-        default=False,
+        default=True,
     )
     show = fields.Boolean(
         string='Show',
-        default=False,
+        default=True,
     )
