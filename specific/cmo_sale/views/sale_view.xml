@@ -13,8 +13,8 @@
                 </field>
                 <xpath expr="///field[@name='project_id']" position="before">
                     <field name="project_related_id"/>
-                    <field name="event_date_description"/>
-                    <field name="venue_description"/>
+                    <field name="event_date_description" style="width:200%"/>
+                    <field name="venue_description" style="width:200%"/>
                 </xpath>
                 <xpath expr="///field[@name='project_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -22,7 +22,7 @@
                 <xpath expr="//field[@name='order_line']/form/group/group/field[@name='product_id']" position="after">
                     <field name="order_lines_group"/>
                     <field name="sale_layout_custom_group_id"/>
-                    <field name="section_code" style="width:20%%" />
+                    <field name="section_code" style="width:20%" />
                 </xpath>
                 <xpath expr="//field[@name='order_line']/form//field[@name='state']" position="before">
                     <button name="cal_management_fee"
@@ -33,6 +33,9 @@
                 <xpath expr="//field[@name='order_line']/form/group/group/field[@name='product_id']" position="replace"/>
                 <xpath expr="//field[@name='order_line']/form/group/group/field[@name='sale_layout_cat_id']" position="after">
                     <field name="product_id"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/form/group/group/field[@name='sale_layout_cat_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/form/group/group/field[@name='address_allotment_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -52,8 +55,26 @@
                 <xpath expr="//field[@name='order_line']/tree[@string='Sales Order Lines']/field[@name='product_id']" position="before">
                     <field name="order_lines_group"/>
                     <field name="sale_layout_custom_group_id"/>
-                    <field name="sale_layout_cat_id"/>
+                    <field name="section_code"/>
                 </xpath>
+                <field name="note" position="replace">
+                    <group>
+                        <field name="note" string="Remark"/>
+                    </group>
+                </field>
+                <page string="Other Information" position="after">
+                    <page string="Payment Term">
+                        <group>
+                            <field name="payment_term_description"/>
+                        </group>
+                    </page>
+                    <page string="Convenants Of Client">
+                        <group>
+                            <field name="convenant_description_eng"/>
+                            <field name="convenant_description_th"/>
+                        </group>
+                    </page>
+                </page>
             </field>
         </record>
         <record id="view_order_form_sale_stock" model="ir.ui.view">
