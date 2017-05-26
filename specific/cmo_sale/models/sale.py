@@ -14,18 +14,35 @@ class SaleOrder(models.Model):
     project_related_id = fields.Many2one(
         'project.project',
         string='Project',
+        states={'done': [('readonly', True)]},
     )
     event_date_description = fields.Char(
         string='Event Date',
         size=250,
+        states={'done': [('readonly', True)]},
     )
     venue_description = fields.Char(
         string='Venue',
         size=250,
+        states={'done': [('readonly', True)]},
     )
     amount_before_management_fee = fields.Float(
         string="Before Management Fee",
         compute='_compute_before_management_fee',
+    )
+    payment_term_description = fields.Text(
+        string='Payment Term',
+        states={'done': [('readonly', True)]},
+    )
+    convenant_description_eng = fields.Text(
+        string='Convenant',
+        states={'done': [('readonly', True)]},
+        default=lambda self: self._get_eng_convenant(),
+    )
+    convenant_description_th = fields.Text(
+        string=u'เงื่อนไขการยกเลิก',
+        states={'done': [('readonly', True)]},
+        default=lambda self: self._get_th_convenant(),
     )
 
     @api.multi
@@ -43,7 +60,7 @@ class SaleOrder(models.Model):
         self.project_number = project.project_number
 
     @api.multi
-    def write(self, vals):
+    def write(self, vals): # TODO refactor get analytic account by compute field
         self.ensure_one()
         if 'project_related_id' in vals:
             project = self.env['project.project'].browse(vals['project_related_id'])
@@ -54,13 +71,30 @@ class SaleOrder(models.Model):
         return super(SaleOrder, self).write(vals)
 
     @api.model
-    def create(self, vals):
+    def create(self, vals): # TODO refactor get analytic account by compute field
         if 'project_related_id' in vals:
             project = self.env['project.project'].browse(vals['project_related_id'])
             vals['project_id'] = project.analytic_account_id.id
             vals['project_number'] = project.project_number
         return super(SaleOrder, self).create(vals)
 
+    @api.multi
+    def _get_eng_convenant(self):
+        convenants = self.env['sale.convenant.description'].search([
+            ['is_eng', '=', True],
+            ['active', '=', True],
+        ])
+        if convenants:
+            return convenants[0].description
+
+    @api.model
+    def _get_th_convenant(self):
+        convenants = self.env['sale.convenant.description'].search([
+            ['is_eng', '=', False],
+            ['active', '=', True],
+        ])
+        if convenants:
+            return convenants[0].description
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -116,8 +150,31 @@ class SaleLayoutCustomGroup(models.Model):
     _name = 'sale_layout.custom_group'
 
     name = fields.Char(
-        string="Name",
+        string='Name',
         required=True,
+    )
+
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Name must be unique!'),
+    ]
+
+class SaleConvenantDescription(models.Model):
+    _name = 'sale.convenant.description'
+
+    name = fields.Char(
+        string='Name',
+        required=True,
+    )
+    description = fields.Text(
+        string='Description',
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    is_eng = fields.Boolean(
+        string='Is English',
+        default=True,
     )
 
     _sql_constraints = [
