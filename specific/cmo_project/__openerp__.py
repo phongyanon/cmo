@@ -18,6 +18,7 @@
         'sale_stock',
         'sale_margin',
         'sale_analytic_plans',
+        'account_auto_fy_sequence',
     ],
     "data": [
         'security/security.xml',
