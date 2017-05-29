@@ -21,6 +21,7 @@
         'wizard/cal_manage_fee_view.xml',
         'views/sale_view.xml',
         'views/master_data_view.xml',
+        'views/product_view.xml',
     ],
     'demo': [
     ],
