@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from openerp import fields, models, api
+from openerp.exceptions import ValidationError
+# TODO: foreign key use, idex and ondelete
 
 
 class ProjectProject(models.Model):
@@ -9,25 +13,33 @@ class ProjectProject(models.Model):
         string='Project Place',
         states={'close': [('readonly', True)]},
     )
-    agency = fields.Many2one(
+    agency_partner_id = fields.Many2one(
         'res.partner',
-        string="Agency",
+        string='Agency',
+        states={'close': [('readonly', True)]},
+        domain=[('category_id', 'like', 'Agency'), ],
     )
-    client_type = fields.Selection(
-        [('unknown', 'Unknown'),
-         ('government', 'Government'),
-         ('private_agency', 'Private Sector (Agency)'),
-         ('private_direct', 'Private Sector (Direct)'),
-         ],
+    brand_type_id = fields.Many2one(
+        'project.brand.type',
+        string='Brand type',
+        related='partner_id.brand_type_id',
+        readonly=True,
+        store=True,
+    )
+    industry_id = fields.Many2one(
+        'project.industry',
+        string='Industry',
+        related='partner_id.industry_id',
+        readonly=True,
+        store=True,
+    )
+    client_type_id = fields.Many2one(
+        'project.client.type',
         string='Client Type',
         states={'close': [('readonly', True)]},
     )
-    obligation = fields.Selection(
-        [('corporate', 'Corporate'),
-         ('sale', 'Sales'),
-         ('crm', 'CSR'),
-         ('csr', 'CSR'),
-         ],
+    obligation_id = fields.Many2one(
+        'project.obligation',
         string='Obligation',
         states={'close': [('readonly', True)]},
     )
@@ -36,108 +48,389 @@ class ProjectProject(models.Model):
         string='Function',
         states={'close': [('readonly', True)]},
     )
-    lead_source = fields.Selection(
-        [('compaign', 'Campaign'),
-         ('cold_call', 'Cold Call'),
-         ('comference', 'Conference'),
-         ('direct_mail', 'Direct Mail'),
-         ('email', 'Email'),
-         ('employee', 'Employee'),
-         ('existing_customer', 'Existing Customer'),
-         ('other', 'Others'),
-         ('partner', 'Partner'),
-         ('campaign', 'Campaign'),
-         ],
-        string='Lead Source',
-        states={'close': [('readonly', True)]},
-    )
-    location = fields.Selection(
-        [('local', 'Local'),
-         ('regional', 'Regional'),
-         ('international', 'International'),
-         ],
+    location_id = fields.Many2one(
+        'project.location',
         string='Location',
         states={'close': [('readonly', True)]},
     )
     description = fields.Text(
         string='Description',
-    )
-    # Team tab
-    client_service = fields.Many2one(
-        'project.department',
-        string="Client Service",
         states={'close': [('readonly', True)]},
     )
-    designer = fields.Many2one(
-        'res.partner',
-        string="Designer"
-    )
-    procurement = fields.Many2one(
-        'res.partner',
-        string="Procurement"
-    )
-    production = fields.Many2one(
-        'res.partner',
-        string="Production"
-    )
-    project_manager = fields.Many2one(
-        'res.partner',
-        string="Product Manager"
-    )
-    creative = fields.Many2one(
-        'res.partner',
-        string="Creative"
-    )
-    graphic = fields.Many2one(
-        'res.partner',
-        string="Graphic"
-    )
-    producer = fields.Many2one(
-        'res.partner',
-        string="Produce"
-    )
-    asst_production = fields.Many2one(
-        'res.partner',
-        string="Asst. Production"
-    )
-    # Others Info tab
-    project_from = fields.Selection(
-        [('unknow', 'Unknow'),
-         ('call_in', 'Call in'),
-         ('new_prospect', 'New Prospect'),
-         ('existing_account', 'Existing Account'),
-         ('ceo_office', 'CEO Office'),
-         ],
+    project_from_id = fields.Many2one(
+        'project.from',
         string='Project From',
         states={'close': [('readonly', True)]},
     )
-    project_type = fields.Selection(
-        [('unknow', 'Unknow'),
-         ('event', 'Event'),
-         ('imc_campaign', 'IMC Campaign'),
-        ],
+    project_type_id = fields.Many2one(
+        'project.type',
         string='Project Type',
         states={'close': [('readonly', True)]},
     )
-    department = fields.Many2one(
-        'project.department',
+    project_budget = fields.Float(
+        string='Project Budget',
+        states={'close': [('readonly', True)]},
+    )
+    actual_price = fields.Float(
+        string='Actual Price',
+        states={'close': [('readonly', True)]},
+    )
+    estimate_cost = fields.Float(
+        string='Estimate Cost',
+        states={'close': [('readonly', True)]},
+    )
+    pre_cost = fields.Float(
+        string='Pre-Project',
+        states={'close': [('readonly', True)]},
+    )
+    actual_po = fields.Float(
+        string='Actual PO',
+        states={'close': [('readonly', True)]},
+    )
+    remain_advance = fields.Float(
+        string='Remain Advance',
+        states={'close': [('readonly', True)]},
+    )
+    expense = fields.Float(
+        string='Expense',
+        states={'close': [('readonly', True)]},
+    )
+    brief_date = fields.Date(
+        string='Brief Date',
+        default=lambda self: fields.Date.context_today(self),
+        states={'close': [('readonly', True)]},
+    )
+    date = fields.Date(
+        default=lambda self: fields.Date.context_today(self),
+        states={'close': [('readonly', True)]},
+    )
+    competitor_ids = fields.Many2many(
+        'project.competitor',
+        'res_competitor_rel', 'project_id', 'competitor_id',
+        string='Competitors',
+        states={'close': [('readonly', True)]},
+    )
+    project_number = fields.Char(
+        string='Project Code',
+        readonly=True,
+        states={'close': [('readonly', True)]},
+        copy=False,
+    )
+    project_member_ids = fields.One2many(
+        'project.team.member',
+        'project_id',
+        string='Team Member',
+        states={'close': [('readonly', True)]},
+    )
+    close_reason = fields.Selection(
+        [('close', 'Completed'),
+         ('reject', 'Reject'),
+         ('lost', 'Lost'),
+         ('cancel', 'Cancelled'),
+         ('terminate', 'Terminated'),
+        ],
+        string='Close Reason',
+        states={'close': [('readonly', True)]},
+    )
+    department_id = fields.Many2one( # no use
+        'hr.department',
         string='Department',
         states={'close': [('readonly', True)]},
     )
-    project_budget = fields.Float(
-        string='Project Budget'
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        string='Operating Unit',
+        default=lambda self: self.env.user.default_operating_unit_id,
+        states={'close': [('readonly', True)]},
     )
-    estimate_cost = fields.Float(
-        string='Estimate cost'
+    state = fields.Selection(
+        [('template', 'Template'),
+         ('draft','Draft'),
+         ('validate', 'Validated'),
+         ('open','In Progress'),
+         ('ready_billing', 'Ready to Billing'),
+         ('invoices', 'Invoices'),
+         ('received', 'Received'),
+         ('cancelled', 'Incompleted'),
+         ('pending','Pending'),
+         ('close','Completed'), ],
+         string='Status',
+         required=True,
+         copy=False,
+         default='draft',
     )
-    brief_date = fields.Date(
-        string='Brief date',
-        default=fields.Date.today
+    state_before_inactive = fields.Char(
+        string='Latest State',
     )
-    competitor =fields.Many2many(
-        'res.company',
-        string="Competitors"
+    is_active_state = fields.Boolean(
+        string='Is Active State',
+        compute='_get_state_before_inactive',
     )
+    lost_reason_id = fields.Many2one(
+        'project.lost.reason',
+        string='Lost Reason',
+    )
+    lost_by_id = fields.Many2one(
+        'res.partner',
+        string='Lost By',
+        domain=[('category_id', 'like', 'Competitor'), ],
+    )
+    reject_reason_id = fields.Many2one(
+        'project.reject.reason',
+        string='Reject Reason',
+    )
+    hold_reason = fields.Text(
+        string='Hold Reason',
+        states={'close': [('readonly', True)]},
+    )
+    assign_id = fields.Many2one(
+        'res.users',
+        string='Assign to',
+        states={'close': [('readonly', True)]},
+    )
+    assign_description = fields.Text(
+        string='Description',
+        states={'close': [('readonly', True)]},
+    )
+    project_parent_id = fields.Many2one(
+        'project.project',
+        string='Parent Project',
+        inverse='_set_project_analytic_account',
+        states={'close': [('readonly', True)]},
+        store=True,
+    )
+
+    _defaults = {
+        'use_tasks': False
+    }
+    # TODO create tab to show invoices of project.
+    # invoice_ids = fields.Many2many(
+    #     'account.invoice',
+    #     string='Invoices',
+    #     compute='_compute_invoice_ids',
+    #     help="This field show invoices related to this project",
+    # )
+    #
+    # @api.multi
+    # @api.depends()
+    # def _compute_invoice_ids(self):
+    #     self.invoice_ids = []
+
+    @api.model
+    def create(self, vals):
+        if vals.get('project_number', '/') == '/':
+            ctx = self._context.copy()
+            current_date = datetime.date.today()
+            fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
+            ctx["fiscalyear_id"] = fiscalyear_id
+            vals['project_number'] = self.env['ir.sequence']\
+                .with_context(ctx).get('cmo.project') # create sequence number
+        project = super(ProjectProject, self).create(vals)
+        return project
+
+    @api.multi
+    def write(self, vals):
+        return super(ProjectProject, self).write(vals)
+
+    @api.multi
+    def action_validate(self):
+        res = self.write({'state':'validate'})
+        return res
+
+    @api.multi
+    def action_approve(self):
+        res = self.write({'state': 'open'})
+        return res
+
+    @api.multi
+    def action_back_to_draft(self):
+        res = self.write({'state': 'draft'})
+        return res
+
+    @api.multi
+    def action_invoices(self):
+        res = self.write({'state': 'invoices'})
+        return res
+
+    @api.multi
+    def action_received(self):
+        res = self.write({'state': 'received'})
+        return res
+
+    @api.multi
+    def action_ready_billing(self):
+        res = self.write({'state': 'ready_billing'})
+        return res
+
+    @api.multi
+    def action_back_to_open(self):
+        res = self.write({'state': 'open'})
+        return res
+
+    @api.multi
+    def action_released(self):
+        if self.state_before_inactive:
+            res = self.write({'state':self.state_before_inactive})  # state_bf_hold
+        else:
+            res = self.write({'state':'open'})
+        self.write({
+            'close_reason': False,
+            'lost_reason_id': False,
+            'lost_by_id': False,
+            'reject_reason_id': False,
+        })
+        return res
+
+    @api.multi
+    def _get_state_before_inactive(self):
+        for project in self:
+            if project.state and \
+               (project.state != 'pending') and \
+               (project.state != 'close') and \
+               (project.state != 'cancelled'):
+               project.write({'state_before_inactive': project.state})
+
+    @api.multi
+    def _set_project_analytic_account(self):
+        for project in self:
+            parent_project = self.env['project.project'].browse(project.project_parent_id.id)
+            project.parent_id = parent_project.analytic_account_id.id
+
+    @api.multi
+    @api.constrains('brief_date', 'date')
+    def _check_brief_dates(self):
+        self.ensure_one()
+        if self.brief_date > self.date:
+            return ValidationError("project brief-date must be lower than project end-date.")
+
+
+class ProjectTeamMember(models.Model):
+    _name = 'project.team.member'
+    _description = 'Project Team Member'
+    _rec_name = 'employee_id'
+
+    project_id = fields.Many2one(
+        'project.project',
+        string='Project',
+        ondelete='cascade',
+        index=True,
+    )
+    position_id = fields.Many2one(
+        'project.position',
+        string='Member Position',
+        required=True,
+    )
+    employee_id = fields.Many2one(
+        'hr.employee',
+        string='Name',
+        required=True,
+    )
+    date_start = fields.Date(
+        string='Start',
+    )
+    date_end = fields.Date(
+        string='End date',
+    )
+    remark = fields.Text(
+        string="Remark"
+    )
+
+
+class ProjectBrandType(models.Model):
+    _name = 'project.brand.type'
+    _description = 'Project Brand Type'
+
+    name = fields.Char(
+        string='Brand Type',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Brand Type must be unique!'),
+    ]
+
+class ProjectClientType(models.Model):
+    _name = 'project.client.type'
+    _description = 'Project Client Type'
+
+    name = fields.Char(
+        string='Client Type',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Client Type must be unique!'),
+    ]
+
+class ProjectIndustry(models.Model):
+    _name = 'project.industry'
+    _description = 'Project Industry'
+
+    name = fields.Char(
+        string='Industry',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Industry must be unique!'),
+    ]
+
+class ProjectLocation(models.Model):
+    _name = 'project.location'
+    _description = 'Project Location'
+
+    name = fields.Char(
+        string='Location',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Location must be unique!'),
+    ]
+
+class ProjectObligation(models.Model):
+    _name = 'project.obligation'
+    _description = 'Project Obligation'
+
+    name = fields.Char(
+        string='Obligation',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Obligation must be unique!'),
+    ]
+
+class ProjectFrom(models.Model):
+    _name = 'project.from'
+    _description = 'Project From'
+
+    name = fields.Char(
+        string='Project From',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project From must be unique!'),
+    ]
 
 class ProjectFunction(models.Model):
     _name = 'project.function'
@@ -156,22 +449,73 @@ class ProjectFunction(models.Model):
         ('name_uniq', 'UNIQUE(name)', 'Project Function must be unique!'),
     ]
 
-class ProjectDepartment(models.Model):
-    _name = 'project.department'
-    _description = 'Project Department'
+class ProjectPosition(models.Model):
+    _name = 'project.position'
+    _description = 'Project Position'
 
     name = fields.Char(
-        string='Name',
+        string='Position',
         required=True,
     )
     active = fields.Boolean(
         string='Active',
-        default=False,
-    )
-    show = fields.Boolean(
-        string='Show',
-        default=False,
+        default=True,
     )
     _sql_constraints = [
-        ('name_uniq', 'UNIQUE(name)', 'Project Department must be unique!'),
+        ('name_uniq', 'UNIQUE(name)', 'Project Position must be unique!'),
     ]
+
+
+class ProjectType(models.Model):
+    _name = 'project.type'
+    _description = 'Project Type'
+
+    name = fields.Char(
+        string='Project Type',
+        required=True,
+    )
+    active = fields.Boolean(
+        string='Active',
+        default=True,
+    )
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Position must be unique!'),
+    ]
+
+class ProjectCompetitor(models.Model):
+    _name = 'project.competitor'
+    _description = 'Project Competitor'
+
+    name = fields.Char(
+        string='Name',
+    )
+    company = fields.Char(
+        string='Company',
+        required=True,
+    )
+    remark = fields.Text(
+        string='Remark',
+    )
+
+    _sql_constraints = [
+        ('name_uniq', 'UNIQUE(name)', 'Project Lost by must be unique!'),
+    ]
+
+class ProjectLostReason(models.Model):
+    _name = 'project.lost.reason'
+    _description = 'Project Lost Reason'
+
+    name = fields.Char(
+        string='Reason',
+        required=True,
+    )
+
+
+class ProjectRejectReason(models.Model):
+    _name = 'project.reject.reason'
+    _description = 'Project Reject Reason'
+
+    name = fields.Char(
+        string='Reason',
+        required=True,
+    )

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data noupdate="1">
+        # Sale Convenant
+        <record model="sale.convenant.description" id="sale_convenant_1">
+            <field name="name">Convenant Thai</field>
+            <field name="active" eval="True"/>
+            <field name="is_eng" eval="False"/>
+            <field name="description">1. กรณีที่ลูกค้ายกเลิกการจัดงาน ก่อนวันจัดงาน 7 วัน หรือน้อยกว่า ลูกค้าจะต้องชำระค่ายกเลิกงานเป็นจำนวน 90% ของค่าจ้างทั้งหมด ตามใบเสนอราคา/สัญญาฉบับนี้
+2. กรณีที่ลูกค้ายกเลิกการจัดงาน ก่อนถึงกำหนดวันจัดงานมากกว่า 15 วัน ลูกค้าจะต้องชำระค่ายกเลิกงานเป็นจำนวน 70% ของค่าจ้างทั้งหมด ตามใบเสนอราคา/สัญญาฉบับนี้
+3. กรณีที่ลูกค้ายกเลิกการจัดงาน ก่อนถึงกำหนดวันจัดงานมากกว่า 30 วัน ลูกค้าจะต้องชำระค่ายกเลิกงานเป็น
+            </field>
+        </record>
+        <record model="sale.convenant.description" id="sale_convenant_2">
+            <field name="name">Convenant Eng</field>
+            <field name="active" eval="True"/>
+            <field name="is_eng" eval="True"/>
+            <field name="description">1. 7 Days Before Event Date is 90% of the Total amount in Quotation or contract
+2. 15 days Before Event Date is 70% of the Total amount in Quotation or contract
+3. 30 days Before Event Date is 50% of the Total amount in Quotation or contract
+            </field>
+        </record>
+    </data>
+</openerp>
