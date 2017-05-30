@@ -37,6 +37,7 @@ class SaleOrder(models.Model):
     project_related_id = fields.Many2one(
         'project.project',
         string='Project',
+        inverse='_compute_project_related_id',
         states={'done': [('readonly', True)]},
     )
     event_date_description = fields.Char(
@@ -67,39 +68,39 @@ class SaleOrder(models.Model):
         states={'done': [('readonly', True)]},
         default=lambda self: self._get_th_convenant(),
     )
+    discount_type = fields.Selection(
+        [('percent', 'Percentage'),
+         ('amount', 'Amount')],
+         string='Discount Type',
+         states={'done': [('readonly', True)]},
+    )
+    discount_rate = fields.Float(
+        string='Discount Rate',
+        states={'done': [('readonly', True)]},
+    )
 
     @api.multi
+    @api.depends('amount_before_management_fee')
     def _compute_before_management_fee(self):
-        total = 0
-        for line in self.order_line:
-            if line.order_lines_group == 'before':
-                total = total + line.price_subtotal
+        total = sum(self.order_line.filtered(\
+            lambda r : r.order_lines_group == 'before'
+            ).mapped('price_subtotal'))
         self.amount_before_management_fee = total
 
     @api.onchange('project_related_id')
     def _get_project_number(self):
-        project = self.env['project.project'].browse(self.project_related_id.id)
+        project = self.env['project.project']\
+            .browse(self.project_related_id.id)
         self.project_id = project.analytic_account_id.id
         self.project_number = project.project_number
 
     @api.multi
-    def write(self, vals): # TODO refactor get analytic account by compute field
-        self.ensure_one()
-        if 'project_related_id' in vals:
-            project = self.env['project.project'].browse(vals['project_related_id'])
-            self.write({
-                'project_id' :  project.analytic_account_id.id,
-                'project_number' : project.project_number,
-            })
-        return super(SaleOrder, self).write(vals)
-
-    @api.model
-    def create(self, vals): # TODO refactor get analytic account by compute field
-        if 'project_related_id' in vals:
-            project = self.env['project.project'].browse(vals['project_related_id'])
-            vals['project_id'] = project.analytic_account_id.id
-            vals['project_number'] = project.project_number
-        return super(SaleOrder, self).create(vals)
+    def _compute_project_related_id(self):
+        for quote in self:
+            parent_project = self.env['project.project']\
+                .browse(quote.project_related_id.id)
+            quote.project_id = parent_project.analytic_account_id.id
+            quote.project_number = parent_project.project_number
 
     @api.multi
     def _get_eng_convenant(self):
