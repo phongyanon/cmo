@@ -71,11 +71,14 @@ class SaleOrder(models.Model):
     discount_type = fields.Selection(
         [('percent', 'Percentage'),
          ('amount', 'Amount')],
+         inverse='_compute_discount_rate',
          string='Discount Type',
          states={'done': [('readonly', True)]},
     )
     discount_rate = fields.Float(
         string='Discount Rate',
+        inverse='_compute_discount_rate',
+        store=True,
         states={'done': [('readonly', True)]},
     )
 
@@ -87,8 +90,22 @@ class SaleOrder(models.Model):
             ).mapped('price_subtotal'))
         self.amount_before_management_fee = total
 
+    @api.depends('discount_type', 'discount_rate', 'order_line')
+    def _compute_discount_rate(self):
+        lines = self.order_line
+        if not self.discount_type:
+            return
+        percent = 0
+        if self.discount_type == 'percent':
+            percent = self.discount_rate
+        elif self.discount_type == 'amount':
+            total = sum(self.order_line.mapped('price_unit'))
+            percent = (self.discount_rate * 100.0) / total
+        for line in lines: # TODO: refactor iterator
+            line.discount = percent
+
     @api.onchange('project_related_id')
-    def _get_project_number(self):
+    def _onchange_project_number(self):
         project = self.env['project.project']\
             .browse(self.project_related_id.id)
         self.project_id = project.analytic_account_id.id
