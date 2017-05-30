@@ -81,13 +81,23 @@ class SaleOrder(models.Model):
         store=True,
         states={'done': [('readonly', True)]},
     )
+    amount_discount = fields.Float(
+        string="Discount",
+        compute='_compute_amount_discount',
+        readonly=True,
+    )
+
+    @api.depends('amount_untaxed')
+    def _compute_amount_discount(self):
+        total = sum(self.order_line.mapped('price_unit'))
+        self.amount_discount = total - self.amount_untaxed
 
     @api.multi
     @api.depends('amount_before_management_fee')
     def _compute_before_management_fee(self):
         total = sum(self.order_line.filtered(\
             lambda r : r.order_lines_group == 'before'
-            ).mapped('price_subtotal'))
+            ).mapped('price_unit'))
         self.amount_before_management_fee = total
 
     @api.depends('discount_type', 'discount_rate', 'order_line')
