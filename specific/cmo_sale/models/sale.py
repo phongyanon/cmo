@@ -35,8 +35,9 @@ class sale_order(models.Model):
         string='Payment Term',
         states={'done': [('readonly', True)]},
     )
-    convenant_description = fields.Text(
-        string='Convenant',
+    covenant_description = fields.Text(
+        string='Covenant',
+        translate=True,
         states={'done': [('readonly', True)]},
     )
     discount_type = fields.Selection(
@@ -56,6 +57,20 @@ class sale_order(models.Model):
         string="Discount",
         compute='_compute_amount_discount',
         readonly=True,
+    )
+    quote_ref_id = fields.Many2one(
+        'sale.order',
+        string='Ref.Quotation',
+        # domain=[ TODO filter partner_id and project_number
+        #         ('partner_id', 'like', lambda self: self.partner_id),
+        #         ('project_number', 'like', lambda self: self.project_number),
+        #     ],
+        states={'done': [('readonly', True)]},
+    )
+    approval_id = fields.Many2one(
+        'res.users',
+        string='Approval',
+        states={'done': [('readonly', True)]},
     )
 
     @api.depends('amount_untaxed')
@@ -100,6 +115,16 @@ class sale_order(models.Model):
                 .browse(quote.project_related_id.id)
             quote.project_id = parent_project.analytic_account_id.id
             quote.project_number = parent_project.project_number
+
+    # @api.multi TODO: domain of Ref.Quotation
+    # def _domain_quote_ref_id(self):
+    #     self.ensure_one()
+    #     rec = self.env['sale.order'].with_context(active_false=True).\
+    #         filtered(lambda r:
+    #             (r.partner_id == self.partner_id) and
+    #             (r.project_number == self.project_number)
+    #         )
+    #     return rec
 
 
 class SaleOrderLine(models.Model):
