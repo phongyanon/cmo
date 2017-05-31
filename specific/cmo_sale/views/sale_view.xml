@@ -68,16 +68,21 @@
                         <field name="note" string="Remark"/>
                     </group>
                 </field>
+                <field name="client_order_ref" position="after">
+                    <field name="quote_ref_id"/>
+                </field>
+                <field name="user_id" position="after">
+                    <field name="approval_id"/>
+                </field>
                 <page string="Other Information" position="after">
                     <page string="Payment Term">
                         <group>
                             <field name="payment_term_description"/>
                         </group>
                     </page>
-                    <page string="Convenants Of Client">
+                    <page string="Covenants Of Client">
                         <group>
-                            <field name="convenant_description_eng"/>
-                            <field name="convenant_description_th"/>
+                            <field name="covenant_description"/>
                         </group>
                     </page>
                 </page>
