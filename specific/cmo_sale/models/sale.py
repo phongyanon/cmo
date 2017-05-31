@@ -2,31 +2,8 @@
 
 from openerp import fields, models, api
 
-class SaleConvenantDescription(models.Model):
-    _name = 'sale.convenant.description'
 
-    name = fields.Char(
-        string='Name',
-        required=True,
-    )
-    description = fields.Text(
-        string='Description',
-    )
-    active = fields.Boolean(
-        string='Active',
-        default=True,
-    )
-    is_eng = fields.Boolean(
-        string='Is English',
-        default=True,
-    )
-
-    _sql_constraints = [
-        ('name_uniq', 'UNIQUE(name)', 'Name must be unique!'),
-    ]
-
-
-class SaleOrder(models.Model):
+class sale_order(models.Model):
     _inherit = 'sale.order'
 
     project_number = fields.Char(
@@ -58,15 +35,9 @@ class SaleOrder(models.Model):
         string='Payment Term',
         states={'done': [('readonly', True)]},
     )
-    convenant_description_eng = fields.Text(
+    convenant_description = fields.Text(
         string='Convenant',
         states={'done': [('readonly', True)]},
-        default=lambda self: self._get_eng_convenant(),
-    )
-    convenant_description_th = fields.Text(
-        string=u'เงื่อนไขการยกเลิก',
-        states={'done': [('readonly', True)]},
-        default=lambda self: self._get_th_convenant(),
     )
     discount_type = fields.Selection(
         [('percent', 'Percentage'),
@@ -89,8 +60,9 @@ class SaleOrder(models.Model):
 
     @api.depends('amount_untaxed')
     def _compute_amount_discount(self):
-        total = sum(self.order_line.mapped('price_unit'))
-        self.amount_discount = total - self.amount_untaxed
+        for line in self:
+            total = sum(line.order_line.mapped('price_unit'))
+            line.amount_discount = total - line.amount_untaxed
 
     @api.multi
     @api.depends('amount_before_management_fee')
@@ -128,24 +100,6 @@ class SaleOrder(models.Model):
                 .browse(quote.project_related_id.id)
             quote.project_id = parent_project.analytic_account_id.id
             quote.project_number = parent_project.project_number
-
-    @api.multi
-    def _get_eng_convenant(self):
-        convenants = self.env['sale.convenant.description'].search([
-            ['is_eng', '=', True],
-            ['active', '=', True],
-        ])
-        if convenants:
-            return convenants[0].description
-
-    @api.model
-    def _get_th_convenant(self):
-        convenants = self.env['sale.convenant.description'].search([
-            ['is_eng', '=', False],
-            ['active', '=', True],
-        ])
-        if convenants:
-            return convenants[0].description
 
 
 class SaleOrderLine(models.Model):
