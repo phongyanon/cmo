@@ -2,6 +2,26 @@
 
 from openerp import fields, models, api
 
+class SaleConvenantDescription(models.Model):
+     _name = 'sale.convenant.description'
+
+     name = fields.Char(
+         string='Name',
+         required=True,
+     )
+     description = fields.Text(
+         string='Description',
+         translate=True,
+     )
+     active = fields.Boolean(
+         string='Active',
+         default=True,
+     )
+
+     _sql_constraints = [
+         ('name_uniq', 'UNIQUE(name)', 'Name must be unique!'),
+     ]
+
 
 class sale_order(models.Model):
     _inherit = 'sale.order'
@@ -38,6 +58,7 @@ class sale_order(models.Model):
     covenant_description = fields.Text(
         string='Covenant',
         translate=True,
+        default='_default_convenant',
         states={'done': [('readonly', True)]},
     )
     discount_type = fields.Selection(
@@ -115,6 +136,14 @@ class sale_order(models.Model):
                 .browse(quote.project_related_id.id)
             quote.project_id = parent_project.analytic_account_id.id
             quote.project_number = parent_project.project_number
+
+    @api.model
+    def _default_convenant(self):
+        convenants = self.env['sale.convenant.description'].search([
+            ['active', '=', True],
+        ])
+        if convenants:
+            return convenants[0].description
 
     # @api.multi TODO: domain of Ref.Quotation
     # def _domain_quote_ref_id(self):
