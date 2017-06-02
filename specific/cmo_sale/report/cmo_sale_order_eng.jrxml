@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cmo_sale_order_eng" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="43"/>
+	<property name="ireport.y" value="0"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;]"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -97,7 +97,7 @@
 					<textFieldExpression class="java.lang.Float"><![CDATA[$V{sum total group}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement x="350" y="-1" width="100" height="20"/>
+					<reportElement x="372" y="-1" width="75" height="20"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
@@ -112,7 +112,7 @@
 			<band height="20">
 				<textField>
 					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="0" y="0" width="38" height="20" isRemoveLineWhenBlank="true" backcolor="#C3C3C3"/>
-					<textElement verticalAlignment="Middle">
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[$F{section code}]]></textFieldExpression>
@@ -160,162 +160,151 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="253" splitType="Stretch">
+		<band height="285" splitType="Stretch">
 			<staticText>
-				<reportElement x="205" y="0" width="150" height="32"/>
+				<reportElement x="200" y="10" width="150" height="32"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="24" isBold="true" isItalic="false" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Quotation]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="446" y="32" width="111" height="20"/>
+				<reportElement x="446" y="47" width="111" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="446" y="52" width="111" height="20"/>
+				<reportElement x="446" y="67" width="111" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_number}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="79" y="92" width="455" height="20"/>
-				<box>
-					<bottomPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="79" y="115" width="455" height="20"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="79" y="112" width="455" height="20"/>
-				<box>
-					<bottomPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="79" y="135" width="455" height="43"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{street}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="79" y="132" width="455" height="20"/>
-				<box>
-					<bottomPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="79" y="178" width="455" height="20"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{project name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="79" y="152" width="455" height="20"/>
-				<box>
-					<bottomPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="79" y="198" width="455" height="20"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{event date}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="79" y="172" width="455" height="20"/>
-				<box>
-					<bottomPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="79" y="218" width="455" height="20"/>
+				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{venue}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="446" y="72" width="111" height="20"/>
+				<reportElement x="446" y="87" width="111" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{date_order}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="363" y="32" width="83" height="20"/>
+				<reportElement x="363" y="47" width="83" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Number]]></text>
+				<text><![CDATA[Number:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="363" y="52" width="83" height="20"/>
+				<reportElement x="363" y="67" width="83" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Project Number]]></text>
+				<text><![CDATA[Project Number:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="363" y="72" width="83" height="20"/>
+				<reportElement x="363" y="87" width="83" height="20"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Date]]></text>
+				<text><![CDATA[Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="92" width="72" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement x="2" y="115" width="72" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Attention]]></text>
+				<text><![CDATA[Attention:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="112" width="72" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement x="2" y="135" width="72" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Address]]></text>
+				<text><![CDATA[Address:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="132" width="72" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement x="2" y="178" width="72" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Project Name]]></text>
+				<text><![CDATA[Project Name:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="152" width="72" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement x="2" y="198" width="72" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Event Date]]></text>
+				<text><![CDATA[Event Date:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="172" width="72" height="20"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
+				<reportElement x="2" y="218" width="72" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[Venue]]></text>
+				<text><![CDATA[Venue:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="47" y="212" width="455" height="20"/>
+				<reportElement x="49" y="245" width="455" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[CMO PLC. here in after referred to as “Company” agrees to provide services to Client]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="2" y="232" width="455" height="20" forecolor="#000000" backcolor="#5FE9FE"/>
+				<reportElement mode="Opaque" x="0" y="265" width="457" height="20" forecolor="#000000" backcolor="#5FE9FE"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<text><![CDATA[1) The scope of services, services fees				                  ]]></text>
+				<text><![CDATA[ 1) The scope of services, services fees				                  ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="455" y="232" width="100" height="20" forecolor="#000000" backcolor="#5FE9FE"/>
+				<reportElement mode="Opaque" x="455" y="265" width="100" height="20" forecolor="#000000" backcolor="#5FE9FE"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
 				</textElement>
 				<text><![CDATA[Bath]]></text>
 			</staticText>
+			<image>
+				<reportElement x="30" y="-5" width="88" height="67"/>
+				<imageExpression class="java.lang.String"><![CDATA["/home/boss/workspace/8.0/cmo/specific/cmo_sale/static/description/cmo.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -325,10 +314,10 @@
 		<band splitType="Prevent"/>
 	</columnHeader>
 	<detail>
-		<band height="47" splitType="Stretch">
+		<band height="90" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="20" width="327" height="20"/>
-				<textElement verticalAlignment="Middle">
+				<reportElement x="2" y="20" width="325" height="70" isRemoveLineWhenBlank="true"/>
+				<textElement verticalAlignment="Top">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{order line}]]></textFieldExpression>
@@ -391,7 +380,7 @@
 		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="513" splitType="Stretch">
+		<band height="534" splitType="Stretch">
 			<textField pattern="###0.00;###0.00-">
 				<reportElement x="427" y="48" width="128" height="20"/>
 				<box>
@@ -448,24 +437,24 @@
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[2) Term of Peyment]]></text>
+				<text><![CDATA[ 2) Term of Peyment]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="0" y="180" width="555" height="20" forecolor="#000000" backcolor="#5FE9FE"/>
 				<textElement verticalAlignment="Middle">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<text><![CDATA[3) Covenant of Client]]></text>
+				<text><![CDATA[ 3) Covenant of Client]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="0" y="99" width="427" height="81"/>
+				<reportElement x="16" y="99" width="427" height="81"/>
 				<textElement verticalAlignment="Top">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{Term of Payment}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="200" width="427" height="95"/>
+				<reportElement x="16" y="200" width="427" height="95"/>
 				<textElement verticalAlignment="Top">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -493,7 +482,7 @@
 				<text><![CDATA[For and on behalf of CMO Public Company Limited]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="99" y="392" width="336" height="20"/>
+				<reportElement x="99" y="413" width="336" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
@@ -520,14 +509,14 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="216" y="473" width="110" height="20"/>
+				<reportElement x="216" y="494" width="110" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[ Authorized Signatory]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="186" y="493" width="177" height="20"/>
+				<reportElement x="186" y="514" width="177" height="20"/>
 				<box>
 					<bottomPen lineWidth="1.0" lineStyle="Dotted"/>
 				</box>
@@ -537,21 +526,21 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="158" y="493" width="28" height="20"/>
+				<reportElement x="158" y="514" width="28" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<text><![CDATA[Date]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="207" y="423" width="123" height="20"/>
+				<reportElement x="207" y="444" width="123" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="186" y="453" width="177" height="20"/>
+				<reportElement x="186" y="474" width="177" height="20"/>
 				<box>
 					<bottomPen lineWidth="1.0" lineStyle="Dotted"/>
 				</box>
