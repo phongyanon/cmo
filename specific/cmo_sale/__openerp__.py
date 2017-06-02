@@ -13,7 +13,6 @@
         'sale_layout',
         'sale_stock',
         'sale_margin',
-        'sale_analytic_plans',
     ],
     'data': [
         'report/report_saleorder.xml',
