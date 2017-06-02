@@ -29,12 +29,12 @@ class sale_order(models.Model):
     project_number = fields.Char(
         string='Project Code',
         readonly=True,
+        compute='_compute_project_number',
         copy=False,
     )
     project_related_id = fields.Many2one(
         'project.project',
         string='Project',
-        inverse='_compute_project_related_id',
         states={'done': [('readonly', True)]},
     )
     event_date_description = fields.Char(
@@ -94,6 +94,7 @@ class sale_order(models.Model):
         states={'done': [('readonly', True)]},
     )
 
+    @api.multi
     @api.depends('amount_untaxed')
     def _compute_amount_discount(self):
         for line in self:
@@ -130,7 +131,8 @@ class sale_order(models.Model):
         self.project_number = project.project_number
 
     @api.multi
-    def _compute_project_related_id(self):
+    @api.depends('project_number', 'project_related_id')
+    def _compute_project_number(self):
         for quote in self:
             parent_project = self.env['project.project']\
                 .browse(quote.project_related_id.id)
@@ -145,37 +147,28 @@ class sale_order(models.Model):
         if convenants:
             return convenants[0].description
 
-    # @api.multi TODO: domain of Ref.Quotation
-    # def _domain_quote_ref_id(self):
-    #     self.ensure_one()
-    #     rec = self.env['sale.order'].with_context(active_false=True).\
-    #         filtered(lambda r:
-    #             (r.partner_id == self.partner_id) and
-    #             (r.project_number == self.project_number)
-    #         )
-    #     return rec
-
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     order_lines_group = fields.Selection(
-        [('before','Before Management Fee'),
+        [('before','Before Management and Operation Fee'),
          ('manage_fee','Management and Operation Fee'),
         ],
         string='Group',
         default='before',
     )
-
     sale_layout_custom_group_id = fields.Many2one(
         'sale_layout.custom_group',
         string='Custom Group',
     )
-
     sale_order_line_margin = fields.Float(
         string='Margin',
-        compute='_get_sale_order_line_margin',
-        readonly=True,
+        compute='_compute_sale_order_line_margin',
+    )
+    so_line_percent_margin = fields.Float(
+        string='Percentage',
+        compute='_compute_so_line_percent_margin'
     )
 
     section_code = fields.Selection(
@@ -201,10 +194,22 @@ class SaleOrderLine(models.Model):
             'context': {'order_line_id': self.id, 'view_id': 'view_sale_management_fee',}
         }
 
+    @api.multi
     @api.onchange('price_unit', 'purchase_price')
-    def _get_sale_order_line_margin(self):
-        margin = self.price_unit - self.purchase_price
-        self.sale_order_line_margin = margin
+    def _compute_sale_order_line_margin(self):
+        for line in self:
+            margin = line.price_unit - line.purchase_price
+            line.sale_order_line_margin = margin
+
+    @api.multi
+    @api.onchange('price_unit', 'purchase_price')
+    def _compute_so_line_percent_margin(self):
+        for line in self:
+            margin = line.price_unit - line.purchase_price
+            if line.price_unit:
+                line.so_line_percent_margin = margin * 100.0 / line.price_unit
+            else:
+                line.so_line_percent_margin = 0.0
 
 class SaleLayoutCustomGroup(models.Model):
     _name = 'sale_layout.custom_group'
