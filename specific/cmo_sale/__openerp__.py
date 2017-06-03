@@ -13,10 +13,8 @@
         'sale_layout',
         'sale_stock',
         'sale_margin',
-        'sale_analytic_plans',
     ],
     'data': [
-        'report/report_saleorder.xml',
         'data/sale_data.xml',
         'wizard/cal_manage_fee_view.xml',
         'views/sale_view.xml',
