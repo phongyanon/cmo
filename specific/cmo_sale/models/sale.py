@@ -61,6 +61,11 @@ class SaleOrder(models.Model):
         default=lambda self: self._default_covenant(),
         states={'done': [('readonly', True)]},
     )
+    quote_ref_id = fields.Many2one(
+        'sale.order',
+        string='Ref.Quotation',
+        states={'done': [('readonly', True)]},
+    )
 
     @api.multi
     @api.depends('amount_before_management_fee')
