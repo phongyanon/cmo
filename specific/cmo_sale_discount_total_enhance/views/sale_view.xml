@@ -10,7 +10,7 @@
                     <field name="amount_before_discount" widget='monetary' options="{'currency_field': 'currency_id'}"/>
                 </field>
                 <xpath expr="//field[@name='order_line']/tree[@string='Sales Order Lines']/field[@name='price_subtotal']" position="replace">
-                    <field name="sub_total_line"/>
+                    <field name="price_subtotal_no_disco"/>
                 </xpath>
             </field>
         </record>
