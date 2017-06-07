@@ -31,7 +31,8 @@ class sale_order(models.Model):
     def calculate_discount(self, vals, order_id):
         discount = 0
         if ('discount_rate' in vals) and ('order_line' in vals):
-            res = self.env['sale.order'].browse(order_id)
+            # res = self.env['sale.order'].browse(order_id)
+            res = vals['']
             if vals['discount_type'] == 'percent':
                 discount = vals['discount_rate']
             else:
@@ -50,7 +51,8 @@ class sale_order(models.Model):
     @api.model
     def create(self, vals):
         res = super(sale_order, self).create(vals)
-        self.calculate_discount(vals, res.id)
+        vals['sale_order_id'] = res
+        self.calculate_discount(vals)
         res._amount_all()
         return res
 
@@ -63,7 +65,8 @@ class sale_order(models.Model):
                     vals['discount_type'] = order.discount_type
                 if 'discount_rate' not in vals:
                     vals['discount_rate'] = order.discount_rate
-                self.calculate_discount(vals, order.id)
+                vals['sale_order_id'] = order
+                self.calculate_discount(vals)
                 order._amount_all()
         return res
 
@@ -106,7 +109,7 @@ class sale_order(models.Model):
                     discount = order.discount_rate
                 for line in order.order_line:
                     line.discount = discount
-        self._amount_all
+        self._amount_all()
 
 
 class SaleOrderLine(models.Model):
