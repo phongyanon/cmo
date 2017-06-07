@@ -12,13 +12,16 @@
                 </field>
                 <xpath expr="///field[@name='project_id']" position="before">
                     <field name="project_related_id"/>
-                    <field name="event_date_description" style="width:200%"/>
-                    <field name="venue_description" style="width:200%"/>
+                    <field name="event_date_description" style="width:150%"/>
+                    <field name="venue_description" style="width:150%"/>
                     <field name="amount_before_management_fee" invisible="1"/>
                 </xpath>
                 <xpath expr="///field[@name='project_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <field name="client_order_ref" position="after">
+                    <field name="quote_ref_id"/>
+                </field>
                 <field name="note" position="replace">
                     <group>
                         <field name="note" string="Remark"/>
