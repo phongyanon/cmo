@@ -70,47 +70,47 @@ class sale_order(models.Model):
         old_revision.message_post(body=msg)
         return action
 
-    @api.returns('self', lambda value: value.id)
     @api.multi
     def copy(self, defaults=None):
         context_update = {}
         if not defaults:
             defaults = {}
-        if self.env.context.get('new_sale_revision'):
-            prev_name = self.name
-            if self.current_revision_id:
-                current_order = self.env['sale.order'].browse(
-                    self.current_revision_id.id)
-                revno = current_order.revision_number
-                for order in current_order.old_revision_ids:
-                    order.write({'current_revision_id': self.id})
-                current_order.write({
-                    'current_revision_id': self.id,
+        for order in self:
+            if order.env.context.get('new_sale_revision'):
+                prev_name = order.name
+                if order.current_revision_id:
+                    current_order = order.env['sale.order'].browse(
+                        order.current_revision_id.id)
+                    revno = current_order.revision_number
+                    for old_order in current_order.old_revision_ids:
+                        old_order.write({'current_revision_id': order.id})
+                    current_order.write({
+                        'current_revision_id': order.id,
+                        'active': False,
+                        'state': 'cancel',
+                    })
+                    order.write({
+                        'current_revision_id': None,
+                        'active': True,
+                        'state': 'draft',
+                    })
+                    new_revno = order.revision_number
+                else:
+                    revno = order.revision_number
+                    new_revno = revno
+                order.write({
+                    'revision_number': revno + 1,
+                    'name': '%s-%02d' % (order.unrevisioned_name, revno + 1),
+                })
+                context_update = {
+                    'name': prev_name,
+                    'revision_number': new_revno,
                     'active': False,
                     'state': 'cancel',
-                })
-                self.write({
-                    'current_revision_id': None,
-                    'active': True,
-                    'state': 'draft',
-                })
-                new_revno = self.revision_number
-            else:
-                revno = self.revision_number
-                new_revno = revno
-            self.write({
-                'revision_number': revno + 1,
-                'name': '%s-%02d' % (self.unrevisioned_name, revno + 1),
-            })
-            context_update = {
-                'name': prev_name,
-                'revision_number': new_revno,
-                'active': False,
-                'state': 'cancel',
-                'current_revision_id': self.id,
-                'unrevisioned_name': self.unrevisioned_name,
-            }
-            defaults.update(context_update)
+                    'current_revision_id': order.id,
+                    'unrevisioned_name': order.unrevisioned_name,
+                }
+                defaults.update(context_update)
         return super(sale_order, self).copy(defaults)
 
     @api.multi
