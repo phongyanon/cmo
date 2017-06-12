@@ -16,13 +16,13 @@ class sale_order(models.Model):
     )
     use_multi_customer = fields.Boolean(
         string='Use Multiple Customer',
-        states={'draft': [('readonly', False)]},
+        states={'done': [('readonly', True)]},
         default=False,
         help="It indicates that the sale order has been sent.",
     )
     use_merge = fields.Boolean(
         string='Merge Order Line',
-        states={'draft': [('readonly', False)]},
+        states={'done': [('readonly', True)]},
         default=False,
         help="Merge order line to be single line.",
     )
@@ -40,6 +40,7 @@ class sale_order(models.Model):
          ('change_quantity', 'As Units (change quantity)')],
         string='Sale Order Mode',
         requied=True,
+        states={'done': [('readonly', True)]},
         default='change_price',
     )
 

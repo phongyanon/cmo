@@ -36,7 +36,7 @@
                                 <field name="sale_order_mode" attrs="{'invisible': [('use_merge', '=', True)]}"/>
                             </group>
                         </group>
-                        <field name="order_plan_ids">
+                        <field name="order_plan_ids" attrs="{'readonly':[('state', '!=', 'draft')]}">
                             <tree string="Sale Order Plan" editable="buttom">
                                 <field name="sequence" widget="handle"/>
                                 <field name="quote_id" invisible="1"/>
