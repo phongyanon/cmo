@@ -91,7 +91,8 @@ class sale_order(models.Model):
             order.amount_before_discount = amount_before_discount
 
     @api.multi
-    @api.onchange('discount_type', 'discount_rate', 'order_line')
+    @api.onchange('discount_type', 'discount_rate', 'order_line',
+        'order_line.product_uom_qty', 'order_line.price_unit')
     def supply_rate(self):
         for order in self:
             if order.discount_type == 'percent':
