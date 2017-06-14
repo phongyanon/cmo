@@ -27,8 +27,9 @@ class sale_order(models.Model):
         track_visibility='always',
     )
 
-    @api.model
+    @api.multi
     def calculate_discount(self, vals):
+        self.ensure_one()
         discount = 0
         if ('discount_rate' in vals) and ('order_line' in vals):
             res = vals['sale_order_record']
@@ -40,10 +41,7 @@ class sale_order(models.Model):
                 )
                 total = amount if amount != 0 else 1 # prevent devison by zero
                 discount_rate = vals['discount_rate']
-                if discount_rate != 0:
-                    discount = (discount_rate / total) * 100.0
-                else:
-                    discount = discount_rate
+                discount = (discount_rate / total) * 100.0
             for line in res.order_line:
                 line.write({'discount': discount})
 
