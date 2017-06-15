@@ -26,6 +26,13 @@
             	</xpath>
                 <page string="Other Information" position="before">
                     <page string="Order Plan" attrs="{'invisible': ['|', ('use_multi_customer','=',False), ('order_type','=','sale_order')]}">
+                        <button name="action_cancel_draft_sale_orders"
+                                states="done"
+                                string="Cancel Draft Sale Orders"
+                                class="oe_highlight"
+                                type="object"
+                                confirm="This will cancel all draft sale orders, are you sure you want to proceed?"
+                                groups="base.group_user"/>
                         <group>
                             <group>
                                 <field name="customer_amount" string="Number of Customer"/>

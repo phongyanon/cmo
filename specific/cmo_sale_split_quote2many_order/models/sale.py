@@ -151,6 +151,24 @@ class sale_order(models.Model):
             'context': "{'active': True}"
         }
 
+    @api.multi
+    def action_cancel_draft_sale_orders(self):
+        self.ensure_one()
+        sale_order_ids = self.env['sale.order'].search([
+            '&', ('quote_id', 'like', self.id),
+            ('order_type', '=', 'sale_order'),
+        ])
+        for sale_order in sale_order_ids:
+            if sale_order.state in ('draft'):
+                sale_order.write({
+                    'state': 'cancel',
+                    'active': False,
+                })
+        self.write({'state': 'draft'})
+        self.delete_workflow()
+        self.create_workflow()
+        return True
+
 
 class SaleOrderCustomerPlan(models.Model):
     _name = 'sale.order.customer.plan'
