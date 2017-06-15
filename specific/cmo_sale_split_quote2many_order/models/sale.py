@@ -165,6 +165,8 @@ class sale_order(models.Model):
                     'active': False,
                 })
         self.write({'state': 'draft'})
+        for order_line in self.order_line:
+            order_line.write({'state': 'draft'})
         self.delete_workflow()
         self.create_workflow()
         return True
