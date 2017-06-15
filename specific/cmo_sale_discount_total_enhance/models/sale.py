@@ -76,7 +76,7 @@ class sale_order(models.Model):
             cur = order.pricelist_id.currency_id
             for line in order.order_line:
                 amount_untaxed += line.price_subtotal
-                amount_tax += self._amount_line_tax(line=line)
+                amount_tax += self.self._amount_line_tax(line)
                 amount_discount += (line.product_uom_qty *
                                     line.price_unit *
                                     line.discount) / 100
@@ -101,13 +101,24 @@ class sale_order(models.Model):
                             lambda r: r.product_uom_qty * r.price_unit)
                         )
                 total = amount if amount != 0 else 1 # prevent devison by zero
-                if order.discount_rate != 0:
-                    discount = (order.discount_rate / total) * 100.0
-                else:
-                    discount = order.discount_rate
+                discount = (order.discount_rate / total) * 100.0
                 for line in order.order_line:
                     line.discount = discount
         self._amount_all()
+
+    # @api.model
+    # def amount_line_tax_enhance(self, line, context=None):
+    #     val = 0.0
+    #     line_obj = self.env['sale.order.line']
+    #     price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+    #     #line_obj._calc_line_base_price(cr, uid, line, context=context)
+    #     qty = line.product_uom_qty
+    #     #line_obj._calc_line_quantity(cr, uid, line, context=context)
+    #     for c in self.env['account.tax'].compute_all(
+    #             cr, uid, line.tax_id, price, qty, line.product_id,
+    #             line.order_id.partner_id)['taxes']:
+    #         val += c.get('amount', 0.0)
+    #     return val
 
 
 class SaleOrderLine(models.Model):
@@ -116,6 +127,12 @@ class SaleOrderLine(models.Model):
     price_subtotal_no_disco = fields.Float(
         string='Sub Total',
         compute='_compute_price_subtotal_no_disco',
+    )
+    discount = fields.Float(
+        string='Discount (%)',
+        digits=(16, 10),
+        # digits= dp.get_precision('Discount'),
+        default=0.0
     )
 
     @api.multi
