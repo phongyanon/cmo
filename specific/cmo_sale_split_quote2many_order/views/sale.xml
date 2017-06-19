@@ -51,6 +51,8 @@
                                 <field name="order_plan_ref"/>
                                 <field name="sale_order_amount" sum="Amount"/>
                                 <field name="sale_order_percent" sum="Percent"/>
+                                <field name="order_ref_name" readonly="1"/>
+                                <field name="order_ref_state" readonly="1"/>
                             </tree>
                         </field>
                     </page>

@@ -131,6 +131,7 @@ class sale_order(models.Model):
                     else:
                         new_sale_order.adjust_price_sale_order_line(
                             plan.sale_order_amount)
+                    plan.write({'order_ref_id': new_sale_order.id})
                 order.signal_workflow('convert_to_order')
             else:
                 self.action_button_convert_to_order()
@@ -156,8 +157,11 @@ class sale_order(models.Model):
         self.ensure_one()
         sale_order_ids = self.env['sale.order'].search([
             '&', ('quote_id', 'like', self.id),
-            ('order_type', '=', 'sale_order'),
+            '&', ('order_type', '=', 'sale_order'),
+            ('active', '=', True),
         ])
+        if sale_order_ids.filtered(lambda r: r.state not in 'draft'):
+            raise Warning(_("One of sale orders was confirmed already."))
         for sale_order in sale_order_ids:
             if sale_order.state in ('draft'):
                 sale_order.write({
@@ -209,6 +213,20 @@ class SaleOrderCustomerPlan(models.Model):
         string='Order Reference',
         required=True,
     )
+    order_ref_id = fields.Many2one(
+        'sale.order',
+        string='Sale Order Ref.',
+        readonly=True,
+        copy=False,
+    )
+    order_ref_state = fields.Selection(
+        related='order_ref_id.state',
+        string='State',
+    )
+    order_ref_name = fields.Char(
+        related='order_ref_id.name',
+        string='Name',
+    )
 
     @api.multi
     @api.onchange('sale_order_percent')
@@ -227,5 +245,5 @@ class SaleOrderCustomerPlan(models.Model):
         amount_order = self.quote_id.amount_untaxed_order_plan
         if amount_order != 0:
             new_percent = (self.sale_order_amount/amount_order) * 100 or 0.0
-            if round(new_percent, 6) != round(self.sale_order_percent, 6):
+            if round(new_percent, 6) != round(self.sale_order_percent, 10):
                 self.sale_order_percent = new_percent
