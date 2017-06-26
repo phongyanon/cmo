@@ -26,7 +26,7 @@ class sale_order(models.Model):
     )
     unrevisioned_name = fields.Char(
         string='Order Reference',
-        copy=True,
+        copy=False,
         readonly=True,
     )
     active = fields.Boolean(
@@ -105,13 +105,14 @@ class sale_order(models.Model):
                 context_update = {
                     'name': prev_name,
                     'revision_number': new_revno,
-                    'active': False,
                     'state': 'cancel',
                     'current_revision_id': order.id,
                     'unrevisioned_name': order.unrevisioned_name,
                 }
                 defaults.update(context_update)
-        return super(sale_order, self).copy(defaults)
+        res = super(sale_order, self).copy(defaults)
+        res.write({'active': False})
+        return res
 
     @api.multi
     def order_revision_tree_view(self):
