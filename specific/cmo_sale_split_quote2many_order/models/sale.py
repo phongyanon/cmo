@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from openerp import api, fields, models, _
 from openerp.tools.float_utils import float_round as round
 import openerp.addons.decimal_precision as dp
@@ -131,10 +133,14 @@ class sale_order(models.Model):
         for order in self:
             if self.use_multi_customer and self.order_plan_ids:
                 order_plan = self.validate_sale_order_plan()
+                ctx = self._context.copy()
+                current_date = datetime.date.today()
+                fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
+                ctx["fiscalyear_id"] = fiscalyear_id
                 for plan in order_plan:
                     new_sale_order = order.copy({
-                        'name': self.env['ir.sequence'].get('sale.order')
-                                or '/',
+                        'name': self.env['ir.sequence'].with_context(ctx)\
+                                    .get('cmo.sale_order') or '/',
                         'order_type': 'sale_order',
                         'quote_id': self.id,
                         'client_order_ref': self.client_order_ref,
