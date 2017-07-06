@@ -348,6 +348,16 @@ class ProjectProject(models.Model):
             'context': "{'active': True}"
         }
 
+    @api.multi
+    def name_get(self):
+        res = []
+        for project in self:
+            name = project.name or '/'
+            if name and project.project_number:
+                name = name + ' ('+project.project_number+')'
+            res.append((project.id, name))
+        return res
+
 
 class ProjectTeamMember(models.Model):
     _name = 'project.team.member'

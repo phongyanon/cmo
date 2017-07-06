@@ -15,6 +15,7 @@
     "depends": [
         'project',
         'cmo_sale',
+        'cmo_purchase',
         'account_auto_fy_sequence',
     ],
     "data": [
