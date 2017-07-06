@@ -96,18 +96,19 @@ class sale_order(models.Model):
                 last_line = self.order_line[-1]
                 line_amount = 0
                 for line in lines:
-                    new_price_unit = line.price_unit * \
-                        round((amount_price / self.amount_untaxed) / \
-                        line.product_uom_qty, 2)
+                    new_price_unit = line.price_unit * line.product_uom_qty * \
+                                round((amount_price / self.amount_untaxed), 2)
                     line_amount += new_price_unit
                     line.write({
                         'price_unit': new_price_unit,
                         'purchase_price': 0.0,
+                        'product_uom_qty': 1,
                         })
                 last_price_unit = amount_price - line_amount
                 last_line.write({
                     'price_unit': last_price_unit,
                     'purchase_price': 0.0,
+                    'product_uom_qty': 1,
                     })
         self._amount_all()
 
