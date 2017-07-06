@@ -205,6 +205,11 @@ class ProjectProject(models.Model):
         string='Related Quotation',
         domain=[('order_type', 'like', 'quotation'), ],
     )
+    purchase_related_ids = fields.One2many(
+        'purchase.order',
+        'project_id',
+        string='Related Project',
+    )
 
     _defaults = {
         'use_tasks': False
@@ -327,18 +332,16 @@ class ProjectProject(models.Model):
             'domain': domain,
             'context': "{'active': True}"
         }
-    # project_id
+
     @api.multi
     def purchase_relate_project_tree_view(self):
         self.ensure_one()
         domain = [
-            '&',
-            ('project_related_id', 'like', self.id),
-            ('order_type', 'like', 'quotation'),
+            ('project_id', 'like', self.id),
         ]
         return {
-            'name': 'Quotation',
-            'res_model': 'sale.order',
+            'name': 'Purchase Order',
+            'res_model': 'purchase.order',
             'type': 'ir.actions.act_window',
             'views': [[False, "tree"], [False, "form"]],
             'domain': domain,
