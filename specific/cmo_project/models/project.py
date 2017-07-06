@@ -74,10 +74,14 @@ class ProjectProject(models.Model):
     actual_price = fields.Float(
         string='Actual Price',
         states={'close': [('readonly', True)]},
+        compute='_compute_price_and_cost',
+        store=True,
     )
     estimate_cost = fields.Float(
         string='Estimate Cost',
         states={'close': [('readonly', True)]},
+        compute='_compute_price_and_cost',
+        store=True,
     )
     pre_cost = fields.Float(
         string='Pre-Project',
@@ -86,6 +90,8 @@ class ProjectProject(models.Model):
     actual_po = fields.Float(
         string='Actual PO',
         states={'close': [('readonly', True)]},
+        compute='_compute_actual_po',
+        store=True,
     )
     remain_advance = fields.Float(
         string='Remain Advance',
@@ -347,6 +353,31 @@ class ProjectProject(models.Model):
             'domain': domain,
             'context': "{'active': True}"
         }
+
+    @api.multi
+    @api.depends('actual_price', 'estimate_cost')
+    def _compute_price_and_cost(self):
+        for project in self:
+            actual_price = 0
+            estimate_cost = 0
+            quotes = self.quote_related_ids.filtered(
+                lambda r: r.state in ('draft', 'done')
+            )
+            for quote in quotes:
+                actual_price += quote.amount_untaxed
+                estimate_cost += sum(quote.order_line.filtered(
+                    lambda r: r.purchase_price > 0).mapped('purchase_price'))
+            project.actual_price = actual_price
+            project.estimate_cost = estimate_cost
+
+    @api.multi
+    @api.depends('actual_po')
+    def _compute_actual_po(self):
+        for project in self:
+            purchase_orders = self.purchase_related_ids.filtered(
+                lambda r: r.state in ('confirmed', 'done')
+            )
+            self.actual_po = sum(purchase_orders.mapped('amount_untaxed'))
 
     @api.multi
     def name_get(self):
