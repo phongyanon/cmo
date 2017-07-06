@@ -205,6 +205,13 @@
                 <xpath expr="//p" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//div[@name='buttons']" position="after">
+                    <div class="oe_right oe_button_box" name="sale_purchase_buttons" groups="base.group_user">
+                        <button class="oe_inline oe_stat_button" type="object" name="quotation_relate_project_tree_view" icon="fa-list">
+                            <field string="Sale Quotation" name="quote_related_ids" widget="x2many_counter"/>
+                        </button>
+                    </div>
+                </xpath>
                 <xpath expr="//field[@name='analytic_account_id']" position="before">
                       <h1>
                           <label for="name" string="Project Number"/>

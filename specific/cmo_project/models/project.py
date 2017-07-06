@@ -199,6 +199,12 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
         store=True,
     )
+    quote_related_ids = fields.One2many(
+        'sale.order',
+        'project_related_id',
+        string='Related Quotation',
+        domain=[('order_type', 'like', 'quotation'), ],
+    )
 
     _defaults = {
         'use_tasks': False
@@ -293,7 +299,8 @@ class ProjectProject(models.Model):
     @api.multi
     def _set_project_analytic_account(self):
         for project in self:
-            parent_project = self.env['project.project'].browse(project.project_parent_id.id)
+            parent_project = self.env['project.project'].browse(
+                project.project_parent_id.id)
             project.parent_id = parent_project.analytic_account_id.id
 
     @api.multi
@@ -301,7 +308,42 @@ class ProjectProject(models.Model):
     def _check_brief_dates(self):
         self.ensure_one()
         if self.brief_date > self.date:
-            return ValidationError("project brief-date must be lower than project end-date.")
+            return ValidationError("project brief-date must be lower than \
+                project end-date.")
+
+    @api.multi
+    def quotation_relate_project_tree_view(self):
+        self.ensure_one()
+        domain = [
+            '&',
+            ('project_related_id', 'like', self.id),
+            ('order_type', 'like', 'quotation'),
+        ]
+        return {
+            'name': 'Quotation',
+            'res_model': 'sale.order',
+            'type': 'ir.actions.act_window',
+            'views': [[False, "tree"], [False, "form"]],
+            'domain': domain,
+            'context': "{'active': True}"
+        }
+    # project_id
+    @api.multi
+    def purchase_relate_project_tree_view(self):
+        self.ensure_one()
+        domain = [
+            '&',
+            ('project_related_id', 'like', self.id),
+            ('order_type', 'like', 'quotation'),
+        ]
+        return {
+            'name': 'Quotation',
+            'res_model': 'sale.order',
+            'type': 'ir.actions.act_window',
+            'views': [[False, "tree"], [False, "form"]],
+            'domain': domain,
+            'context': "{'active': True}"
+        }
 
 
 class ProjectTeamMember(models.Model):

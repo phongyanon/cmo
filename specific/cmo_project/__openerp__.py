@@ -14,6 +14,7 @@
     "license": "AGPL-3",
     "depends": [
         'project',
+        'cmo_sale',
         'account_auto_fy_sequence',
     ],
     "data": [
