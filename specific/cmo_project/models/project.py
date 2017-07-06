@@ -355,7 +355,7 @@ class ProjectProject(models.Model):
         }
 
     @api.multi
-    @api.depends('actual_price', 'estimate_cost')
+    @api.depends('actual_price', 'estimate_cost', 'quote_related_ids')
     def _compute_price_and_cost(self):
         for project in self:
             actual_price = 0
@@ -371,7 +371,7 @@ class ProjectProject(models.Model):
             project.estimate_cost = estimate_cost
 
     @api.multi
-    @api.depends('actual_po')
+    @api.depends('actual_po', 'purchase_related_ids')
     def _compute_actual_po(self):
         for project in self:
             purchase_orders = self.purchase_related_ids.filtered(
