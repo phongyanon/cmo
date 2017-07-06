@@ -371,13 +371,17 @@ class ProjectProject(models.Model):
             project.estimate_cost = estimate_cost
 
     @api.multi
-    @api.depends('actual_po', 'purchase_related_ids')
+    @api.depends(
+        'actual_po',
+        'purchase_related_ids',
+        'purchase_related_ids.state',
+    )
     def _compute_actual_po(self):
         for project in self:
-            purchase_orders = self.purchase_related_ids.filtered(
-                lambda r: r.state in ('confirmed', 'done')
+            purchase_orders = project.purchase_related_ids.filtered(
+                lambda r: r.state in ('approved', 'done')
             )
-            self.actual_po = sum(purchase_orders.mapped('amount_untaxed'))
+            project.actual_po = sum(purchase_orders.mapped('amount_untaxed'))
 
     @api.multi
     def name_get(self):
