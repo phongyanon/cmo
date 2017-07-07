@@ -235,7 +235,6 @@ class SaleOrderCustomerPlan(models.Model):
     )
     order_plan_ref = fields.Text(
         string='Order Reference',
-        required=True,
     )
     order_ref_id = fields.Many2one(
         'sale.order',
