@@ -100,19 +100,11 @@
                   <field name="partner_id" string="Customer"/>
                   <field name="project_from_id"/>
                   <field name="project_type_id"/>
-                  <field name="agency_partner_id"/>
-                  <field name="client_type_id"/>
-                  <field name="brand_type_id"/>
-                  <field name="industry_id"/>
-                  <field name="obligation_id"/>
-                  <field name="function_id"/>
-                  <field name="location_id"/>
-                  <field name="project_place"/>
-                  <field name="project_budget"/>
-                  <field name="actual_price"/>
-                  <field name="estimate_cost"/>
-                  <field name="pre_cost"/>
-                  <field name="actual_po"/>
+                  <field name="project_budget" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
+                  <field name="actual_price" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
+                  <field name="estimate_cost" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
+                  <field name="pre_cost" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
+                  <field name="actual_po" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
                   <field name="close_reason"/>
               </xpath>
             </field>
@@ -331,6 +323,7 @@
                             <field name="actual_po" readonly="1"/>
                             <field name="remain_advance" readonly="1"/>
                             <field name="expense" readonly="1"/>
+                            <field name="remaining_cost" readonly="1"/>
                         </group>
                     </page>
                  </xpath>

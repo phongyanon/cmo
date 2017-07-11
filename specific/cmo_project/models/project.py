@@ -216,6 +216,10 @@ class ProjectProject(models.Model):
         'project_id',
         string='Related Project',
     )
+    remaining_cost = fields.Float(
+        string='Remaining Cost',
+        compute='_compute_remaining_cost',
+    )
 
     _defaults = {
         'use_tasks': False
@@ -392,6 +396,14 @@ class ProjectProject(models.Model):
                 name = name + ' ('+project.project_number+')'
             res.append((project.id, name))
         return res
+
+    @api.multi
+    @api.depends('estimate_cost', 'pre_cost', 'actual_po', 'expense')
+    def _compute_remaining_cost(self):
+        for project in self:
+            remaining = (project.estimate_cost + project.pre_cost) - \
+                (project.actual_po + project.expense)
+            project.remaining_cost = remaining
 
 
 class ProjectTeamMember(models.Model):
