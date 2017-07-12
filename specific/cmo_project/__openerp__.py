@@ -4,11 +4,6 @@
     "summary": "",
     "version": "1.0",
     "category": "Project",
-    "description": """
-
-* Additional fields for project master
-
-    """,
     "website": "http://ecosoft.co.th",
     "author": "Kitti U., Phongyanon Y.",
     "license": "AGPL-3",
