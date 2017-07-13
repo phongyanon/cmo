@@ -340,7 +340,7 @@ class ProjectProject(models.Model):
             'type': 'ir.actions.act_window',
             'views': [[False, "tree"], [False, "form"]],
             'domain': domain,
-            'context': "{'active': True}"
+            'context': "{'active': True, 'order_type': 'quotation'}"
         }
 
     @api.multi
