@@ -100,6 +100,7 @@ class ProjectProject(models.Model):
     expense = fields.Float(
         string='Expense',
         states={'close': [('readonly', True)]},
+        compute='_compute_expense',
     )
     brief_date = fields.Date(
         string='Brief Date',
@@ -404,6 +405,17 @@ class ProjectProject(models.Model):
             remaining = (project.estimate_cost + project.pre_cost) - \
                 (project.actual_po + project.expense)
             project.remaining_cost = remaining
+
+    @api.multi
+    def _compute_expense(self): 
+        for project in self:
+            inv_lines = self.env['account.invoice.line'].search([
+                 ['account_analytic_id', '=', project.analytic_account_id.id],
+            ])
+            expense = sum(inv_lines.filtered(
+                lambda r: r.invoice_id.state in ('open', 'paid')
+                ).mapped('price_subtotal'))
+            project.expense = expense
 
 
 class ProjectTeamMember(models.Model):
