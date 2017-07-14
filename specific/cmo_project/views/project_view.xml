@@ -291,7 +291,7 @@
                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@name='parent_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']" position="inside">
+                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']" position="after">
                       <group>
                           <field name="active" invisible="1"/>
                           <group>
@@ -327,7 +327,7 @@
                         </group>
                     </page>
                  </xpath>
-                 <xpath expr="//notebook/page[@string='Other Info']/group[2]" position="after">
+                 <xpath expr="//notebook/page[@string='Other Info']/group[3]" position="after">
                     <group>
                         <field name="description" string="Project Description"/>
                     </group>
