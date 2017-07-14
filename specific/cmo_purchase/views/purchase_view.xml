@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="purchase.menu_purchase_rfq" model="ir.ui.menu">
-            <field name="groups_id" eval="[(6,0,[ref('purchase_invisible')])]"/>
-        </record>
+        <delete id="purchase.menu_purchase_rfq" model="ir.ui.menu"/>
+
         <record id="purchase.purchase_form_action" model="ir.actions.act_window">
             <field name="domain"></field>
         </record>
+
         <record id="purchase_order_form" model="ir.ui.view">
             <field name="name">purchase.order.form</field>
             <field name="model">purchase.order</field>
@@ -71,15 +71,15 @@
                         <field name="name" class="oe_inline" readonly="1"/>
                     </h1>
                 </h1>
-                <field name="partner_ref" position="after">
-                    <field name="project_id" attrs="{'invisible': [('po_type_related', '!=', 'PO Project')], 'required': [('po_type_related', 'in', ('PO Project'))]}"/>
-                    <field name="order_ref" domain="[('order_type', '=', 'quotation'), ('project_related_id', '!=', False), ('project_related_id', '=', project_id)]" attrs="{'invisible': [('po_type_related', '!=', 'PO Project')]}"/>
-                    <field name="event_date_description" style="width:150%" attrs="{'invisible': [('po_type_related', '!=', 'PO Project')], 'required': [('order_ref', '!=', False)]}"/>
-                    <field name="venue_description" style="width:150%" attrs="{'invisible': [('po_type_related', '!=', 'PO Project')], 'required': [('order_ref', '!=', False)]}"/>
-                </field>
                 <field name="picking_type_id" position="after">
                     <field name="po_type_id" options="{'no_create': True, 'no_create_edit': True}"/>
-                    <field name="po_type_related" invisible="True"/>
+                    <field name="po_project" invisible="True"/>
+                </field>
+                <field name="partner_ref" position="after">
+                    <field name="project_id" attrs="{'invisible': [('po_project', '!=', True)], 'required': [('po_project', '=', True)]}"/>
+                    <field name="order_ref" domain="[('order_type', '=', 'quotation'), ('project_related_id', '!=', False), ('project_related_id', '=', project_id)]" attrs="{'invisible': [('po_project', '!=', True)]}"/>
+                    <field name="event_date_description" style="width:150%" attrs="{'invisible': [('po_project', '!=', True)], 'required': [('order_ref', '!=', False)]}"/>
+                    <field name="venue_description" style="width:150%" attrs="{'invisible': [('po_project', '!=', True)], 'required': [('order_ref', '!=', False)]}"/>
                 </field>
                 <field name="notes" position="before">
                     <group>
@@ -181,6 +181,7 @@
                                 <field name="category_id" required="True" options="{'no_create':true,'no_create_edit':true}"/>
                             </group>
                             <group>
+                                <field name="po_project"/>
                                 <field name="active"/>
                             </group>
                         </group>

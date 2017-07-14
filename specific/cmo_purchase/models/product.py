@@ -8,6 +8,8 @@ class ProductProduct(models.Model):
     @api.model
     def name_search(self, name, args=None, operator='ilike', limit=100):
         context = self._context.copy()
+
+        # Search Product Ref from Quotation Number
         if context.get('order_ref', False):
             order = self.env['sale.order'].browse(context.get('order_ref'))
             product_ids = order.order_line.mapped('product_id.id')

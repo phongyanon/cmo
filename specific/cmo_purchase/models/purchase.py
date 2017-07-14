@@ -28,9 +28,9 @@ class PurchaseOrder(models.Model):
         string='PO Type',
         required=True,
     )
-    po_type_related = fields.Char(
-        string='PO Type Related',
-        related='po_type_id.name',
+    po_project = fields.Boolean(
+        string='PO Project',
+        related='po_type_id.po_project',
     )
     approve_ids = fields.Many2one(
         'hr.employee',
@@ -100,4 +100,8 @@ class PurchaseOrderTypeConfig(models.Model):
     active = fields.Boolean(
         string='Active',
         default=True,
+    )
+    po_project = fields.Boolean(
+        string='PO Project',
+        default=False,
     )

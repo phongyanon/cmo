@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <record id="purchase.report_purchase_quotation" model="ir.actions.report.xml">
-            <field name="groups_id" eval="[(6,0,[ref('purchase_invisible')])]"/>
-        </record>
-        <record id="purchase.action_report_purchase_order" model="ir.actions.report.xml">
-            <field name="groups_id" eval="[(6,0,[ref('purchase_invisible')])]"/>
-        </record>
+        <delete id="purchase.report_purchase_quotation" model="ir.actions.report.xml"/>
+        <delete id="purchase.action_report_purchase_order" model="ir.actions.report.xml"/>
     </data>
 </openerp>
