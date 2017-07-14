@@ -55,6 +55,7 @@ class PurchaseOrder(models.Model):
         self.event_date_description = False
         self.venue_description = False
         for line in self.order_line:
+            line.group_id = False
             line.product_ref = False
 
     @api.onchange('order_ref')
@@ -62,6 +63,7 @@ class PurchaseOrder(models.Model):
         self.event_date_description = self.order_ref.event_date_description
         self.venue_description = self.order_ref.venue_description
         for line in self.order_line:
+            line.group_id = False
             line.product_ref = False
 
     @api.model
@@ -85,6 +87,14 @@ class PurchaseOrderLine(models.Model):
     date_planned = fields.Date(
         required=False,
     )
+    group_id = fields.Many2one(
+        'sale_layout.custom_group',
+        string='Custom Group',
+    )
+
+    @api.onchange('group_id')
+    def _onchange_group_id(self):
+        self.product_ref = False
 
 
 class PurchaseOrderTypeConfig(models.Model):

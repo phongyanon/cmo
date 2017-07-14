@@ -10,6 +10,9 @@
     'depends': [
         'purchase_operating_unit',
         'account_auto_fy_sequence',
+        'cmo_sale',
+        'project',
+        'hr',
     ],
     'data': [
         'data/cmo_purchase_sequence.xml',

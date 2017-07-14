@@ -11,8 +11,11 @@ class ProductProduct(models.Model):
 
         # Search Product Ref from Quotation Number
         if context.get('order_ref', False):
+            group_id = context.get('group_id', False)
             order = self.env['sale.order'].browse(context.get('order_ref'))
-            product_ids = order.order_line.mapped('product_id.id')
+            product_ids = order.order_line.filtered(
+                lambda x: x.sale_layout_custom_group_id.id == group_id) \
+                .mapped('product_id.id')
             args = [('id', 'in', product_ids)] + args
         elif 'order_ref' in context:
             args = [('id', 'in', [])]
