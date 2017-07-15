@@ -11,7 +11,7 @@
         'purchase_operating_unit',
         'account_auto_fy_sequence',
         'cmo_sale',
-        'project',
+        'cmo_project',
         'hr',
     ],
     'data': [
