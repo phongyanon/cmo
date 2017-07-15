@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
+from openerp.exceptions import ValidationError
 
 
 class PurchaseOrder(models.Model):
@@ -74,7 +75,27 @@ class PurchaseOrder(models.Model):
             ctx["fiscalyear_id"] = fiscalyear_id
             vals['name'] = self.env['ir.sequence'].\
                 with_context(ctx).get('cmo.purchase')
-        return super(PurchaseOrder, self).create(vals)
+        order = super(PurchaseOrder, self).create(vals)
+        order._check_amount_untaxed()
+        return order
+
+    @api.multi
+    def write(self, vals):
+        res = super(PurchaseOrder, self).write(vals)
+        self._check_amount_untaxed()
+        return res
+
+    @api.multi
+    def _check_amount_untaxed(self):
+        for order in self:
+            po_project = order.po_type_id and order.po_type_id.po_project \
+                or False
+            remaining_cost = order.project_id and \
+                order.project_id.remaining_cost or False
+            if po_project and remaining_cost is not False:
+                if order.amount_untaxed > remaining_cost:
+                    raise ValidationError(
+                        "PO value is over project cost please change value")
 
 
 class PurchaseOrderLine(models.Model):
