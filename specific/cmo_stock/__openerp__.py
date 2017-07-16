@@ -13,6 +13,7 @@
     "depends": [
         'stock_operating_unit',
         'stock_account',
+        'project',
     ],
     "data": [
         'security/cmo_stock_security.xml',

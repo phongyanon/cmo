@@ -93,14 +93,17 @@ class StockPickingType(models.Model):
     def action_picking_type_form(self):
         user = self.env['res.users'].browse(self._uid)
         domain = [(1, '=', 1)]
-        if user.has_group('cmo_stock.group_stock_wh_user'):
-            domain = ['|', ('name', '=', 'Receipts'),
-                           ('name', '=', 'Issue Stock')]
+        if user.has_group('stock.group_stock_manager'):
+            domain = ['|', ('code', '=', 'incoming'),
+                      '|', ('code', '=', 'outgoing'),
+                           ('code', '=', 'internal')]
+        elif user.has_group('cmo_stock.group_stock_wh_user'):
+            domain = ['|', ('code', '=', 'incoming'),
+                           ('code', '=', 'outgoing')]
+        elif user.has_group('stock.group_stock_user'):
+            domain = [('code', '=', 'outgoing')]
         elif user.has_group('cmo_stock.group_stock_readonly'):
-            domain = [('name', '=', 'Issue Stock')]
-        elif user.has_group('stock.group_stock_user') and \
-                not user.has_group('stock.group_stock_manager'):
-            domain = [('name', '=', 'Issue Stock')]
+            domain = [('code', '=', 'outgoing')]
         return {
             'name': _('All Operations'),
             'res_model': 'stock.picking.type',
