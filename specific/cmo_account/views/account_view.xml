@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        <!-- Test Don't commit -->
         <record id="view_invoice_customer" model="ir.ui.view">
             <field name="name">account.invoice.customer.quote</field>
             <field name="model">account.invoice</field>
@@ -15,6 +14,7 @@
                             <field name="project_ref_name"/>
                             <field name="quote_ref_event_date"/>
                             <field name="quote_ref_venue"/>
+                            <field name="project_ref_id" invisible="1"/>
                         </group>
                     </page>
                 </page>
@@ -40,7 +40,7 @@
         </record>
 
         <!-- Invoice form -->
-        <!-- <record id="view_invoice_form_inherit_1" model="ir.ui.view" >
+        <record id="view_invoice_form_inherit_1" model="ir.ui.view" >
              <field name="name">account.invoice.form.inherit_1</field>
              <field name="model">account.invoice</field>
              <field name="inherit_id" ref="sale_layout.view_invoice_form_inherit_1"/>
@@ -49,8 +49,21 @@
                         <attribute name="invisible">1</attribute>
                     </xpath>
              </field>
-        </record> -->
+        </record>
 
         <!-- supplier invoice -->
+        <record id="invoice_supplier_form" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <field name="origin">
+                    <field name="project_ref_id" invisible="1"/>
+                </field>
+                <xpath expr="////field[@name='move_id']" position="before">
+                    <field name="purchase_ref_id"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>
