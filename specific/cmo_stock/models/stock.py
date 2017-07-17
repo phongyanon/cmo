@@ -34,6 +34,23 @@ class StockPicking(models.Model):
                     picking.default_operating_unit_id = \
                         user[0].default_operating_unit_id.id
 
+    @api.multi
+    def action_open_stock(self):
+        # Get product_id in each line
+        product_ids = []
+        for picking in self:
+            product_ids += picking.move_lines.mapped('product_id.id')
+        return {
+            'name': _('Cuurent Inventory Valuation'),
+            'res_model': 'stock.history',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,graph',
+            'domain': "[('product_id','in', \
+                [" + ','.join(map(str, product_ids)) + "])]",
+            'context': "{'search_default_group_by_product': True}"
+        }
+
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
@@ -66,24 +83,24 @@ class StockMove(models.Model):
             location = Location.search([('operating_unit_id', '=', ou_id)])
         return location and location[0].id or False
 
-    @api.multi
-    @api.onchange('product_id', 'location_id', 'location_dest_id',
-                  'picking_id.partner_id')
-    def onchange_product_id(self):
-        for move in self:
-            res = super(StockMove, move).onchange_product_id(
-                move.product_id.id, move.location_id.id,
-                move.location_dest_id.id, move.picking_id.partner_id.id
-            )
-            if res:
-                res = res['value']
-                move.name = res.get('name', False)
-                move.product_uom = res.get('product_uom', False)
-                move.product_uos = res.get('product_uos', False)
-                move.product_uom_qty = res.get('product_uom_qty', False)
-                move.product_uos_qty = res.get('product_uos_qty', False)
-                move.location_id = res.get('location_id', False)
-                move.location_dest_id = res.get('location_dest_id', False)
+    # @api.multi
+    # @api.onchange('product_id', 'location_id', 'location_dest_id',
+    #               'picking_id.partner_id')
+    # def onchange_product_id(self):
+    #     for move in self:
+    #         res = super(StockMove, move).onchange_product_id(
+    #             move.product_id.id, move.location_id.id,
+    #             move.location_dest_id.id, move.picking_id.partner_id.id
+    #         )
+    #         if res:
+    #             res = res['value']
+    #             move.name = res.get('name', False)
+    #             move.product_uom = res.get('product_uom', False)
+    #             move.product_uos = res.get('product_uos', False)
+    #             move.product_uom_qty = res.get('product_uom_qty', False)
+    #             move.product_uos_qty = res.get('product_uos_qty', False)
+    #             move.location_id = res.get('location_id', False)
+    #             move.location_dest_id = res.get('location_dest_id', False)
 
 
 class StockPickingType(models.Model):
