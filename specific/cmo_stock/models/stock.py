@@ -48,7 +48,8 @@ class StockPicking(models.Model):
             'view_mode': 'tree,graph',
             'domain': "[('product_id','in', \
                 [" + ','.join(map(str, product_ids)) + "])]",
-            'context': "{'search_default_group_by_product': True}"
+            'context': "{'search_default_group_by_location': True, \
+                         'search_default_group_by_product': True}"
         }
 
 
