@@ -34,17 +34,17 @@ class AccountInvoice(models.Model):
     quote_ref_event_date = fields.Char(
         string='Event Date',
         readonly=True,
-        related='quote_ref_id.event_date_description',
+        compute='_compute_quote_ref_id',
     )
     quote_ref_venue = fields.Char(
         string='Venue',
         readonly=True,
-        related='quote_ref_id.venue_description',
+        compute='_compute_quote_ref_id',
     )
     project_ref_number = fields.Char(
         string='Project Number',
         readonly=True,
-        related='project_ref_id.project_number',
+        compute='_compute_quote_ref_id',
     )
     project_ref_name = fields.Char(
         string='Project Name',
@@ -61,7 +61,6 @@ class AccountInvoice(models.Model):
     )
     def _compute_quote_ref_id(self):
         for invoice in self:
-            print('>>>>>>>>>>>>>>>>>>>>>', invoice._context.get('journal_type'))
             if invoice._context.get('journal_type') == 'sale':
                 order_env = self.env['sale.order']
                 origin_ref = order_env.search([
@@ -70,13 +69,23 @@ class AccountInvoice(models.Model):
                 origin_ref = origin_ref.quote_id or False
                 if origin_ref:
                     invoice.quote_ref_id = origin_ref
+                    invoice.quote_ref_venue = origin_ref.venue_description
+                    invoice.quote_ref_event_date = origin_ref.\
+                        event_date_description
                     project_ref = origin_ref.project_related_id or False
                     if project_ref:
                         invoice.project_ref_id = project_ref
+                        invoice.project_ref_number = project_ref.project_number
             elif invoice._context.get('journal_type') == 'purchase':
                 order_env = self.env['purchase.order']
                 origin_ref = order_env.search([
                     ('name', '=', invoice.origin)
                 ])
                 invoice.purchase_ref_id = origin_ref
-                invoice.project_ref_id = origin_ref.project_id
+                invoice.quote_ref_venue = origin_ref.venue_description
+                invoice.quote_ref_event_date = origin_ref.\
+                    event_date_description
+                project_ref = origin_ref.project_id or False
+                if project_ref:
+                    invoice.project_ref_id = project_ref
+                    invoice.project_ref_number = project_ref.project_number
