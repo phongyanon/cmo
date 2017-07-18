@@ -51,6 +51,10 @@ class AccountInvoice(models.Model):
         readonly=True,
         related='project_ref_id.name',
     )
+    others_note = fields.Text(
+        string='Other',
+        states={'paid': [('readonly', True)]},
+    )
 
     @api.multi
     @api.depends(
