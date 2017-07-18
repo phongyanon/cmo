@@ -8,88 +8,86 @@ class AccountInvoice(models.Model):
     quote_ref_id = fields.Many2one(
         'sale.order',
         string='Quotation Ref.',
-        compute='_compute_quote_ref_id',
         readonly=True,
     )
-    purchase_ref_id = fields.Many2one(
-        'purchase.order',
-        readonly=True,
-        compute='_compute_quote_ref_id',
-    )
+    # purchase_ref_id = fields.Many2one(
+    #     'purchase.order',
+    #     readonly=True,
+    #     compute='_compute_quote_ref_id',
+    # )
     project_ref_id = fields.Many2one(
         'project.project',
         string='Project Ref.',
-        compute='_compute_quote_ref_id',
+        readonly=True,
     )
     quote_ref_number = fields.Char(
         string='Quotation Number',
-        readonly=True,
-        related='quote_ref_id.name',
+        states={'paid': [('readonly', True)]},
     )
-    quote_ref_date = fields.Datetime(
+    quote_ref_date = fields.Char(
         string='Quotation Date',
-        readonly=True,
-        related='quote_ref_id.date_order',
+        states={'paid': [('readonly', True)]},
     )
     quote_ref_event_date = fields.Char(
         string='Event Date',
-        readonly=True,
-        compute='_compute_quote_ref_id',
+        states={'paid': [('readonly', True)]},
     )
     quote_ref_venue = fields.Char(
         string='Venue',
-        readonly=True,
-        compute='_compute_quote_ref_id',
+        states={'paid': [('readonly', True)]},
     )
     project_ref_number = fields.Char(
         string='Project Number',
-        readonly=True,
-        compute='_compute_quote_ref_id',
+        states={'paid': [('readonly', True)]},
     )
     project_ref_name = fields.Char(
         string='Project Name',
-        readonly=True,
-        related='project_ref_id.name',
+        states={'paid': [('readonly', True)]},
     )
     others_note = fields.Text(
         string='Other',
         states={'paid': [('readonly', True)]},
     )
 
-    @api.multi
-    @api.depends(
-        'origin',
-        'quote_ref_id',
-        'purchase_ref_id',
-        'project_ref_id',
-    )
-    def _compute_quote_ref_id(self):
-        for invoice in self:
-            if invoice._context.get('journal_type') == 'sale':
-                order_env = self.env['sale.order']
-                origin_ref = order_env.search([
-                    ('name', '=', invoice.origin)
-                ])
-                origin_ref = origin_ref.quote_id or False
-                if origin_ref:
-                    invoice.quote_ref_id = origin_ref
-                    invoice.quote_ref_venue = origin_ref.venue_description
-                    invoice.quote_ref_event_date = origin_ref.\
-                        event_date_description
-                    project_ref = origin_ref.project_related_id or False
-                    if project_ref:
-                        invoice.project_ref_id = project_ref
-                        invoice.project_ref_number = project_ref.project_number
-            elif invoice._context.get('journal_type') == 'purchase':
-                order_env = self.env['purchase.order']
-                origin_ref = order_env.search([
-                    ('name', '=', invoice.origin)
-                ])
-                invoice.purchase_ref_id = origin_ref
-                invoice.quote_ref_venue = origin_ref.venue_description
-                invoice.quote_ref_event_date = origin_ref.\
-                    event_date_description
-                project_ref = origin_ref.project_id or False
-                if project_ref:
-                    invoice.project_ref_id = project_ref
-                    invoice.project_ref_number = project_ref.project_number
+    @api.model
+    def create(self, vals):
+        res = super(AccountInvoice, self).create(vals)
+        order_ref = self.env['sale.order'].search([
+            ('name', '=', res.origin)
+        ])
+        if order_ref:
+            quote_id = order_ref.quote_id or False
+            if quote_id:
+                res.write({
+                    'quote_ref_id': quote_id.id,
+                    'quote_ref_number': quote_id.name,
+                    'quote_ref_date': quote_id.date_order.split(' ')[0],
+                    'quote_ref_event_date': quote_id.event_date_description,
+                    'quote_ref_venue': quote_id.venue_description,
+                })
+                project_id = quote_id.project_related_id or False
+                if project_id:
+                    res.write({
+                        'project_ref_name': project_id.name,
+                        'project_ref_number': project_id.project_number,
+                    })
+        return res
+
+    @api.model
+    def _prepare_refund(self, invoice, date=None, period_id=None,
+                        description=None, journal_id=None):
+        res = super(AccountInvoice, self)._prepare_refund(
+            invoice, date=date, period_id=period_id,
+            description=description, journal_id=journal_id,
+        )
+        res.update({
+            'quote_ref_id': invoice.quote_ref_id.id,
+            'quote_ref_number': invoice.quote_ref_number,
+            'quote_ref_date': invoice.quote_ref_date,
+            'quote_ref_event_date': invoice.quote_ref_event_date,
+            'quote_ref_venue': invoice.quote_ref_venue,
+            'project_ref_name': invoice.project_ref_name,
+            'project_ref_number': invoice.project_ref_number,
+            'others_note': invoice.others_note,
+        })
+        return res

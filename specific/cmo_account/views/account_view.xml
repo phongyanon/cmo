@@ -9,13 +9,18 @@
                 <page string="Payments" position="after">
                     <page string="Invoice Project">
                         <group>
-                            <field name="quote_ref_number"/>
-                            <field name="quote_ref_date"/>
-                            <field name="project_ref_name"/>
-                            <field name="project_ref_number"/>
-                            <field name="quote_ref_event_date"/>
-                            <field name="quote_ref_venue"/>
-                            <field name="project_ref_id" invisible="1"/>
+                            <group>
+                                <field name="quote_ref_number"/>
+                                <field name="quote_ref_date"/>
+                                <field name="project_ref_name"/>
+                                <field name="project_ref_number"/>
+                                <field name="quote_ref_event_date"/>
+                                <field name="quote_ref_venue"/>
+                                <!-- <field name="project_ref_id" invisible="1"/> -->
+                            </group>
+                            <group>
+                                <field name="others_note"/>
+                            </group>
                         </group>
                     </page>
                 </page>
@@ -34,9 +39,6 @@
                 <xpath expr="////tree[@string='Invoice Lines']/field[@name='discount']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="////tree[@string='Invoice Lines']/field[@name='invoice_line_tax_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
             </field>
         </record>
 
@@ -53,7 +55,7 @@
         </record>
 
         <!-- supplier invoice -->
-        <record id="invoice_supplier_form" model="ir.ui.view">
+        <!-- <record id="invoice_supplier_form" model="ir.ui.view">
             <field name="name">account.invoice.supplier.form</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
@@ -65,7 +67,7 @@
                     <field name="purchase_ref_id"/>
                 </xpath>
             </field>
-        </record>
+        </record> -->
 
         <!-- invoice tree -->
         <record id="invoice_tree" model="ir.ui.view">
