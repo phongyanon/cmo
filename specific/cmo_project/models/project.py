@@ -210,7 +210,7 @@ class ProjectProject(models.Model):
         'sale.order',
         'project_related_id',
         string='Related Quotation',
-        domain=[('order_type', 'like', 'quotation'), ],
+        domain=[('order_type', '=', 'quotation'), ],
     )
     purchase_related_ids = fields.One2many(
         'purchase.order',
@@ -333,15 +333,16 @@ class ProjectProject(models.Model):
         domain = [
             '&',
             ('project_related_id', 'like', self.id),
-            ('order_type', 'like', 'quotation'),
+            ('order_type', '=', 'quotation'),
         ]
         return {
-            'name': 'Quotation',
+            'name': 'Quotations',
             'res_model': 'sale.order',
             'type': 'ir.actions.act_window',
-            'views': [[False, "tree"], [False, "form"]],
+            'view_type': 'form',
+            'view_mode': 'tree,form',
             'domain': domain,
-            'context': "{'active': True, 'order_type': 'quotation'}"
+            'context': "{'active': True, 'order_type': 'quotation'}",
         }
 
     @api.multi
@@ -360,7 +361,12 @@ class ProjectProject(models.Model):
         }
 
     @api.multi
-    @api.depends('actual_price', 'estimate_cost', 'quote_related_ids')
+    @api.depends(
+        'actual_price',
+        'estimate_cost',
+        'quote_related_ids',
+        'quote_related_ids.amount_untaxed',
+    )
     def _compute_price_and_cost(self):
         for project in self:
             actual_price = 0
@@ -380,6 +386,7 @@ class ProjectProject(models.Model):
         'actual_po',
         'purchase_related_ids',
         'purchase_related_ids.state',
+        'purchase_related_ids.amount_untaxed',
     )
     def _compute_actual_po(self):
         for project in self:
@@ -407,14 +414,16 @@ class ProjectProject(models.Model):
             project.remaining_cost = remaining
 
     @api.multi
-    def _compute_expense(self): 
+    @api.depends('expense')
+    def _compute_expense(self):
         for project in self:
-            inv_lines = self.env['account.invoice.line'].search([
-                 ['account_analytic_id', '=', project.analytic_account_id.id],
+            expense_lines = self.env['hr.expense.line'].search([
+                 ['analytic_account', '=', project.analytic_account_id.id],
             ])
-            expense = sum(inv_lines.filtered(
-                lambda r: r.invoice_id.state in ('open', 'paid')
-                ).mapped('price_subtotal'))
+            expense = sum(expense_lines.filtered(
+                lambda r: (r.expense_id.state in ('done', 'paid')) and
+                          (r.expense_id.is_employee_advance is False)
+            ).mapped('total_amount'))
             project.expense = expense
 
 

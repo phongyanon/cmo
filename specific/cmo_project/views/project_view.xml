@@ -109,7 +109,18 @@
               </xpath>
             </field>
         </record>
-
+        <record id="inherit_view_project_tree" model="ir.ui.view">
+            <field name="name">project.project.inherit.tree</field>
+            <field name="model">project.project</field>
+            <field eval="17" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Projects">
+                    <field name="project_number"/>
+                    <field name="name"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
         # Project  # TODO Administration selection only public and access
         <record id="edit_project" model="ir.ui.view">
             <field name="name">edit.project</field>
@@ -228,7 +239,7 @@
                             <field name="brief_date"/>
                             <field name="date_start"/>
                             <field name="date" string="End Date"/>
-                            <field name="project_parent_id"/>
+                            <field name="project_parent_id" context="{'tree_view_ref':'cmo_project.inherit_view_project_tree'}"/>
                             <field name="operating_unit_id" string="Department" readonly="1"/>
                             <field name="state_before_inactive" invisible="1"/>
                             <field name="is_active_state" invisible="1"/>
