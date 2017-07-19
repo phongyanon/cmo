@@ -365,7 +365,7 @@ class ProjectProject(models.Model):
         'actual_price',
         'estimate_cost',
         'quote_related_ids',
-        'quote_related_ids.amount_untaxed',
+        'quote_related_ids.order_line',
     )
     def _compute_price_and_cost(self):
         for project in self:
