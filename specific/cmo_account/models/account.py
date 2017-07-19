@@ -10,16 +10,6 @@ class AccountInvoice(models.Model):
         string='Quotation Ref.',
         readonly=True,
     )
-    # purchase_ref_id = fields.Many2one(
-    #     'purchase.order',
-    #     readonly=True,
-    #     compute='_compute_quote_ref_id',
-    # )
-    project_ref_id = fields.Many2one(
-        'project.project',
-        string='Project Ref.',
-        readonly=True,
-    )
     quote_ref_number = fields.Char(
         string='Quotation Number',
         states={'paid': [('readonly', True)]},
