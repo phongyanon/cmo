@@ -15,6 +15,7 @@ class HrExpenseExpense(models.Model):
             'draft': [('readonly', False)],
             'confirm': [('readonly', False)],
         },
+        default=lambda self: self._default_employee_request_id(),
     )
     request_date = fields.Date(
         string='Request Date',
@@ -34,20 +35,20 @@ class HrExpenseExpense(models.Model):
     )
     payment_by = fields.Selection(
         [('cash', 'Cash'),
-         ('bank_transfer', 'Bank Transfer'),
          ('cashier_cheque', 'Cashier Cheque'),
+         ('bank_transfer', 'Bank Transfer'),
          ('ac_payee', 'A/C Payee'),
         ],
         string='Payment By',
     )
-    bank_transfer_ref = fields.Char(
+    bank_transfer_ref = fields.Text(
         string='Bank Transfer Ref.',
         states={
             'draft': [('readonly', False)],
             'confirm': [('readonly', False)],
         },
     )
-    ac_payee_ref = fields.Char(
+    ac_payee_ref = fields.Text(
         string='A/C Payee Ref.',
         states={
             'draft': [('readonly', False)],
@@ -71,6 +72,12 @@ class HrExpenseExpense(models.Model):
     def action_validate(self):
         res = self.write({'state': 'validate'})
         return res
+
+    @api.model
+    def _default_employee_request_id(self):
+        Employee = self.env['hr.employee']
+        employee_request_id = Employee.search([('user_id', '=', self._uid), ])
+        return employee_request_id and employee_request_id[0].id or False
 
 
 class HrExpenseLine(models.Model):

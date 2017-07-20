@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <record id="view_expenses_tree_request" model="ir.ui.view">
+            <field name="name">hr.expense.expense.tree.request</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_tree"/>
+            <field name="arch" type="xml">
+                <field name="employee_id" position="after">
+                    <field name="employee_request_id"/>
+                </field>
+            </field>
+        </record>
         <record id="view_expenses_form_advance" model="ir.ui.view">
             <field name="name">view.expenses.form</field>
             <field name="model">hr.expense.expense</field>
