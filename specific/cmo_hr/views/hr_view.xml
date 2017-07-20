@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_expenses_form_advance" model="ir.ui.view">
+            <field name="name">view.expenses.form</field>
+            <field name="model">hr.expense.expense</field>
+            <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='confirm']" position="before">
+                    <button name="action_validate" type="object"
+                            string="Validate"
+                            states="draft"
+                            attrs="{'invisible':[['state', 'not in', ['draft']]]}"
+                            groups="project.group_project_admin,project.group_project_manager"/>
+                </xpath>
+                <button name="confirm" position="attributes">
+                    <attribute name="states">validate</attribute>
+                </button>
+                <field name="state" position="replace">
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,validate,confirm,accepted,done,paid"
+                           statusbar_colors="{&quot;confirm&quot;:&quot;blue&quot;,&quot;cancelled&quot;:&quot;red&quot;}"/>
+                </field>
+                <field name="department_id" position="after">
+                    <field name="employee_request_id"/>
+                </field>
+                <field name="currency_id" position="after">
+                    <field name="request_date"/>
+                    <field name="due_date"/>
+                </field>
+                <field name="line_ids" position="after">
+                    <group>
+                        <group>
+                            <field name="payment_by" widget="radio"/>
+                            <field name="bank_transfer_ref" attrs="{'invisible': [('payment_by','!=','bank_transfer')]}"/>
+                            <field name="ac_payee_ref" attrs="{'invisible': [('payment_by','!=','ac_payee')]}"/>
+                        </group>
+                        <group class="oe_subtotal_footer oe_right">
+
+                        </group>
+                    </group>
+                </field>
+                <xpath expr="//tree[@string='Expense Lines']/field[@name='uom_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_expenses_form" model="ir.ui.view">
+			<field name="name">view.expenses.form</field>
+			<field name="model">hr.expense.expense</field>
+			<field name="inherit_id" ref="hr_expense_auto_invoice.view_expenses_form"/>
+			<field name="arch" type="xml">
+                <xpath expr="//tree[@string='Expense Lines']/field[@name='tax_ids']" position="after">
+                    <field name="amount_line_untaxed" sum="Total Untaxed"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>
