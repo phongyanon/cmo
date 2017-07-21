@@ -11,6 +11,7 @@
         'hr_expense_auto_invoice',
     ],
     'data': [
+        'data/hr_data.xml',
         'views/hr_view.xml',
     ],
     'demo': [

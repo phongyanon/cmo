@@ -61,6 +61,23 @@ class HrExpenseExpense(models.Model):
         ],
     )
 
+    @api.model
+    def create(self, vals):
+        ctx = self._context.copy()
+        current_date = datetime.date.today()
+        fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
+        ctx["fiscalyear_id"] = fiscalyear_id
+        if (not ctx.get('is_employee_advance', False)) and \
+                ctx.get('number', '/') == '/':
+            vals['number'] = self.env['ir.sequence']\
+                .with_context(ctx).get('cmo.expense')
+        elif ctx.get('is_employee_advance', False) and \
+                ctx.get('number', '/') == '/':
+            vals['number'] = self.env['ir.sequence']\
+                .with_context(ctx).get('cmo.advance')
+        res = super(HrExpenseExpense, self).create(vals)
+        return res
+
     @api.multi
     @api.onchange('payment_by')
     def _onchange_payment_by(self):
