@@ -440,6 +440,7 @@ PL,PL,Statement of Income,CMO,View,account.data_account_account_type_view,FALSE
 5001-39,5001-39,ต้นทุนงาน - Classified Admin Direct,501,Regular,account.data_account_account_type_expense,FALSE
 5001-98,5001-98,ประมาณการต้นทุนส่วนเพิ่ม,501,Regular,account.data_account_account_type_expense,FALSE
 5002,5002,ต้นทุนขาย,501,Regular,account.data_account_account_type_expense,FALSE
+504,504,ค่าใช้จ่ายบริหาร,50,View,account.data_account_account_type_view,FALSE
 5003,5003,เงินเดือนและค่าจ้าง,504,Regular,account.data_account_account_type_expense,FALSE
 5003-2,5003-2,ต้นทุน - เงินเดือนอื่น,502,Regular,account.data_account_account_type_expense,FALSE
 5004-1,5004-1,ต้นทุน - ค่าเบี้ยเลี้ยงโอที,502,Regular,account.data_account_account_type_expense,FALSE
@@ -456,7 +457,7 @@ PL,PL,Statement of Income,CMO,View,account.data_account_account_type_view,FALSE
 5034-3,5034-3,ต้นทุน - ภาษีซื้อไม่ขอคืนแต่ถือเป็นคชจ,502,Regular,account.data_account_account_type_expense,FALSE
 5051-1,5051-1,ต้นทุน-ค่าตอบแทนผู้บริหาร,502,Regular,account.data_account_account_type_expense,FALSE
 5008,5008,ค่าใช้จ่ายยานพาหนะ,504,Regular,account.data_account_account_type_expense,FALSE
-504,504,ค่าใช้จ่ายบริหาร,50,View,account.data_account_account_type_view,FALSE
+,,,,,,
 5009,5009,ค่าเช่า,504,Regular,account.data_account_account_type_expense,FALSE
 5007,5007,ค่าใช้จ่ายพาหนะและเดินทาง,503,Regular,account.data_account_account_type_expense,FALSE
 5010,5010,ค่าไฟฟ้า,504,Regular,account.data_account_account_type_expense,FALSE
