@@ -49,6 +49,8 @@ class PurchaseOrder(models.Model):
         self.event_date_description = False
         self.venue_description = False
         self.order_line = False
+        self.invoice_method = self.po_type_id and \
+            self.po_type_id.invoice_method or False
 
     @api.onchange('project_id')
     def _onchange_project_id(self):
@@ -135,4 +137,14 @@ class PurchaseOrderTypeConfig(models.Model):
     po_project = fields.Boolean(
         string='PO Project',
         default=False,
+    )
+    invoice_method = fields.Selection(
+        [('manual', 'Based on Purchase Order lines'),
+         ('order', 'Based on generated draft invoice'),
+         ('picking', 'Based on incoming shipments'),
+         ('line_percentage', 'Based on line percentage'),
+         ('invoice_plan', 'Invoice Plan'), ],
+        string='Invoicing Control',
+        required=True,
+        default='order',
     )

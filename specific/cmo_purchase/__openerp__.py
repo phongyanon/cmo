@@ -9,6 +9,7 @@
     "version": "1.0",
     'depends': [
         'purchase_operating_unit',
+        'purchase_invoice_plan',
         'account_auto_fy_sequence',
         'cmo_sale',
         'project',
