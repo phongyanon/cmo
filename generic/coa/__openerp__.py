@@ -31,8 +31,10 @@ Thai accounting chart for CMO and localization.
     """,
     'author': 'Ecosoft',
     'website': 'http://www.ecosoft.co.th/',
-    'depends': ['account_chart',
+    'depends': [
+                'account_chart',
                 'account_accountant',
+                'l10n_th_account',
                 ],
     'data': [
         'data/account.account.type.csv',
