@@ -20,14 +20,14 @@
 ##############################################################################
 
 {
-    'name': 'NSTDA :: CoA for PABI2',
+    'name': 'CMO :: CoA for CMO',
     'version': '1.0',
     'category': 'Localization/Account Charts',
     'description': """
-Chart of Accounts for PABI2
+Chart of Accounts for CMO
 ===========================
 
-Thai accounting chart for PABI2 and localization.
+Thai accounting chart for CMO and localization.
     """,
     'author': 'Ecosoft',
     'website': 'http://www.ecosoft.co.th/',

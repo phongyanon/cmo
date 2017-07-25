@@ -1,30 +1,25 @@
 id,name,code,parent_id/id,notprintable,sign
-thai_tax,Thai Tax,,,False,1
-withholding_tax,Withholding Tax,WHT,thai_tax,False,1
-value_added_tax,Value Added Tax,VAT,thai_tax,False,1
-withholding_tax_payable,Withholding Tax Payable,WHT_P,withholding_tax,False,1
-corporate_withholding_tax,Corporate Withholding Tax,C_WHT,withholding_tax_payable,False,1
-corporate_withholding_tax_1_base,Corporate Withholding Tax 1%_Base,C_WHT_1%_Base,corporate_withholding_tax,False,1
-corporate_withholding_tax_1_tax,Corporate Withholding Tax 1%_Tax,C_WHT_1%_Tax,corporate_withholding_tax,False,1
-due_vat,Due VAT,DueVAT,value_added_tax,False,1
-undue_vat,Undue VAT,UndueVAT,value_added_tax,False,1
-input_vat,Input VAT,InputVAT,due_vat,False,1
-input_vat_base,Input VAT_Base,InputVAT_Base,input_vat,False,-1
-input_vat_tax,Input VAT_Tax,InputVAT_Tax,input_vat,False,1
-output_vat,Output VAT,OutputVAT,due_vat,False,1
-output_vat_base,Output VAT_Base,OutputVAT_Base,output_vat,False,1
-output_vat_tax,Output VAT_Tax,OutputVAT_Tax,output_vat,False,1
-personal_withholding_tax,Personal Withholding Tax,P_WHT,withholding_tax_payable,False,1
-personal_withholding_tax_1_base,Personal Withholding Tax 1%_Base,P_WHT_1%_Base,personal_withholding_tax,False,1
-personal_withholding_tax_1_tax,Personal Withholding Tax 1%_Tax,P_WHT_1%_Tax,personal_withholding_tax,False,1
-undue_input_vat,Undue Input VAT,UndueInputVAT,undue_vat,False,1
-undue_input_vat_base,Undue Input VAT_Base,UndueInputVAT_Base,undue_input_vat,False,-1
-undue_input_vat_tax,Undue Input VAT_Tax,UndueInputVAT_Tax,undue_input_vat,False,1
-undue_output_vat,Undue Output VAT,UndueOutputVAT,undue_vat,False,1
-undue_output_vat_base,Undue Output VAT_Base,UndueOutputVAT_Base,undue_output_vat,False,1
-undue_output_vat_tax,Undue Output VAT_Tax,Undue OutputVAT_Tax,undue_output_vat,False,1
-withholding_tax_income,Withholding Tax Income,WHT_I,withholding_tax,False,1
-withholding_tax_income_1_base,Withholding Tax Income 1%_Base,WHT_I_1%_Base,withholding_tax_income,False,1
-withholding_tax_income_1_tax,Withholding Tax Income 1%_Tax,WHT_I_1%_Tax,withholding_tax_income,False,1
-withholding_tax_income_3_base,Withholding Tax Income 3%_Base,WHT_I_3%_Base,withholding_tax_income,False,1
-withholding_tax_income_3_tax,Withholding Tax Income 3%_Tax,WHT_I_3%_Tax,withholding_tax_income,False,1
+tc_root,Thai Chart of Taxes,,,,1
+tc_vat,Taxable amounts,,tc_root,FALSE,1
+tc_vat_due,Value Added Tax,,tc_vat,FALSE,1
+tc_vat_due_input,Input VAT,PP30,tc_vat_due,FALSE,1
+tc_vat_due_output,Output VAT,PP30,tc_vat_due,FALSE,1
+tc_vat_undue,Undue Value Added Tax,,tc_vat,FALSE,1
+tc_vat_undue_input,Undue Input VAT,,tc_vat_undue,FALSE,1
+tc_vat_undue_output,Undue Output VAT,,tc_vat_undue,FALSE,1
+tc_wht,Withholding Tax,,tc_root,FALSE,1
+tc_wht_corp,Corporate WHT,,tc_wht,FALSE,1
+tc_wht_corp_1,Corporate WHT 1%,PND53,tc_wht_corp,FALSE,1
+tc_wht_corp_2,Corporate WHT 2%,PND53,tc_wht_corp,FALSE,1
+tc_wht_corp_3,Corporate WHT 3%,PND53,tc_wht_corp,FALSE,1
+tc_wht_corp_5,Corporate WHT 5%,PND53,tc_wht_corp,FALSE,1
+tc_wht_psn,Personal WHT,,tc_wht,FALSE,1
+tc_wht_psn_1,Personal WHT 1%,PND3,tc_wht_psn,FALSE,1
+tc_wht_psn_2,Personal WHT 2%,PND3,tc_wht_psn,FALSE,1
+tc_wht_psn_3,Personal WHT 3%,PND3,tc_wht_psn,FALSE,1
+tc_wht_psn_5,Personal WHT 5%,PND3,tc_wht_psn,FALSE,1
+tc_wht_income,Income WHT,,tc_wht,FALSE,1
+tc_wht_income_1,Income WHT 1%,,tc_wht_income,FALSE,1
+tc_wht_income_2,Income WHT 2%,,tc_wht_income,FALSE,1
+tc_wht_income_3,Income WHT 3%,,tc_wht_income,FALSE,1
+tc_wht_income_5,Income WHT 5%,,tc_wht_income,FALSE,1
