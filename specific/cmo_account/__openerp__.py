@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-{#
+{
     "name": "CMO :: Account Extension",
     "summary": "",
     "version": "1.0",

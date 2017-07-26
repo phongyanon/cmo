@@ -65,7 +65,7 @@ class AccountInvoice(models.Model):
 
     @api.model
     def _prepare_refund(self, invoice, date=None, period_id=None,
-                        description=None, journal_id=None): # refund invoice
+                        description=None, journal_id=None):
         res = super(AccountInvoice, self)._prepare_refund(
             invoice, date=date, period_id=period_id,
             description=description, journal_id=journal_id,
