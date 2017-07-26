@@ -371,7 +371,7 @@ class ProjectProject(models.Model):
         for project in self:
             actual_price = 0
             estimate_cost = 0
-            quotes = self.quote_related_ids.filtered(
+            quotes = project.quote_related_ids.filtered(
                 lambda r: r.state in ('draft', 'done')
             )
             for quote in quotes:
