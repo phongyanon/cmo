@@ -1,7 +1,7 @@
 id,chart_template_id/id,type_tax_use,description,name,is_wht,is_undue_tax,type,amount,account_collected_id/id,account_paid_id/id,base_code_id/id,tax_code_id/id,ref_base_code_id/id,ref_tax_code_id/id,tax_sign,base_sign,ref_base_sign,ref_tax_sign,parent_id/id
 tax_vat_input_0,CMO_account_chart,purchase,,Input VAT 0%,FALSE,FALSE,percent,0,1136,1136,tc_vat_due_input,tc_vat_due_input,,,1,1,-1,-1,
 tax_vat_input_7,CMO_account_chart,purchase,,Input VAT 7%,FALSE,FALSE,percent,0.07,1136,1136,tc_vat_due_input,tc_vat_due_input,,,1,1,-1,-1,
-tax_undue_vat_input_7,CMO_account_chart,purchase,,Undue Input VAT 7%,FALSE,TRUE,percent,0.07,1136-2,1136-2,tc_base_undue_input,tc_tax_undue_vat_input,,,1,1,-1,-1,
+tax_undue_vat_input_7,CMO_account_chart,purchase,,Undue Input VAT 7%,FALSE,TRUE,percent,0.07,1136-2,1136-2,tc_vat_undue_input,tc_vat_undue_input,,,1,1,-1,-1,
 tax_vat_output_0,CMO_account_chart,sale,,Output VAT 0%,FALSE,FALSE,percent,0,2118,2118,tc_vat_due_output,tc_vat_due_output,,,1,1,-1,-1,
 tax_vat_output_7,CMO_account_chart,sale,,Output VAT 7%,FALSE,FALSE,percent,0.07,2118,2118,tc_vat_due_output,tc_vat_due_output,,,1,1,-1,-1,
 tax_undue_vat_output_7,CMO_account_chart,sale,,Undue Output VAT 7%,FALSE,TRUE,percent,0.07,2118-1,2118-1,tc_vat_undue_output,tc_vat_undue_output,,,1,1,-1,-1,
