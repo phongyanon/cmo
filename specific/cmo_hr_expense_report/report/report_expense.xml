@@ -6,7 +6,7 @@
            <field name="auto">True</field>
            <field name="model">hr.expense.expense</field>
            <field name="jasper_model_id" ref="hr_expense.model_hr_expense_expense"/>
-           <field name="name">Hr/Expense (Eng)</field>
+           <field name="name">HR/Expense</field>
            <field name="report_name">cmo.hr.expense</field>
            <field name="report_rml">cmo_hr_expense_report/report/cmo_hr_expense.jrxml</field>
            <field name="force_locale">en_US</field>
@@ -16,10 +16,11 @@
            <field name="jasper_output">pdf</field>
         </record>
         <record id="cmo_hr_expense_values" model="ir.values">
-           <field name="name">Hr/Expense (Eng)</field>
+           <field name="name">HR/Expense</field>
            <field name="model">hr.expense.expense</field>
            <field name="key2" eval="'client_print_multi'"/>
            <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_hr_expense)"/>
         </record>
+        <delete id="hr_expense.action_report_hr_expense" model="ir.actions.report.xml"/>
     </data>
 </openerp>
