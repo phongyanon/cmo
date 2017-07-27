@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="cmo_customer_refund" model="ir.actions.report.xml">
+           <field name="string">Customer/Refund</field>
+           <field name="auto">True</field>
+           <field name="model">account.invoice</field>
+           <field name="jasper_model_id" ref="account.model_account_invoice"/>
+           <field name="name">Customer/Refund</field>
+           <field name="report_name">cmo.customer.refund</field>
+           <field name="report_rml">cmo_customer_refund_report/report/cmo_customer_refund.jrxml</field>
+           <field name="force_locale">en_US</field>
+           <field name="menu">True</field>
+           <field name="header">False</field>
+           <field name="jasper_report">True</field>
+           <field name="jasper_output">pdf</field>
+        </record>
+        <record id="cmo_customer_refund_values" model="ir.values">
+           <field name="name">Customer/Refund</field>
+           <field name="model">account.invoice</field>
+           <field name="key2" eval="'client_print_multi'"/>
+           <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_customer_refund)"/>
+        </record>
+        <!-- <delete id="hr_expense.action_report_hr_expense" model="ir.actions.report.xml"/> -->
+    </data>
+</openerp>
