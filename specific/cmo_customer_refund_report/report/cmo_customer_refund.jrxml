@@ -74,6 +74,9 @@
 	<field name="other_info_name" class="java.lang.String">
 		<fieldDescription><![CDATA[name]]></fieldDescription>
 	</field>
+	<field name="others_note" class="java.lang.String">
+		<fieldDescription><![CDATA[others_note]]></fieldDescription>
+	</field>
 	<variable name="string_total" class="java.lang.String">
 		<variableExpression><![CDATA[(Math.round($F{amount_total}*100)/100).toString()]]></variableExpression>
 	</variable>
@@ -277,7 +280,8 @@ $F{quote_date} + "\n" +
 $F{project_name} + "\n" +
 $F{project_number} + "\n" +
 $F{quote_event_date} + "\n" +
-$F{quote_venue}]]></textFieldExpression>
+$F{quote_venue} + "\n" +
+$F{others_note}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;(#,##0.00-)">
 				<reportElement isPrintRepeatedValues="false" x="400" y="0" width="155" height="20"/>
