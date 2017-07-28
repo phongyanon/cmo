@@ -54,6 +54,7 @@ class AccountInvoice(models.Model):
                     'quote_ref_date': quote_id.date_order.split(' ')[0],
                     'quote_ref_event_date': quote_id.event_date_description,
                     'quote_ref_venue': quote_id.venue_description,
+                    'others_note': quote_id.payment_term_description,
                 })
                 project_id = quote_id.project_related_id or False
                 if project_id:
