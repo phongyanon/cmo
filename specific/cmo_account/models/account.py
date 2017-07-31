@@ -26,6 +26,11 @@ class AccountInvoice(models.Model):
         string='Venue',
         states={'paid': [('readonly', True)]},
     )
+    project_ref_id = fields.Many2one(
+        'project.project',
+        string='Project Ref.',
+        readonly=True,
+    )
     project_ref_number = fields.Char(
         string='Project Number',
         states={'paid': [('readonly', True)]},
@@ -61,6 +66,7 @@ class AccountInvoice(models.Model):
                     res.write({
                         'project_ref_name': project_id.name,
                         'project_ref_number': project_id.project_number,
+                        'project_ref_id': project_id.id,
                     })
         return res
 
