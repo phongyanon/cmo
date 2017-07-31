@@ -157,7 +157,7 @@ class ProjectProject(models.Model):
          ('open','In Progress'),
          ('ready_billing', 'Ready to Billing'),
          ('invoices', 'Invoices'),
-         ('received', 'Received'),
+         ('paid', 'Paid'),
          ('cancelled', 'Incompleted'),
          ('pending','Pending'),
          ('close','Completed'), ],
@@ -217,6 +217,17 @@ class ProjectProject(models.Model):
         'project_id',
         string='Related Project',
     )
+    invoice_related_ids = fields.One2many(
+        'account.invoice',
+        'project_ref_id',
+        string='Related Invoice',
+        domain=[('type', '=', 'out_invoice'), ],
+
+    )
+    is_paid = fields.Boolean(
+        string='is paid',
+        compute='_compute_invoice_related_ids',
+    )
     remaining_cost = fields.Float(
         string='Remaining Cost',
         compute='_compute_remaining_cost',
@@ -225,18 +236,6 @@ class ProjectProject(models.Model):
     _defaults = {
         'use_tasks': False
     }
-    # TODO create tab to show invoices of project.
-    # invoice_ids = fields.Many2many(
-    #     'account.invoice',
-    #     string='Invoices',
-    #     compute='_compute_invoice_ids',
-    #     help="This field show invoices related to this project",
-    # )
-    #
-    # @api.multi
-    # @api.depends()
-    # def _compute_invoice_ids(self):
-    #     self.invoice_ids = []
 
     @api.model
     def create(self, vals):
@@ -361,6 +360,28 @@ class ProjectProject(models.Model):
         }
 
     @api.multi
+    def invoice_relate_project_tree_view(self):
+        self.ensure_one()
+        domain = [
+            '&',
+            ('project_ref_id', 'like', self.id),
+            ('type', '=', 'out_invoice'),
+        ]
+        return {
+            'name': 'Project Invoice',
+            'res_model': 'account.invoice',
+            'type': 'ir.actions.act_window',
+            'views': [[False, "tree"], [False, "form"]],
+            'domain': domain,
+            'context': "{\
+                'active': True, \
+                'default_type':'out_invoice', \
+                'type':'out_invoice', \
+                'journal_type': 'sale'\
+            }"
+        }
+
+    @api.multi
     @api.depends(
         'actual_price',
         'estimate_cost',
@@ -425,6 +446,24 @@ class ProjectProject(models.Model):
                           (r.expense_id.is_employee_advance is False)
             ).mapped('total_amount'))
             project.expense = expense
+
+    @api.multi
+    @api.depends('is_paid', 'invoice_related_ids', 'invoice_related_ids.state')
+    def _compute_invoice_related_ids(self):
+        for project in self:
+            invoice_open = project.invoice_related_ids.filtered(
+                lambda r: r.state in ('open', 'paid')
+            )
+            invoice_paid = project.invoice_related_ids.filtered(
+                lambda r: r.state in ('paid')
+            )
+            if invoice_paid and \
+                    (len(invoice_paid) == len(project.invoice_related_ids)):
+                project.write({'state': 'paid'})
+            elif invoice_open:
+                project.write({'state': 'invoices'})
+            else:
+                project.write({'state': 'ready_billing'})
 
 
 class ProjectTeamMember(models.Model):
