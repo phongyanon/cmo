@@ -422,7 +422,7 @@ class ProjectProject(models.Model):
         for project in self:
             name = project.name or '/'
             if name and project.project_number:
-                name = name + ' ('+project.project_number+')'
+                name = name + ' ['+project.project_number+']'
             res.append((project.id, name))
         return res
 
