@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="132"/>
+	<property name="ireport.y" value="96"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -76,6 +76,9 @@
 	</field>
 	<field name="others_note" class="java.lang.String">
 		<fieldDescription><![CDATA[others_note]]></fieldDescription>
+	</field>
+	<field name="project_note" class="java.lang.String">
+		<fieldDescription><![CDATA[project_note]]></fieldDescription>
 	</field>
 	<variable name="string_total" class="java.lang.String">
 		<variableExpression><![CDATA[(Math.round($F{amount_total}*100)/100).toString()]]></variableExpression>
@@ -271,13 +274,12 @@ www.cmo-group.com Email : cmo@cmo-group.com ]]></text>
 		<band height="77" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement isPrintRepeatedValues="false" x="0" y="-1" width="400" height="78" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
-				<box leftPadding="2"/>
+				<box topPadding="2" leftPadding="2"/>
 				<textElement>
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{Quote_number} + "\n" +
-$F{quote_date} + "\n" +
-$F{project_name} + "\n" +
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_note} + "  " + $F{project_name} + "\n" +
+$F{Quote_number} + "/" + $F{quote_date} + "\n" +
 $F{project_number} + "\n" +
 $F{quote_event_date} + "\n" +
 $F{quote_venue} + "\n" +
