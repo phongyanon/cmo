@@ -26,11 +26,6 @@ class AccountInvoice(models.Model):
         string='Venue',
         states={'paid': [('readonly', True)]},
     )
-    project_ref_id = fields.Many2one(
-        'project.project',
-        string='Project Ref.',
-        readonly=True,
-    )
     project_ref_number = fields.Char(
         string='Project Number',
         states={'paid': [('readonly', True)]},
@@ -43,6 +38,15 @@ class AccountInvoice(models.Model):
         string='Other',
         states={'paid': [('readonly', True)]},
     )
+    project_ref_id = fields.Many2one(
+         'project.project',
+         string='Project Ref.',
+         readonly=True,
+     )
+    project_note = fields.Char(
+        string='Description',
+        states={'paid': [('readonly', True)]},
+     )
 
     @api.model
     def create(self, vals):
