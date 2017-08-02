@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="308"/>
+	<property name="ireport.y" value="144"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -245,7 +245,7 @@ www.cmo-group.com Email : cmo@cmo-group.com ]]></text>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="307" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement isPrintRepeatedValues="false" x="0" y="-1" width="400" height="21" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box topPadding="2" leftPadding="2"/>
@@ -347,9 +347,11 @@ www.cmo-group.com Email : cmo@cmo-group.com ]]></text>
 			<line>
 				<reportElement x="0" y="165" width="180" height="1"/>
 			</line>
-			<textField>
-				<reportElement x="189" y="79" width="180" height="20"/>
-				<textElement textAlignment="Center"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="189" y="79" width="180" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00;#,##0.00-" isBlankWhenNull="true">
@@ -395,9 +397,11 @@ www.cmo-group.com Email : cmo@cmo-group.com ]]></text>
 				</textElement>
 				<text><![CDATA[ใบเสนอราคาเลขที่]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="0" y="79" width="180" height="20"/>
-				<textElement textAlignment="Center"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="79" width="180" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<line>

@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="202"/>
+	<property name="ireport.y" value="240"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -331,9 +331,11 @@ $F{others_note}]]></textFieldExpression>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$F{tax_amount}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="1" y="76" width="180" height="20"/>
-				<textElement textAlignment="Center"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="1" y="76" width="180" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<line>
@@ -349,9 +351,11 @@ $F{others_note}]]></textFieldExpression>
 			<line>
 				<reportElement x="376" y="162" width="180" height="1"/>
 			</line>
-			<textField>
-				<reportElement x="190" y="76" width="180" height="20"/>
-				<textElement textAlignment="Center"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="190" y="76" width="180" height="20" isPrintWhenDetailOverflows="true"/>
+				<textElement textAlignment="Center">
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}]]></textFieldExpression>
 			</textField>
 			<staticText>
