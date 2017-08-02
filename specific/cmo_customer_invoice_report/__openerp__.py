@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "CMO :: Customer Refund Report Jasper (PDF)",
+    'name': "CMO :: Customer Invoice Report Jasper (PDF)",
     'summary': "",
     'author': "Phongyanon Y.",
     'website': "http://ecosoft.co.th",
@@ -12,7 +12,7 @@
         'cmo_account',
     ],
     'data': [
-        'report/report_refund.xml',
+        'report/report_data.xml',
     ],
     'demo': [
     ],
