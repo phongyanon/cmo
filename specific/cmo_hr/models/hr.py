@@ -56,8 +56,14 @@ class HrExpenseExpense(models.Model):
         },
     )
     state = fields.Selection(
-        selection_add=[
+        selection=[
+            ('draft', 'New'),
             ('validate', 'Waiting Validate'),
+            ('cancelled', 'Refused'),
+            ('confirm', 'Waiting Approval'),
+            ('accepted', 'Approved'),
+            ('done', 'Waiting Payment'),
+            ('paid', 'Paid'),
         ],
     )
 

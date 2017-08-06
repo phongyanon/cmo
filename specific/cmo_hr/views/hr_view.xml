@@ -18,20 +18,16 @@
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='confirm']" position="before">
                     <button name="action_validate" type="object"
-                            string="Validate"
+                            string="Submit to Director"
                             states="draft"
-                            attrs="{'invisible':[['state', 'not in', ['draft']]]}"
-                            groups="project.group_project_admin,project.group_project_manager"/>
+                            attrs="{'invisible':[['state', 'not in', ['draft']]]}"/>
+                </xpath>
+                <xpath expr="//button[@name='confirm']" position="attributes">
+                    <attribute name="groups">base.group_hr_user,hr.group_hr_director</attribute>
                 </xpath>
                 <button name="confirm" position="attributes">
                     <attribute name="states">validate</attribute>
                 </button>
-                <field name="state" position="replace">
-                    <field name="state"
-                           widget="statusbar"
-                           statusbar_visible="draft,validate,confirm,accepted,done,paid"
-                           statusbar_colors="{&quot;confirm&quot;:&quot;blue&quot;,&quot;cancelled&quot;:&quot;red&quot;}"/>
-                </field>
                 <field name="department_id" position="after">
                     <field name="employee_request_id"/>
                 </field>
