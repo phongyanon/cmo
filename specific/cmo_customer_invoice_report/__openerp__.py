@@ -3,6 +3,11 @@
 {
     'name': "CMO :: Customer Invoice Report Jasper (PDF)",
     'summary': "",
+    "description": """
+
+* account invoice and account voucher report jasper
+
+    """,
     'author': "Phongyanon Y.",
     'website': "http://ecosoft.co.th",
     'category': 'Tools',

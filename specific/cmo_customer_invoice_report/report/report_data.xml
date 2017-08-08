@@ -84,6 +84,6 @@
            <field name="key2" eval="'client_print_multi'"/>
            <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_customer_payment)"/>
         </record>
-        <!-- <delete id="account.account_invoices" model="ir.actions.report.xml"/> -->
+        <delete id="account.account_invoices" model="ir.actions.report.xml"/>
     </data>
 </openerp>
