@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
+from openerp.tools import float_compare
+from openerp.tools.translate import _
 
 
 class PurchaseOrder(models.Model):
@@ -49,8 +51,7 @@ class PurchaseOrder(models.Model):
         self.event_date_description = False
         self.venue_description = False
         self.order_line = False
-        self.invoice_method = self.po_type_id and \
-            self.po_type_id.invoice_method or False
+        self.invoice_method = self.po_type_id.invoice_method or False
 
     @api.onchange('project_id')
     def _onchange_project_id(self):
@@ -90,14 +91,12 @@ class PurchaseOrder(models.Model):
     @api.multi
     def _check_amount_untaxed(self):
         for order in self:
-            po_project = order.po_type_id and order.po_type_id.po_project \
-                or False
-            remaining_cost = order.project_id and \
-                order.project_id.remaining_cost or False
+            po_project = order.po_type_id.po_project or False
+            remaining_cost = order.project_id.remaining_cost or 0.0
             if po_project and remaining_cost is not False:
-                if order.amount_untaxed > remaining_cost:
+                if float_compare(order.amount_untaxed, remaining_cost, 2) > 0:
                     raise ValidationError(
-                        "PO value is over project cost please change value")
+                        _("PO value is over project cost please change value"))
 
 
 class PurchaseOrderLine(models.Model):

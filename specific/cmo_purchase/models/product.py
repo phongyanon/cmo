@@ -25,10 +25,9 @@ class ProductProduct(models.Model):
             po_type_id = context.get('po_type_id', [])
             PoTypeConfig = self.env['purchase.order.type.config']
             po_type_config = PoTypeConfig.browse(po_type_id)
-            categ_ids = po_type_config.category_id.mapped('id')
+            categ_ids = po_type_config.category_id.ids
             product = self.search([('categ_id', 'in', categ_ids)])
-            product_ids = product.mapped('id')
-            args = [('id', 'in', product_ids)] + args
+            args = [('id', 'in', product.ids)] + args
         elif 'po_type_id' in context:
             args = [('id', 'in', [])]
         return super(ProductProduct, self).name_search(
