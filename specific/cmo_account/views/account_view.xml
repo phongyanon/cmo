@@ -12,10 +12,10 @@
                         <group>
                             <group>
                                 <field name="project_note"/>
-                                <field name="quote_ref_number"/>
-                                <field name="quote_ref_date"/>
                                 <field name="project_ref_name"/>
-                                <field name="project_ref_number"/>
+                                <field name="quote_ref_number" readonly="1"/>
+                                <field name="quote_ref_date" readonly="1"/>
+                                <field name="project_ref_number" readonly="1"/>
                                 <field name="quote_ref_event_date"/>
                                 <field name="quote_ref_venue"/>
                             </group>
