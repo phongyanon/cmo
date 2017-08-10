@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from openerp import models, fields, api
-from openerp.tools.translate import _
 
 
 class StockPicking(models.Model):
@@ -8,7 +7,7 @@ class StockPicking(models.Model):
 
     partner_id = fields.Many2one(
         'res.partner',
-        default=lambda self: self._get_partner_id(),
+        default=lambda self: self.env.user.partner_id,
     )
     default_operating_unit_id = fields.Many2one(
         'operating.unit',
@@ -16,16 +15,11 @@ class StockPicking(models.Model):
         compute='_compute_default_operating_unit_id',
     )
 
-    @api.model
-    def _get_partner_id(self):
-        user = self.env['res.users'].browse(self._uid)
-        return user.partner_id and user.partner_id.id or False
-
     @api.multi
     @api.depends('partner_id')
     def _compute_default_operating_unit_id(self):
         for picking in self:
-            User = picking.env['res.users']
+            User = self.env['res.users']
             picking.default_operating_unit_id = False
             if picking.partner_id:
                 user = User.search([('partner_id', '=',
@@ -40,17 +34,14 @@ class StockPicking(models.Model):
         product_ids = []
         for picking in self:
             product_ids += picking.move_lines.mapped('product_id.id')
-        return {
-            'name': _('Cuurent Inventory Valuation'),
-            'res_model': 'stock.history',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'tree,graph',
-            'domain': "[('product_id','in', \
-                [" + ','.join(map(str, product_ids)) + "])]",
-            'context': "{'search_default_group_by_location': True, \
-                         'search_default_group_by_product': True}"
-        }
+
+        action = self.env.ref('stock_account.action_history_tree')
+        result = action.read()[0]
+        dom = "[('product_id','in',[" + ','.join(map(str, product_ids)) + "])]"
+        ctx = "{'search_default_group_by_location': True, \
+                'search_default_group_by_product': True}"
+        result.update({'domain': dom, 'context': ctx})
+        return result
 
 
 class StockMove(models.Model):
@@ -59,7 +50,8 @@ class StockMove(models.Model):
     project_id = fields.Many2one(
         'project.project',
         string='Project name',
-        domain=lambda self: self._get_domain(),
+        domain=lambda self: [
+            ('operating_unit_id', 'in', self.env.user.operating_unit_ids.ids)],
     )
     location_dest_id = fields.Many2one(
         'stock.location',
@@ -67,19 +59,11 @@ class StockMove(models.Model):
     )
 
     @api.model
-    def _get_domain(self):
-        user = self.env['res.users'].browse(self._uid)
-        operating_unit_ids = []
-        for operating_unit in user.operating_unit_ids:
-            operating_unit_ids.append(operating_unit.id)
-        return [('operating_unit_id', 'in', operating_unit_ids)]
-
-    @api.model
     def _get_location_dest_id(self):
         Location = self.env['stock.location']
-        user = self.env['res.users'].browse(self._uid)
-        ou_id = user.default_operating_unit_id and \
-            user.default_operating_unit_id.id or False
+        user = self.env.user
+        ou_id = user.default_operating_unit_id.id or False
+        location = False
         if ou_id:
             location = Location.search([('operating_unit_id', '=', ou_id)])
         return location and location[0].id or False
@@ -109,7 +93,7 @@ class StockPickingType(models.Model):
 
     @api.multi
     def action_picking_type_form(self):
-        user = self.env['res.users'].browse(self._uid)
+        user = self.env.user
         domain = [(1, '=', 1)]
         if user.has_group('stock.group_stock_manager'):
             domain = ['|', ('code', '=', 'incoming'),
@@ -122,11 +106,8 @@ class StockPickingType(models.Model):
             domain = [('code', '=', 'outgoing')]
         elif user.has_group('cmo_stock.group_stock_readonly'):
             domain = [('code', '=', 'outgoing')]
-        return {
-            'name': _('All Operations'),
-            'res_model': 'stock.picking.type',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'kanban,form',
-            'domain': domain
-        }
+
+        action = self.env.ref('stock.action_picking_type_form')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result

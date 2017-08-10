@@ -16,6 +16,13 @@ class StockHistory(models.Model):
 
     # Replace
     def init(self, cr):
+        """
+            This function is overide the core module (stock_history)
+            which view will show additional 3 fields composed of
+                1. picking_name or source
+                2. partner_id or supplier_id
+                3. operating_unit_id (stock_picking, purchase_order)
+        """
         tools.drop_view_if_exists(cr, 'stock_history')
         cr.execute("""
             CREATE OR REPLACE VIEW stock_history AS (
