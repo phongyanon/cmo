@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp import api, fields, models
+from openerp.tools.float_utils import float_round
 import openerp.addons.decimal_precision as dp
 
 
@@ -32,25 +33,24 @@ class sale_order(models.Model):
     )
 
     @api.multi
-    def calculate_discount(self, vals):
+    def calculate_discount(self):
         self.ensure_one()
         discount = 0
         last_line = False
-        if ('discount_rate' in vals) and ('order_line' in vals):
-            res = vals['sale_order_record']
-            cur = res.pricelist_id.currency_id
-            if vals['discount_type'] == 'percent':
-                discount = vals['discount_rate']
-                order_lines = res.order_line
+        if self.discount_rate and self.order_line:
+            cur = self.pricelist_id.currency_id
+            if self.discount_type == 'percent':
+                discount = self.discount_rate
+                order_lines = self.order_line
             else:
-                amount = sum(res.order_line.mapped(
+                amount = sum(self.order_line.mapped(
                     lambda r: r.product_uom_qty * r.price_unit)
                 )
                 total = amount if amount != 0 else 1 # prevent devison by zero
-                discount_rate = vals['discount_rate']
-                discount = round((discount_rate / total) * 100.0, 16)
-                order_lines = res.order_line[:-1]
-                last_line = res.order_line[-1]
+                discount_rate = self.discount_rate
+                discount = float_round((discount_rate / total) * 100.0, 16)
+                order_lines = self.order_line[:-1]
+                last_line = self.order_line[-1]
             discount_line = 0
             for line in order_lines:
                 line.write({'discount': discount})
@@ -65,8 +65,7 @@ class sale_order(models.Model):
     @api.model
     def create(self, vals):
         res = super(sale_order, self).create(vals)
-        vals['sale_order_record'] = res
-        res.calculate_discount(vals)
+        res.calculate_discount()
         return res
 
     @api.multi
@@ -79,7 +78,7 @@ class sale_order(models.Model):
                 if 'discount_rate' not in vals:
                     vals['discount_rate'] = order.discount_rate
                 vals['sale_order_record'] = order
-                order.calculate_discount(vals)
+                order.calculate_discount()
         return res
 
     @api.multi
@@ -105,7 +104,7 @@ class sale_order(models.Model):
             order.amount_before_discount = amount_before_discount
 
     @api.multi
-    @api.onchange('discount_type', 'discount_rate', 'order_line',)
+    @api.onchange('discount_type', 'discount_rate', 'order_line')
     def supply_rate(self):
         for order in self:
             if order.discount_type == 'percent':
@@ -116,7 +115,7 @@ class sale_order(models.Model):
                             lambda r: r.product_uom_qty * r.price_unit)
                         )
                 total = amount if amount != 0 else 1 # prevent devison by zero
-                discount = round((order.discount_rate / total) * 100.0, 16)
+                discount = float_round((order.discount_rate / total) * 100.0, 16)
                 order_lines = order.order_line[:-1] if \
                     len(order.order_line) > 0 else order.order_line
                 cur = order.pricelist_id.currency_id
