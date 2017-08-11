@@ -33,7 +33,7 @@ class StockPicking(models.Model):
         # Get product_id in each line
         product_ids = []
         for picking in self:
-            product_ids += picking.move_lines.mapped('product_id.id')
+            product_ids += picking.move_lines.mapped('product_id').ids
 
         action = self.env.ref('stock_account.action_history_tree')
         result = action.read()[0]
