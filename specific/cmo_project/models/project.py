@@ -102,7 +102,7 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
         compute='_compute_expense',
     )
-    brief_date = fields.Date(
+    date_brief = fields.Date(
         string='Brief Date',
         default=lambda self: fields.Date.context_today(self),
         states={'close': [('readonly', True)]},
@@ -202,7 +202,7 @@ class ProjectProject(models.Model):
     project_parent_id = fields.Many2one(
         'project.project',
         string='Parent Project',
-        inverse='_set_project_analytic_account',
+        compute='_set_project_analytic_account',
         states={'close': [('readonly', True)]},
         store=True,
     )
@@ -241,7 +241,7 @@ class ProjectProject(models.Model):
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
             ctx = self._context.copy()
-            current_date = datetime.date.today()
+            current_date = fields.Date.context_today(self)
             fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
             ctx["fiscalyear_id"] = fiscalyear_id
             vals['project_number'] = self.env['ir.sequence']\
@@ -316,33 +316,27 @@ class ProjectProject(models.Model):
         for project in self:
             parent_project = self.env['project.project'].browse(
                 project.project_parent_id.id)
-            project.parent_id = parent_project.analytic_account_id.id
+            project.parent_id = parent_project.analytic_account_id
 
     @api.multi
-    @api.constrains('brief_date', 'date')
-    def _check_brief_dates(self):
+    @api.constrains('date_brief', 'date')
+    def _check_date_briefs(self):
         self.ensure_one()
-        if self.brief_date > self.date:
-            return ValidationError("project brief-date must be lower than \
-                project end-date.")
+        if self.date_brief > self.date:
+            return ValidationError("project brief-date must be lower than "
+                                                        "project end-date.")
 
     @api.multi
     def quotation_relate_project_tree_view(self):
         self.ensure_one()
         domain = [
-            '&',
             ('project_related_id', 'like', self.id),
             ('order_type', '=', 'quotation'),
         ]
-        return {
-            'name': 'Quotations',
-            'res_model': 'sale.order',
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'domain': domain,
-            'context': "{'active': True, 'order_type': 'quotation'}",
-        }
+        action = self.env.ref('sale.action_quotations')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
 
     @api.multi
     def purchase_relate_project_tree_view(self):
@@ -350,36 +344,22 @@ class ProjectProject(models.Model):
         domain = [
             ('project_id', 'like', self.id),
         ]
-        return {
-            'name': 'Purchase Order',
-            'res_model': 'purchase.order',
-            'type': 'ir.actions.act_window',
-            'views': [[False, "tree"], [False, "form"]],
-            'domain': domain,
-            'context': "{'active': True}"
-        }
+        action = self.env.ref('purchase.purchase_form_action')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
 
     @api.multi
     def invoice_relate_project_tree_view(self):
         self.ensure_one()
         domain = [
-            '&',
             ('project_ref_id', 'like', self.id),
             ('type', '=', 'out_invoice'),
         ]
-        return {
-            'name': 'Project Invoice',
-            'res_model': 'account.invoice',
-            'type': 'ir.actions.act_window',
-            'views': [[False, "tree"], [False, "form"]],
-            'domain': domain,
-            'context': "{\
-                'active': True, \
-                'default_type':'out_invoice', \
-                'type':'out_invoice', \
-                'journal_type': 'sale'\
-            }"
-        }
+        action = self.env.ref('account.action_invoice_tree1')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
 
     @api.multi
     @api.depends(
@@ -390,15 +370,15 @@ class ProjectProject(models.Model):
     )
     def _compute_price_and_cost(self):
         for project in self:
-            actual_price = 0
-            estimate_cost = 0
+            actual_price = 0.0
+            estimate_cost = 0.0
             quotes = project.quote_related_ids.filtered(
                 lambda r: r.state in ('draft', 'done')
             )
             for quote in quotes:
                 actual_price += quote.amount_untaxed
                 estimate_cost += sum(quote.order_line.filtered(
-                    lambda r: r.purchase_price > 0).mapped('purchase_price'))
+                    lambda r: r.purchase_price > 0.0).mapped('purchase_price'))
             project.actual_price = actual_price
             project.estimate_cost = estimate_cost
 

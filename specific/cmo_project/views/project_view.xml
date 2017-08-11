@@ -92,7 +92,7 @@
                   <attribute name="string">Project Status</attribute>
               </xpath>
               <xpath expr="/tree/field[@name='state']" position="before">
-                  <field name="brief_date"/>
+                  <field name="date_brief"/>
                   <field name="date_start"/>
               </xpath>
               <xpath expr="/tree/field[@name='state']" position="after">
@@ -220,6 +220,9 @@
                             <field string="Invoices" name="invoice_related_ids" widget="x2many_counter"/>
                         </button>
                     </div>
+                    <div class="oe_right oe_button_box" name="sale_invoice_buttons" groups="base.group_user">
+
+                    </div>
                 </xpath>
                 <xpath expr="//field[@name='analytic_account_id']" position="before">
                       <h1>
@@ -239,7 +242,7 @@
                     <group>
                         <group>
                             <field name="project_budget"/>
-                            <field name="brief_date"/>
+                            <field name="date_brief"/>
                             <field name="date_start"/>
                             <field name="date" string="End Date"/>
                             <field name="project_parent_id" context="{'tree_view_ref':'cmo_project.inherit_view_project_tree'}"/>
