@@ -28,7 +28,7 @@ class sale_order(models.Model):
         default=False,
         help="Merge order line to be single line.",
     )
-    amount_untaxed_order_plan  = fields.Float(
+    amount_untaxed_order_plan = fields.Float(
         string='Amount Untaxed',
         readonly=True,
         related='amount_untaxed',
@@ -46,23 +46,23 @@ class sale_order(models.Model):
         default='change_price',
     )
 
-    @api.multi
     @api.depends('customer_amount')
     @api.onchange('order_plan_ids')
     def _compute_customer_amount(self):
-        for order in self:
-            self.customer_amount = len(self.order_plan_ids)
+        self.customer_amount = len(self.order_plan_ids)
 
     @api.multi
     def merge_sale_order_line(self, amount_price):
         self.ensure_one()
         order_lines = self.order_line
-        description = (self.name or '') + ' ' + \
-                      (self.date_order or '') + ' ' + \
-                      (self.project_related_id.project_number or '') + ' ' + \
-                      (self.project_related_id.name or '') + ' ' + \
-                      (self.event_date_description or '') + ' ' + \
-                      (self.venue_description or '')
+        description = '%s %s %s %s %s %s' % (
+            self.name or '',
+            self.date_order or '',
+            self.project_related_id.project_number or '',
+            self.project_related_id.name or '',
+            self.event_date_description or '',
+            self.venue_description or '',
+        )
         new_line = order_lines[0].copy({
             'order_lines_group': 'before',
             'sale_layout_custom_group_id': None,
@@ -73,8 +73,7 @@ class sale_order(models.Model):
             'product_uom_qty': 1.0,
             'name': description,
         })
-        for line in order_lines:
-            line.unlink()
+        order_lines.unlink()
         res = new_line.write({'order_id': self.id})
         self._amount_all()
         return res
@@ -86,7 +85,8 @@ class sale_order(models.Model):
         if order_line and self.sale_order_mode:
             if self.sale_order_mode == 'change_quantity':
                 for line in self.order_line:
-                    new_quantity = amount_price / self.amount_untaxed
+                    new_quantity = amount_price / self.amount_untaxed \
+                        if self.amount_price != 0 else amount_price
                     line.write({
                         'product_uom_qty': new_quantity,
                         'purchase_price': 0.0,
@@ -119,9 +119,9 @@ class sale_order(models.Model):
         order_plan_amount = sum(order_plan.mapped('sale_order_amount'))
         order_plan_percent = sum(order_plan.mapped('sale_order_percent'))
         if (self.use_merge is False) and (self.sale_order_mode is False):
-            raise Warning(_("Should select sale order mode \
-            if not use merge sale order line"))
-        if order_plan_amount != self.amount_untaxed_order_plan:
+            raise Warning(_("Should select sale order mode "
+                            "if not use merge sale order line"))
+        if order_plan_amount != self.amount_untaxed:
             raise Warning(_("Order plan have amount not equal with Quotation"))
         if order_plan_amount <= 0.0:
             raise Warning(_("Order plan amount must more than zero"))
@@ -135,7 +135,7 @@ class sale_order(models.Model):
             if self.use_multi_customer and self.order_plan_ids:
                 order_plan = self.validate_sale_order_plan()
                 ctx = self._context.copy()
-                current_date = datetime.date.today()
+                current_date = fields.Date.context_today(self)
                 fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
                 ctx["fiscalyear_id"] = fiscalyear_id
                 for plan in order_plan:
@@ -163,18 +163,13 @@ class sale_order(models.Model):
     @api.multi
     def action_view_sale_order(self):
         self.ensure_one()
+        action = self.env.ref('sale.action_orders')
         domain = [
-            '&', ('quote_id', 'like', self.id),
+            ('quote_id', 'like', self.id),
             ('order_type', '=', 'sale_order'),
         ]
-        return {
-            'name': _('Sale Order List'),
-            'res_model': 'sale.order',
-            'type': 'ir.actions.act_window',
-            'views': [[False, "tree"], [False, "form"]],
-            'domain': domain,
-            'context': "{'active': True}"
-        }
+        action['domain'] = domain
+        return action.read()[0]
 
     @api.multi
     def action_cancel_draft_sale_orders(self):
@@ -251,21 +246,17 @@ class SaleOrderCustomerPlan(models.Model):
         string='Name',
     )
 
-    @api.multi
     @api.onchange('sale_order_percent')
     def _onchange_sale_order_percent(self):
-        self.ensure_one()
         precision = self.env['decimal.precision']
         prec = precision.precision_get('Account')
         subtotal = self.quote_id.amount_untaxed
         self.sale_order_amount = round(self.sale_order_percent / 100.0 *
                                        subtotal or 0.0, prec)
 
-    @api.multi
     @api.onchange('sale_order_amount')
     def _onchange_sale_order_amount(self):
-        self.ensure_one()
-        amount_order = self.quote_id.amount_untaxed_order_plan
+        amount_order = self.quote_id.amount_untaxed
         if amount_order != 0:
             new_percent = (self.sale_order_amount/amount_order) * 100 or 0.0
             if round(new_percent, 6) != round(self.sale_order_percent, 10):

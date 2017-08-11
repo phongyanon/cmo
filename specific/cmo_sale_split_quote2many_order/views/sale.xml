@@ -21,7 +21,7 @@
 				<xpath expr="/form/sheet/notebook" position="before">
 	               	<div>
 	               		<field name="use_multi_customer" attrs="{'invisible': [('order_type','=','sale_order')]}"/>
-	               		<label for="use_multi_customer" attrs="{'invisible': [('order_type','=','sale_order')]}"/>
+	               		<label for="use_multi_customer" string="Order Plan" attrs="{'invisible': [('order_type','=','sale_order')]}"/>
 	               	</div>
             	</xpath>
                 <page string="Other Information" position="before">
