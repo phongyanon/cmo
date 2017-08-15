@@ -4,16 +4,13 @@
     "summary": "",
     "version": "1.0",
     "category": "Project",
-    "description": """
-
-* Additional fields for project master
-
-    """,
     "website": "http://ecosoft.co.th",
     "author": "Kitti U., Phongyanon Y.",
     "license": "AGPL-3",
     "depends": [
         'project',
+        'cmo_sale',
+        'cmo_purchase',
         'account_auto_fy_sequence',
     ],
     "data": [
@@ -26,7 +23,6 @@
         'views/project_view.xml',
         'views/master_data_view.xml',
         'views/customer_view.xml',
-        'views/account_view.xml',
     ],
     "application": False,
     "installable": True,
