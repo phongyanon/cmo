@@ -92,7 +92,7 @@
                   <attribute name="string">Project Status</attribute>
               </xpath>
               <xpath expr="/tree/field[@name='state']" position="before">
-                  <field name="brief_date"/>
+                  <field name="date_brief"/>
                   <field name="date_start"/>
               </xpath>
               <xpath expr="/tree/field[@name='state']" position="after">
@@ -100,24 +100,27 @@
                   <field name="partner_id" string="Customer"/>
                   <field name="project_from_id"/>
                   <field name="project_type_id"/>
-                  <field name="agency_partner_id"/>
-                  <field name="client_type_id"/>
-                  <field name="brand_type_id"/>
-                  <field name="industry_id"/>
-                  <field name="obligation_id"/>
-                  <field name="function_id"/>
-                  <field name="location_id"/>
-                  <field name="project_place"/>
-                  <field name="project_budget"/>
-                  <field name="actual_price"/>
-                  <field name="estimate_cost"/>
-                  <field name="pre_cost"/>
-                  <field name="actual_po"/>
+                  <field name="project_budget" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
+                  <field name="actual_price" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
+                  <field name="estimate_cost" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
+                  <field name="pre_cost" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
+                  <field name="actual_po" groups="project.group_project_admin,project.group_project_manager,project.group_project_readonly"/>
                   <field name="close_reason"/>
               </xpath>
             </field>
         </record>
-
+        <record id="inherit_view_project_tree" model="ir.ui.view">
+            <field name="name">project.project.inherit.tree</field>
+            <field name="model">project.project</field>
+            <field eval="17" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Projects">
+                    <field name="project_number"/>
+                    <field name="name"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
         # Project  # TODO Administration selection only public and access
         <record id="edit_project" model="ir.ui.view">
             <field name="name">edit.project</field>
@@ -205,6 +208,22 @@
                 <xpath expr="//p" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//div[@name='buttons']" position="after">
+                    <div class="oe_right oe_button_box" name="sale_purchase_buttons" groups="base.group_user">
+                        <button class="oe_inline oe_stat_button" type="object" name="quotation_relate_project_tree_view" icon="fa-list">
+                            <field string="Sale Quotation" name="quote_related_ids" widget="x2many_counter"/>
+                        </button>
+                        <button class="oe_inline oe_stat_button" type="object" name="purchase_relate_project_tree_view" icon="fa-list">
+                            <field string="Purchase Order" name="purchase_related_ids" widget="x2many_counter"/>
+                        </button>
+                        <button class="oe_inline oe_stat_button" type="object" name="invoice_relate_project_tree_view" icon="fa-list">
+                            <field string="Invoices" name="invoice_related_ids" widget="x2many_counter"/>
+                        </button>
+                    </div>
+                    <div class="oe_right oe_button_box" name="sale_invoice_buttons" groups="base.group_user">
+
+                    </div>
+                </xpath>
                 <xpath expr="//field[@name='analytic_account_id']" position="before">
                       <h1>
                           <label for="name" string="Project Number"/>
@@ -223,10 +242,10 @@
                     <group>
                         <group>
                             <field name="project_budget"/>
-                            <field name="brief_date"/>
+                            <field name="date_brief"/>
                             <field name="date_start"/>
                             <field name="date" string="End Date"/>
-                            <field name="project_parent_id"/>
+                            <field name="project_parent_id" context="{'tree_view_ref':'cmo_project.inherit_view_project_tree'}"/>
                             <field name="operating_unit_id" string="Department" readonly="1"/>
                             <field name="state_before_inactive" invisible="1"/>
                             <field name="is_active_state" invisible="1"/>
@@ -289,7 +308,7 @@
                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']/field[@name='parent_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']" position="inside">
+                 <xpath expr="//notebook/page[@string='Other Info']/group[@name='misc']" position="after">
                       <group>
                           <field name="active" invisible="1"/>
                           <group>
@@ -321,10 +340,12 @@
                             <field name="actual_po" readonly="1"/>
                             <field name="remain_advance" readonly="1"/>
                             <field name="expense" readonly="1"/>
+                            <field name="remaining_cost" readonly="1"/>
+                            <field name="is_paid" invisible="1"/>
                         </group>
                     </page>
                  </xpath>
-                 <xpath expr="//notebook/page[@string='Other Info']/group[2]" position="after">
+                 <xpath expr="//notebook/page[@string='Other Info']/group[3]" position="after">
                     <group>
                         <field name="description" string="Project Description"/>
                     </group>

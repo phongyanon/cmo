@@ -74,10 +74,14 @@ class ProjectProject(models.Model):
     actual_price = fields.Float(
         string='Actual Price',
         states={'close': [('readonly', True)]},
+        compute='_compute_price_and_cost',
+        store=True,
     )
     estimate_cost = fields.Float(
         string='Estimate Cost',
         states={'close': [('readonly', True)]},
+        compute='_compute_price_and_cost',
+        store=True,
     )
     pre_cost = fields.Float(
         string='Pre-Project',
@@ -86,6 +90,8 @@ class ProjectProject(models.Model):
     actual_po = fields.Float(
         string='Actual PO',
         states={'close': [('readonly', True)]},
+        compute='_compute_actual_po',
+        store=True,
     )
     remain_advance = fields.Float(
         string='Remain Advance',
@@ -94,8 +100,9 @@ class ProjectProject(models.Model):
     expense = fields.Float(
         string='Expense',
         states={'close': [('readonly', True)]},
+        compute='_compute_expense',
     )
-    brief_date = fields.Date(
+    date_brief = fields.Date(
         string='Brief Date',
         default=lambda self: fields.Date.context_today(self),
         states={'close': [('readonly', True)]},
@@ -150,7 +157,7 @@ class ProjectProject(models.Model):
          ('open','In Progress'),
          ('ready_billing', 'Ready to Billing'),
          ('invoices', 'Invoices'),
-         ('received', 'Received'),
+         ('paid', 'Paid'),
          ('cancelled', 'Incompleted'),
          ('pending','Pending'),
          ('close','Completed'), ],
@@ -195,32 +202,46 @@ class ProjectProject(models.Model):
     project_parent_id = fields.Many2one(
         'project.project',
         string='Parent Project',
-        inverse='_set_project_analytic_account',
+        compute='_set_project_analytic_account',
         states={'close': [('readonly', True)]},
         store=True,
+    )
+    quote_related_ids = fields.One2many(
+        'sale.order',
+        'project_related_id',
+        string='Related Quotation',
+        domain=[('order_type', '=', 'quotation'), ],
+    )
+    purchase_related_ids = fields.One2many(
+        'purchase.order',
+        'project_id',
+        string='Related Project',
+    )
+    invoice_related_ids = fields.One2many(
+        'account.invoice',
+        'project_ref_id',
+        string='Related Invoice',
+        domain=[('type', '=', 'out_invoice'), ],
+
+    )
+    is_paid = fields.Boolean(
+        string='is paid',
+        compute='_compute_invoice_related_ids',
+    )
+    remaining_cost = fields.Float(
+        string='Remaining Cost',
+        compute='_compute_remaining_cost',
     )
 
     _defaults = {
         'use_tasks': False
     }
-    # TODO create tab to show invoices of project.
-    # invoice_ids = fields.Many2many(
-    #     'account.invoice',
-    #     string='Invoices',
-    #     compute='_compute_invoice_ids',
-    #     help="This field show invoices related to this project",
-    # )
-    #
-    # @api.multi
-    # @api.depends()
-    # def _compute_invoice_ids(self):
-    #     self.invoice_ids = []
 
     @api.model
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
             ctx = self._context.copy()
-            current_date = datetime.date.today()
+            current_date = fields.Date.context_today(self)
             fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
             ctx["fiscalyear_id"] = fiscalyear_id
             vals['project_number'] = self.env['ir.sequence']\
@@ -293,15 +314,136 @@ class ProjectProject(models.Model):
     @api.multi
     def _set_project_analytic_account(self):
         for project in self:
-            parent_project = self.env['project.project'].browse(project.project_parent_id.id)
-            project.parent_id = parent_project.analytic_account_id.id
+            parent_project = self.env['project.project'].browse(
+                project.project_parent_id.id)
+            project.parent_id = parent_project.analytic_account_id
 
     @api.multi
-    @api.constrains('brief_date', 'date')
-    def _check_brief_dates(self):
+    @api.constrains('date_brief', 'date')
+    def _check_date_briefs(self):
         self.ensure_one()
-        if self.brief_date > self.date:
-            return ValidationError("project brief-date must be lower than project end-date.")
+        if self.date_brief > self.date:
+            return ValidationError("project brief-date must be lower than "
+                                                        "project end-date.")
+
+    @api.multi
+    def quotation_relate_project_tree_view(self):
+        self.ensure_one()
+        domain = [
+            ('project_related_id', 'like', self.id),
+            ('order_type', '=', 'quotation'),
+        ]
+        action = self.env.ref('sale.action_quotations')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
+
+    @api.multi
+    def purchase_relate_project_tree_view(self):
+        self.ensure_one()
+        domain = [
+            ('project_id', 'like', self.id),
+        ]
+        action = self.env.ref('purchase.purchase_form_action')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
+
+    @api.multi
+    def invoice_relate_project_tree_view(self):
+        self.ensure_one()
+        domain = [
+            ('project_ref_id', 'like', self.id),
+            ('type', '=', 'out_invoice'),
+        ]
+        action = self.env.ref('account.action_invoice_tree1')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
+
+    @api.multi
+    @api.depends(
+        'actual_price',
+        'estimate_cost',
+        'quote_related_ids',
+        'quote_related_ids.order_line',
+    )
+    def _compute_price_and_cost(self):
+        for project in self:
+            actual_price = 0.0
+            estimate_cost = 0.0
+            quotes = project.quote_related_ids.filtered(
+                lambda r: r.state in ('draft', 'done')
+            )
+            for quote in quotes:
+                actual_price += quote.amount_untaxed
+                estimate_cost += sum(quote.order_line.filtered(
+                    lambda r: r.purchase_price > 0.0).mapped('purchase_price'))
+            project.actual_price = actual_price
+            project.estimate_cost = estimate_cost
+
+    @api.multi
+    @api.depends(
+        'actual_po',
+        'purchase_related_ids',
+        'purchase_related_ids.state',
+        'purchase_related_ids.amount_untaxed',
+    )
+    def _compute_actual_po(self):
+        for project in self:
+            purchase_orders = project.purchase_related_ids.filtered(
+                lambda r: r.state in ('approved', 'done')
+            )
+            project.actual_po = sum(purchase_orders.mapped('amount_untaxed'))
+
+    @api.multi
+    def name_get(self):
+        res = []
+        for project in self:
+            name = project.name or '/'
+            if name and project.project_number:
+                name = '['+project.project_number+'] ' + name
+            res.append((project.id, name))
+        return res
+
+    @api.multi
+    @api.depends('estimate_cost', 'pre_cost', 'actual_po', 'expense')
+    def _compute_remaining_cost(self):
+        for project in self:
+            remaining = (project.estimate_cost + project.pre_cost) - \
+                (project.actual_po + project.expense)
+            project.remaining_cost = remaining
+
+    @api.multi
+    @api.depends('expense')
+    def _compute_expense(self):
+        for project in self:
+            expense_lines = self.env['hr.expense.line'].search([
+                 ['analytic_account', '=', project.analytic_account_id.id],
+            ])
+            expense = sum(expense_lines.filtered(
+                lambda r: (r.expense_id.state in ('done', 'paid')) and
+                          (r.expense_id.is_employee_advance is False)
+            ).mapped('total_amount'))
+            project.expense = expense
+
+    @api.multi
+    @api.depends('is_paid', 'invoice_related_ids', 'invoice_related_ids.state')
+    def _compute_invoice_related_ids(self):
+        for project in self:
+            invoice_open = project.invoice_related_ids.filtered(
+                lambda r: r.state in ('open', 'paid')
+            )
+            invoice_paid = project.invoice_related_ids.filtered(
+                lambda r: r.state in ('paid')
+            )
+            if invoice_paid and \
+                    (len(invoice_paid) == len(project.invoice_related_ids)):
+                project.write({'state': 'paid'})
+            elif invoice_open:
+                project.write({'state': 'invoices'})
+            else:
+                project.write({'state': 'ready_billing'})
 
 
 class ProjectTeamMember(models.Model):
