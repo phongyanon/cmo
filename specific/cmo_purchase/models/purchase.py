@@ -80,12 +80,14 @@ class PurchaseOrder(models.Model):
                 with_context(ctx).get('cmo.purchase')
         order = super(PurchaseOrder, self).create(vals)
         order._check_amount_untaxed()
+        order._update_analytic_by_project()
         return order
 
     @api.multi
     def write(self, vals):
         res = super(PurchaseOrder, self).write(vals)
         self._check_amount_untaxed()
+        self._update_analytic_by_project()
         return res
 
     @api.multi
@@ -97,6 +99,12 @@ class PurchaseOrder(models.Model):
                 if float_compare(order.amount_untaxed, remaining_cost, 2) > 0:
                     raise ValidationError(
                         _("PO value is over project cost please change value"))
+
+    @api.multi
+    def _update_analytic_by_project(self):
+        for rec in self:
+            for line in rec.order_line:
+                line.account_analytic_id = self.project_id.analytic_account_id
 
 
 class PurchaseOrderLine(models.Model):
