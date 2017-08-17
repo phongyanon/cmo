@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from openerp import fields, models, api
+from openerp import fields, models, api, _
+from openerp.exceptions import ValidationError
 
 
 class HrExpenseExpense(models.Model):
@@ -61,10 +62,23 @@ class HrExpenseExpense(models.Model):
             ('validate', 'Waiting Validate'),
             ('cancelled', 'Refused'),
             ('confirm', 'Waiting Approval'),
-            ('accepted', 'Approved'),
+            ('accepted',
+            'Approved'),
             ('done', 'Waiting Payment'),
             ('paid', 'Paid'),
         ],
+    )
+    employee_id = fields.Many2one(
+        states={
+            'draft': [('readonly', True)],
+            'confirm': [('readonly', True)],
+        },
+    )
+    department_id = fields.Many2one(
+        states={
+            'draft': [('readonly', True)],
+            'confirm': [('readonly', True)],
+        },
     )
 
     @api.model
@@ -101,6 +115,21 @@ class HrExpenseExpense(models.Model):
         Employee = self.env['hr.employee']
         employee_request_id = Employee.search([('user_id', '=', self._uid), ])
         return employee_request_id and employee_request_id[0].id or False
+
+    @api.onchange('employee_id')
+    def _onchange_hr_department(self):
+        self.department_id = self.employee_id.department_id
+
+    @api.multi
+    @api.constrains('request_date', 'due_date')
+    def _check_due_date(self):
+        self.ensure_one()
+        # Employees = self.env['hr.employee'].search([
+        #     ('department_id', '=', self.user_id.employee_ids.department_id.id),
+        # ]) # example for filter employee by department instead of OU
+        if self.request_date > self.due_date:
+            raise ValidationError(
+                _('Request Date must be lower than Due Date.'))
 
 
 class HrExpenseLine(models.Model):
