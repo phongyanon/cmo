@@ -143,10 +143,17 @@ class HrExpenseExpense(models.Model):
 class HrExpenseLine(models.Model):
     _inherit = 'hr.expense.line'
 
+
     amount_line_untaxed = fields.Float(
-        string="Total Untaxed",
+        string='Total Untaxed',
         compute='_compute_amount_line_untaxed',
         readonly=True,
+    )
+
+    is_advance_clearing = fields.Boolean(
+        string='Is Clearing',
+        related='expense_id.is_advance_clearing',
+        default=lambda self: self._context.get('is_advance_clearing', False),
     )
 
     @api.model

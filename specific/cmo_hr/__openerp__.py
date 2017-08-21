@@ -9,6 +9,7 @@
     "version": "1.0",
     'depends': [
         'hr_expense_auto_invoice',
+        'hr_expense_advance_clearing',
     ],
     'data': [
         'data/hr_data.xml',

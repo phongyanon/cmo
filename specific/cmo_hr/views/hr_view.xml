@@ -35,6 +35,9 @@
                     <field name="request_date"/>
                     <field name="due_date"/>
                 </field>
+                <field name="line_ids" position="attributes">
+                    <attribute name="context">{'is_advance_clearing': context.get('is_advance_clearing'),'currency_id': currency_id, 'default_analytic_account': context.get('analytic_account', '')}</attribute>
+                </field>
                 <field name="line_ids" position="after">
                     <group>
                         <group>
@@ -50,8 +53,11 @@
                 <xpath expr="//tree[@string='Expense Lines']/field[@name='uom_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+                <xpath expr="//tree[@string='Expense Lines']/field[@name='analytic_account']" position="before">
+                    <field name="is_advance_clearing" invisible="1"/>
+                </xpath>
                 <xpath expr="//tree[@string='Expense Lines']/field[@name='analytic_account']" position="attributes">
-                    <attribute name="readonly">[('is_employee_advance','=',True)]</attribute>
+                    <attribute name="attrs">{'readonly': [('is_advance_clearing','=',True)]}</attribute>
                 </xpath>
             </field>
         </record>
