@@ -131,6 +131,14 @@ class HrExpenseExpense(models.Model):
             raise ValidationError(
                 _('Request Date must be lower than Due Date.'))
 
+    @api.onchange('line_ids', 'advance_expense_id')
+    def _onchange_hr_line_analytic(self):
+        advance = self.advance_expense_id
+        self.employee_request_id = advance.employee_request_id
+        if advance and advance.is_employee_advance:
+            for line in self.line_ids:
+                line.analytic_account = advance.line_ids.analytic_account
+
 
 class HrExpenseLine(models.Model):
     _inherit = 'hr.expense.line'
@@ -140,6 +148,16 @@ class HrExpenseLine(models.Model):
         compute='_compute_amount_line_untaxed',
         readonly=True,
     )
+
+    @api.model
+    def create(self, vals):
+        Expense = self.env['hr.expense.expense'].\
+            browse(vals['expense_id'])
+        advance = Expense.advance_expense_id
+        if advance and advance.is_employee_advance:
+            vals['analytic_account'] = advance.line_ids.analytic_account.id
+        res = super(HrExpenseLine, self).create(vals)
+        return res
 
     @api.multi
     @api.depends('amount_line_untaxed')
