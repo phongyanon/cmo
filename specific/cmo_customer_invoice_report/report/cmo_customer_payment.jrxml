@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;line_cr_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.1"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="778"/>
+	<property name="ireport.y" value="336"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -44,8 +44,8 @@
 	<field name="Quote_number" class="java.lang.String">
 		<fieldDescription><![CDATA[line_cr_ids/move_line_id/invoice/quote_ref_number]]></fieldDescription>
 	</field>
-	<field name="quote_date" class="java.lang.String">
-		<fieldDescription><![CDATA[line_cr_ids/move_line_id/invoice/quote_ref_date]]></fieldDescription>
+	<field name="quote_date" class="java.util.Date">
+		<fieldDescription><![CDATA[line_cr_ids/move_line_id/invoice/quote_ref_id/date_order]]></fieldDescription>
 	</field>
 	<field name="project_name" class="java.lang.String">
 		<fieldDescription><![CDATA[line_cr_ids/move_line_id/invoice/project_ref_name]]></fieldDescription>
@@ -83,6 +83,15 @@
 	<field name="narration" class="java.lang.String">
 		<fieldDescription><![CDATA[narration]]></fieldDescription>
 	</field>
+	<field name="province_id" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/province_id]]></fieldDescription>
+	</field>
+	<field name="township_id" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/township_id]]></fieldDescription>
+	</field>
+	<field name="district_id" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/district_id]]></fieldDescription>
+	</field>
 	<variable name="string_total" class="java.lang.String">
 		<variableExpression><![CDATA[(Math.round($F{amount_total}*100)/100).toString()]]></variableExpression>
 	</variable>
@@ -102,7 +111,7 @@
 	</title>
 	<pageHeader>
 		<band height="296" splitType="Stretch">
-			<textField pattern="dd MMMMM yyyy" isBlankWhenNull="true">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement x="400" y="140" width="110" height="20"/>
 				<textElement>
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
@@ -128,7 +137,12 @@
 				<textElement>
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_street}+ " " +$F{partner_street2}+ " " +$F{partner_city}+ " " +$F{partner_zip}+ " " +$F{partner_country}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_street}+ " " +
+$F{partner_street2}+ " "+
+$F{township_id} +" "+
+$F{district_id}+ " " +
+$F{province_id} + " "+
+$F{partner_zip}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="80" y="160" width="280" height="24" isPrintWhenDetailOverflows="true"/>
@@ -153,17 +167,41 @@
 				<textFieldExpression class="java.lang.Float"><![CDATA[$F{amount_untaxed}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement isPrintRepeatedValues="false" x="15" y="0" width="385" height="78" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement isPrintRepeatedValues="false" x="15" y="40" width="385" height="38" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box topPadding="2" leftPadding="2"/>
 				<textElement>
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_note} + "  " + $F{project_name} + "\n" +
-"( Quotation No. : " + $F{Quote_number} + " / Date: " + $F{quote_date} + " )" + "\n" +
-"Project No. : " + $F{project_number} + "\n" +
+				<textFieldExpression class="java.lang.String"><![CDATA["Project No. : " + $F{project_number} + "\n" +
 "วันที่จัดงาน " + $F{quote_event_date} + "\n" +
 "สถานที่จัดงาน " + $F{quote_venue} + "\n" +
 $F{others_note}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="15" y="0" width="385" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2"/>
+				<textElement>
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_note} + "  " + $F{project_name}
+
+]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="15" y="20" width="385" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2"/>
+				<textElement>
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["( Quotation No. : " + $F{Quote_number} + " / Date:                         )"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="220" y="20" width="90" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<box topPadding="2" leftPadding="2"/>
+				<textElement>
+					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{quote_date}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -196,7 +234,7 @@ $F{others_note}]]></textFieldExpression>
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$F{tax_amount}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="0" y="61" width="310" height="20"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>

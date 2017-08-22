@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
 	<property name="ireport.zoom" value="1.0000000000000022"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="147"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -83,6 +83,15 @@
 	<field name="invoice_line_subtotal" class="java.lang.Float">
 		<fieldDescription><![CDATA[invoice_line/price_subtotal]]></fieldDescription>
 	</field>
+	<field name="district_id" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/district_id]]></fieldDescription>
+	</field>
+	<field name="township_id" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/township_id]]></fieldDescription>
+	</field>
+	<field name="province_id" class="java.lang.String">
+		<fieldDescription><![CDATA[partner_id/province_id]]></fieldDescription>
+	</field>
 	<variable name="string_total" class="java.lang.String">
 		<variableExpression><![CDATA[(Math.round($F{amount_total}*100)/100).toString()]]></variableExpression>
 	</variable>
@@ -128,8 +137,13 @@
 				<textElement>
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}+ "\n"
-+$F{partner_street}+ " " +$F{partner_street2}+ " " +$F{partner_city}+ " " +$F{partner_zip}+ " " +$F{partner_country}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{partner_name}+ "\n" +
+$F{partner_street}+ " " +
+$F{partner_street2}+ " "+
+$F{township_id} +" "+
+$F{district_id}+ " " +
+$F{province_id} + " "+
+$F{partner_zip}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="15" y="210" width="110" height="20"/>
@@ -185,7 +199,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.Float"><![CDATA[$F{amount_total}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="15" y="50" width="294" height="20" isPrintWhenDetailOverflows="true"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
