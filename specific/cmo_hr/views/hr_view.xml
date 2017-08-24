@@ -25,6 +25,9 @@
                 <xpath expr="//button[@name='confirm']" position="attributes">
                     <attribute name="groups">base.group_hr_user,hr.group_hr_director</attribute>
                 </xpath>
+                <xpath expr="//button[@name='refuse']" position="attributes">
+                    <attribute name="states">draft,validate,confirm,accepted</attribute>
+                </xpath>
                 <button name="confirm" position="attributes">
                     <attribute name="states">validate</attribute>
                 </button>
