@@ -62,8 +62,7 @@ class HrExpenseExpense(models.Model):
             ('validate', 'Waiting Validate'),
             ('cancelled', 'Refused'),
             ('confirm', 'Waiting Approval'),
-            ('accepted',
-            'Approved'),
+            ('accepted', 'Approved'),
             ('done', 'Waiting Payment'),
             ('paid', 'Paid'),
         ],
@@ -124,9 +123,6 @@ class HrExpenseExpense(models.Model):
     @api.constrains('request_date', 'due_date')
     def _check_due_date(self):
         self.ensure_one()
-        # Employees = self.env['hr.employee'].search([
-        #     ('department_id', '=', self.user_id.employee_ids.department_id.id),
-        # ]) # example for filter employee by department instead of OU
         if self.request_date > self.due_date:
             raise ValidationError(
                 _('Request Date must be lower than Due Date.'))
