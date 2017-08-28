@@ -76,7 +76,7 @@ class sale_order(models.Model):
         if not defaults:
             defaults = {}
         for order in self:
-            if self._context.get('new_sale_revision', False):
+            if order.env.context.get('new_sale_revision'):
                 prev_name = order.name
                 if order.current_revision_id:
                     current_order = order.env['sale.order'].browse(
@@ -111,7 +111,7 @@ class sale_order(models.Model):
                 }
                 defaults.update(context_update)
         res = super(sale_order, self).copy(defaults)
-        if self._context.get('new_sale_revision', False):
+        if order.env.context.get('new_sale_revision'):
             res.write({'active': False})
         return res
 
