@@ -11,6 +11,7 @@ class AccountInvoice(models.Model):
         readonly=True,
     )
     quote_ref_number = fields.Char(
+        related='quote_ref_id.name',
         string='Quotation Number',
         states={'paid': [('readonly', True)]},
     )
@@ -19,22 +20,27 @@ class AccountInvoice(models.Model):
         states={'paid': [('readonly', True)]},
     )
     quote_ref_event_date = fields.Char(
+        related='quote_ref_id.event_date_description',
         string='Event Date',
         states={'paid': [('readonly', True)]},
     )
     quote_ref_venue = fields.Char(
+        related='quote_ref_id.venue_description',
         string='Venue',
         states={'paid': [('readonly', True)]},
     )
     project_ref_number = fields.Char(
+        related='project_ref_id.project_number',
         string='Project Number',
         states={'paid': [('readonly', True)]},
     )
     project_ref_name = fields.Char(
+        related='project_ref_id.name',
         string='Project Name',
         states={'paid': [('readonly', True)]},
     )
     others_note = fields.Text(
+        related='quote_ref_id.payment_term_description',
         string='Other',
         states={'paid': [('readonly', True)]},
     )
@@ -47,32 +53,6 @@ class AccountInvoice(models.Model):
         string='Description',
         states={'paid': [('readonly', True)]},
      )
-
-    @api.model
-    def create(self, vals):
-        res = super(AccountInvoice, self).create(vals)
-        order_ref = self.env['sale.order'].search([
-            ('name', '=', res.origin)
-        ])
-        if order_ref:
-            quote_id = order_ref.quote_id or False
-            if quote_id:
-                res.write({
-                    'quote_ref_id': quote_id.id,
-                    'quote_ref_number': quote_id.name,
-                    'quote_ref_date': quote_id.date_order.split(' ')[0],
-                    'quote_ref_event_date': quote_id.event_date_description,
-                    'quote_ref_venue': quote_id.venue_description,
-                    'others_note': quote_id.payment_term_description,
-                })
-                project_id = quote_id.project_related_id or False
-                if project_id:
-                    res.write({
-                        'project_ref_name': project_id.name,
-                        'project_ref_number': project_id.project_number,
-                        'project_ref_id': project_id.id,
-                    })
-        return res
 
     @api.model
     def _prepare_refund(self, invoice, date=None, period_id=None,

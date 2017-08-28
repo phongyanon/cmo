@@ -11,7 +11,7 @@
                     <page string="Invoice Project">
                         <group>
                             <group>
-                                <field name="project_note"/>
+                                <!-- <field name="project_note"/> -->
                                 <field name="project_ref_name"/>
                                 <field name="quote_ref_number" readonly="1"/>
                                 <field name="quote_ref_date" readonly="1"/>
