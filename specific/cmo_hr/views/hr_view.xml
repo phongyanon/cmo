@@ -17,7 +17,7 @@
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='confirm']" position="before">
-                    <button name="action_validate" type="object"
+                    <button name="draft_to_validate" type="workflow"
                             string="Submit to Director"
                             states="draft"
                             attrs="{'invisible':[['state', 'not in', ['draft']]]}"/>

@@ -14,6 +14,7 @@
     'data': [
         'data/hr_data.xml',
         'views/hr_view.xml',
+        'workflow/cmo_hr_workflow.xml'
     ],
     'demo': [
     ],
