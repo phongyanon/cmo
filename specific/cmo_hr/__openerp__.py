@@ -10,9 +10,9 @@
     'depends': [
         'hr_expense_auto_invoice',
         'hr_expense_advance_clearing',
+        'l10n_th_doctype_expense',
     ],
     'data': [
-        'data/hr_data.xml',
         'views/hr_view.xml',
         'workflow/cmo_hr_workflow.xml'
     ],

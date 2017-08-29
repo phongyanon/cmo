@@ -16,7 +16,7 @@ class HrExpenseExpense(models.Model):
             'draft': [('readonly', False)],
             'confirm': [('readonly', False)],
         },
-        default=lambda self: self._default_employee_request_id(),
+        default=lambda self: self.env.user.partner_id.employee_id,
     )
     request_date = fields.Date(
         string='Request Date',
@@ -80,27 +80,8 @@ class HrExpenseExpense(models.Model):
         },
     )
 
-    @api.model
-    def create(self, vals):
-        ctx = self._context.copy()
-        current_date = datetime.date.today()
-        fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
-        ctx["fiscalyear_id"] = fiscalyear_id
-        if (not ctx.get('is_employee_advance', False)) and \
-                ctx.get('number', '/') == '/':
-            vals['number'] = self.env['ir.sequence']\
-                .with_context(ctx).get('cmo.expense')
-        elif ctx.get('is_employee_advance', False) and \
-                ctx.get('number', '/') == '/':
-            vals['number'] = self.env['ir.sequence']\
-                .with_context(ctx).get('cmo.advance')
-        res = super(HrExpenseExpense, self).create(vals)
-        return res
-
-    @api.multi
     @api.onchange('payment_by')
     def _onchange_payment_by(self):
-        self.ensure_one()
         self.bank_transfer_ref = False
         self.ac_payee_ref = False
 
@@ -109,12 +90,6 @@ class HrExpenseExpense(models.Model):
         res = self.write({'state': 'validate'})
         return res
 
-    @api.model
-    def _default_employee_request_id(self):
-        Employee = self.env['hr.employee']
-        employee_request_id = Employee.search([('user_id', '=', self._uid), ])
-        return employee_request_id and employee_request_id[0].id or False
-
     @api.onchange('employee_id')
     def _onchange_hr_department(self):
         self.department_id = self.employee_id.department_id
@@ -122,10 +97,10 @@ class HrExpenseExpense(models.Model):
     @api.multi
     @api.constrains('request_date', 'due_date')
     def _check_due_date(self):
-        self.ensure_one()
-        if self.request_date > self.due_date:
-            raise ValidationError(
-                _('Request Date must be lower than Due Date.'))
+        for rec in self:
+            if rec.request_date > rec.due_date:
+                raise ValidationError(
+                    _('Request Date must be lower than Due Date.'))
 
     @api.onchange('line_ids', 'advance_expense_id')
     def _onchange_hr_line_analytic(self):
@@ -139,13 +114,11 @@ class HrExpenseExpense(models.Model):
 class HrExpenseLine(models.Model):
     _inherit = 'hr.expense.line'
 
-
     amount_line_untaxed = fields.Float(
         string='Total Untaxed',
         compute='_compute_amount_line_untaxed',
         readonly=True,
     )
-
     is_advance_clearing = fields.Boolean(
         string='Is Clearing',
         related='expense_id.is_advance_clearing',
