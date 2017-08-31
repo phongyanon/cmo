@@ -26,12 +26,8 @@ class ProjectProject(models.Model):
         for project in self:
             project_state = project.state
             if project_state not in (
-                    'draft',
-                    'validate',
-                    'open',
-                    'pending',
-                    'cancelled',
-                    'close'):
+                    'draft', 'validate', 'open',
+                    'pending', 'cancelled', 'close'):
                 invoice_open = project.invoice_related_ids.filtered(
                     lambda r: r.state in ('open', 'paid')
                 )
