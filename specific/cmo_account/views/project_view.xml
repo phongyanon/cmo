@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="edit_project" model="ir.ui.view">
+            <field name="name">edit.project</field>
+            <field name="model">project.project</field>
+            <field name="inherit_id" ref="cmo_project.edit_project"/>
+            <field name="arch" type="xml">
+                <button name="quotation_relate_project_tree_view" position="before">
+                    <button class="oe_inline oe_stat_button" type="object" name="invoice_relate_project_tree_view" icon="fa-list">
+                        <field string="Invoices" name="invoice_related_ids" widget="x2many_counter"/>
+                    </button>
+                </button>
+                <field name="remaining_cost" position="after">
+                    <field name="is_paid" invisible="1"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>

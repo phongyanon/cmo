@@ -12,10 +12,12 @@
     "depends": [
         'account',
         'sale_layout',
+        'cmo_project',
     ],
     "data": [
         'views/product_view.xml',
         'views/account_view.xml',
+        'views/project_view.xml',
     ],
     "application": False,
     "installable": True,
