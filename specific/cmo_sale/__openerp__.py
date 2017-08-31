@@ -24,6 +24,7 @@
         'views/sale_view.xml',
         'views/master_data_view.xml',
         'views/product_view.xml',
+        'views/sale_layout_view.xml',
     ],
     'demo': [
     ],
