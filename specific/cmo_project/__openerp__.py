@@ -8,9 +8,11 @@
     "author": "Kitti U., Phongyanon Y.",
     "license": "AGPL-3",
     "depends": [
+        'account',
         'project',
         'cmo_sale',
         'cmo_purchase',
+        'cmo_account',
         'account_auto_fy_sequence',
     ],
     "data": [

@@ -216,9 +216,9 @@
                         <button class="oe_inline oe_stat_button" type="object" name="purchase_relate_project_tree_view" icon="fa-list">
                             <field string="Purchase Order" name="purchase_related_ids" widget="x2many_counter"/>
                         </button>
-                    </div>
-                    <div class="oe_right oe_button_box" name="sale_invoice_buttons" groups="base.group_user">
-
+                        <button class="oe_inline oe_stat_button" type="object" name="invoice_relate_project_tree_view" icon="fa-list">
+                            <field string="Invoices" name="out_invoice_ids" widget="x2many_counter"/>
+                        </button>
                     </div>
                 </xpath>
                 <xpath expr="//field[@name='analytic_account_id']" position="before">

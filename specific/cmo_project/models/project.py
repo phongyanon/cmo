@@ -9,6 +9,9 @@ from openerp.exceptions import ValidationError
 class ProjectProject(models.Model):
     _inherit = 'project.project'
 
+    use_tasks = fields.Boolean(
+        default=False,
+    )
     project_place = fields.Char(
         string='Project Place',
         states={'close': [('readonly', True)]},
@@ -157,7 +160,7 @@ class ProjectProject(models.Model):
          ('validate', 'Validated'),
          ('open','In Progress'),
          ('ready_billing', 'Ready to Billing'),
-         ('invoices', 'Invoices'),
+         ('invoiced', 'Invoiced'),
          ('paid', 'Paid'),
          ('cancelled', 'Incompleted'),
          ('pending','Pending'),
@@ -222,10 +225,25 @@ class ProjectProject(models.Model):
         string='Remaining Cost',
         compute='_compute_remaining_cost',
     )
+    out_invoice_ids = fields.One2many(
+        'account.invoice',
+        'project_ref_id',
+        string='Related Invoice',
+        domain=[('type', '=', 'out_invoice'), ],
+    )
+    # is_invoiced = fields.Boolean(
+    #     string='Invoiced',
+    #     compute='_compute_is_invoiced',
+    #     help="Triggered when at least 1 invoice is opened",
+    # )
 
-    _defaults = {
-        'use_tasks': False
-    }
+    # @api.multi
+    # @api.depends('invoice_related_ids')
+    # def _compute_is_invoiced(self):
+    #     x = 1/0
+    #     for project in self:
+    #         if 'open' in project.invoice_related_ids.mapped('state'):
+    #             project._write({'state': 'invoices'})
 
     @api.model
     def create(self, vals):
@@ -260,7 +278,7 @@ class ProjectProject(models.Model):
 
     @api.multi
     def action_invoices(self):
-        res = self.write({'state': 'invoices'})
+        res = self.write({'state': 'invoiced'})
         return res
 
     @api.multi
@@ -296,10 +314,10 @@ class ProjectProject(models.Model):
     def _get_state_before_inactive(self):
         for project in self:
             if project.state and \
-               (project.state != 'pending') and \
-               (project.state != 'close') and \
-               (project.state != 'cancelled'):
-               project.write({'state_before_inactive': project.state})
+                    (project.state != 'pending') and \
+                    (project.state != 'close') and \
+                    (project.state != 'cancelled'):
+                project.write({'state_before_inactive': project.state})
 
     @api.multi
     def _set_project_analytic_account(self):
@@ -330,13 +348,9 @@ class ProjectProject(models.Model):
     @api.multi
     def invoice_relate_project_tree_view(self):
         self.ensure_one()
-        domain = [
-            ('project_ref_id', 'like', self.id),
-            ('type', '=', 'out_invoice'),
-        ]
         action = self.env.ref('account.action_invoice_tree1')
         result = action.read()[0]
-        result.update({'domain': domain})
+        result.update({'domain': [('id', 'in', self.out_invoice_ids.ids)]})
         return result
 
     @api.multi
@@ -418,6 +432,17 @@ class ProjectProject(models.Model):
             rec.remain_advance = sum(
                 line_ids.expense_id.mapped('amount_to_clearing'))
 
+    @api.multi
+    def quotation_relate_project_tree_view(self):
+        self.ensure_one()
+        domain = [
+            ('project_related_id', 'like', self.id),
+            ('order_type', '=', 'quotation'),
+        ]
+        action = self.env.ref('sale.action_quotations')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
 
 class ProjectTeamMember(models.Model):
     _name = 'project.team.member'
