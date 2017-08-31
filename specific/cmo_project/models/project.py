@@ -265,7 +265,7 @@ class ProjectProject(models.Model):
 
     @api.multi
     def action_received(self):
-        res = self.write({'state': 'received'})
+        res = self.write({'state': 'paid'})
         return res
 
     @api.multi
