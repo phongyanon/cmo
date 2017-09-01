@@ -15,6 +15,7 @@
         'sale_margin',
         'sale_invoice_plan',
         'sale_split_quote2order',
+        'cmo_account',
     ],
     'data': [
         'security/security.xml',
@@ -25,6 +26,7 @@
         'views/master_data_view.xml',
         'views/product_view.xml',
         'views/sale_layout_view.xml',
+        'views/account_view.xml'
     ],
     'demo': [
     ],

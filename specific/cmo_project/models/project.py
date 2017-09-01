@@ -216,10 +216,18 @@ class ProjectProject(models.Model):
         string='Related Quotation',
         domain=[('order_type', '=', 'quotation'), ],
     )
+    quote_related_count = fields.Integer(
+        string='# of Quotation',
+        compute='_compute_quote_related_count',
+    )
     purchase_related_ids = fields.One2many(
         'purchase.order',
         'project_id',
         string='Related Project',
+    )
+    purchase_related_count = fields.Integer(
+        string='# of Purchase',
+        compute='_compute_purchase_related_count',
     )
     remaining_cost = fields.Float(
         string='Remaining Cost',
@@ -231,6 +239,11 @@ class ProjectProject(models.Model):
         string='Related Invoice',
         domain=[('type', '=', 'out_invoice'), ],
     )
+    out_invoice_count = fields.Integer(
+        string='# of Out Invoice',
+        compute='_compute_out_invoice_count',
+    )
+
     # is_invoiced = fields.Boolean(
     #     string='Invoiced',
     #     compute='_compute_is_invoiced',
@@ -346,12 +359,30 @@ class ProjectProject(models.Model):
         return result
 
     @api.multi
+    @api.depends('purchase_related_ids')
+    def _compute_purchase_related_count(self):
+        self.ensure_one()
+        purchase_ids = self.env['purchase.order'].search([
+            ('project_id', 'like', self.id),
+        ])
+        self.purchase_related_count = len(purchase_ids)
+
+    @api.multi
     def invoice_relate_project_tree_view(self):
         self.ensure_one()
         action = self.env.ref('account.action_invoice_tree1')
         result = action.read()[0]
         result.update({'domain': [('id', 'in', self.out_invoice_ids.ids)]})
         return result
+
+    @api.multi
+    @api.depends('out_invoice_ids')
+    def _compute_out_invoice_count(self):
+        self.ensure_one()
+        invoice_ids = self.env['account.invoice'].search([
+            ('id', 'in', self.out_invoice_ids.ids)
+        ])
+        self.out_invoice_count = len(invoice_ids)
 
     @api.multi
     @api.depends(
@@ -443,6 +474,17 @@ class ProjectProject(models.Model):
         result = action.read()[0]
         result.update({'domain': domain})
         return result
+
+    @api.multi
+    @api.depends('quote_related_ids')
+    def _compute_quote_related_count(self):
+        self.ensure_one()
+        quote_ids = self.env['sale.order'].search([
+            ('project_related_id', 'like', self.id),
+            ('order_type', '=', 'quotation'),
+        ])
+        self.quote_related_count = len(quote_ids)
+
 
 class ProjectTeamMember(models.Model):
     _name = 'project.team.member'

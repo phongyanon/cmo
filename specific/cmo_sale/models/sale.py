@@ -128,6 +128,25 @@ class SaleOrder(models.Model):
         return new_order
 
     @api.multi
+    def action_button_convert_to_order(self):  # overwrite split2order
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        ctx = self._context.copy()
+        current_date = fields.Date.context_today(self)
+        fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
+        ctx["fiscalyear_id"] = fiscalyear_id
+        order = self.copy({
+            'name': self.env['ir.sequence']
+                    .with_context(ctx).get('cmo.sale_order') or '/',
+            'order_type': 'sale_order',
+            'quote_id': self.id,
+            'client_order_ref': self.client_order_ref,
+        })
+        self.order_id = order.id  # Reference from this quotation to order
+        self.signal_workflow('convert_to_order')
+        return self.open_sale_order()
+
+    @api.multi
     @api.depends('amount_before_management_fee')
     def _compute_before_management_fee(self):
         total = sum(self.order_line.filtered(
