@@ -15,6 +15,7 @@
     ],
     'data': [
         'views/sale.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [
     ],
