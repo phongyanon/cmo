@@ -5,8 +5,8 @@
       <record id="doctype_employee_expense_seq" model="ir.sequence">
           <field name="name">DOCTYPE: Employee Expense</field>
           <field name="code"></field>
-          <field name="prefix">EX%(fy)s</field>
-          <field eval="6" name="padding"/>
+          <field name="prefix">EXCM%(fy)s-</field>
+          <field eval="4" name="padding"/>
           <field eval="1" name="number_next"/>
           <field eval="1" name="number_increment"/>
           <field name="implementation">standard</field>
@@ -17,8 +17,8 @@
       <record id="doctype_employee_advance_seq" model="ir.sequence">
           <field name="name">DOCTYPE: Employee Advance</field>
           <field name="code"></field>
-          <field name="prefix">AV%(fy)s</field>
-          <field eval="6" name="padding"/>
+          <field name="prefix">ADCM%(fy)s-</field>
+          <field eval="4" name="padding"/>
           <field eval="1" name="number_next"/>
           <field eval="1" name="number_increment"/>
           <field name="implementation">standard</field>
