@@ -62,6 +62,11 @@ class SaleOrder(models.Model):
     #     compute='_compute_project_number',
     #     copy=False,
     # )
+    section_code_order_line = fields.Boolean(
+        string='Flag Sequence',
+        compute='_compute_section_code_order_line',
+        help='Flag to generate section A - F in order line',
+    )
     event_date_description = fields.Char(
         string='Event Date',
         size=250,
@@ -210,9 +215,41 @@ class SaleOrder(models.Model):
                 order.margin_percentage = order.margin * 100 /\
                     order.amount_untaxed
 
+    @api.model
+    def _gen_ascii_seq(self, num, seq=''):
+        leng = len(ascii_uppercase)
+        digit = num / leng
+        if digit == 0:
+            seq = seq + ascii_uppercase[num]
+            return seq
+        else:
+            seq = seq + ascii_uppercase[(digit % leng) - 1]
+            num = num - (digit * leng)
+            return self._gen_ascii_seq(num, seq)
+
+    @api.depends('section_code_order_line')
+    def _compute_section_code_order_line(self):
+        for order in self:
+            lines = order.order_line.sorted(
+                key=lambda r: r.sale_layout_cat_id.sequence)
+            custom_groups = list(set(order.order_line.mapped(
+                'sale_layout_custom_group')))
+            for custom_group in custom_groups:
+                order_lines = lines.filtered(
+                    lambda r: r.sale_layout_custom_group == custom_group)
+                cat_ids = order_lines.mapped('sale_layout_cat_id')
+                for c, cat_id in enumerate(cat_ids, 0):
+                    lines_cat = order_lines.filtered(
+                        lambda r: r.sale_layout_cat_id == cat_id)
+                    new_code = self._gen_ascii_seq(c)
+                    lines_cat.write({'section_code': new_code})
+                if not custom_group:
+                    break
+
 
 class SaleOrderLine(models.Model):
-    _inherit = "sale.order.line"
+    _inherit = 'sale.order.line'
+    _order = 'order_lines_group, sale_layout_custom_group, sale_layout_cat_id'
 
     order_lines_group = fields.Selection(
         [('before','Before Management Fee'),
@@ -248,10 +285,9 @@ class SaleOrderLine(models.Model):
     #     string='Section Code',
     #     # required=True,
     # )
-    # section_code = fields.Char(
-    #     compute='_compute_section_code',
-    #     string='Section Code',
-    # )
+    section_code = fields.Char(
+        string='Section Code',
+    )
     product_id = fields.Many2one(
         'product.product',
         required=True,
@@ -325,23 +361,6 @@ class SaleOrderLine(models.Model):
         self.price_unit = 0
         self.purchase_price = 0
         return res
-
-    @api.model
-    def _gen_ascii_seq(self, num, seq=''):
-        leng = len(ascii_uppercase)
-        digit = num / leng
-        if digit == 0:
-            seq = seq + ascii_uppercase[num]
-            return seq
-        else:
-            seq = seq + ascii_uppercase[(digit % leng) - 1]
-            num = num - (digit * leng)
-            return self._gen_ascii_seq(num, seq)
-
-    # @api.multi
-    # def _compute_section_code(self):
-    #     for order_line in self:
-    #         print('>>>>>>>>>>>>', order_line)
 
 
 class SaleLayoutCustomGroup(models.Model):

@@ -16,6 +16,12 @@ class ProjectProject(models.Model):
         string='Project Place',
         states={'close': [('readonly', True)]},
     )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Agency',
+        states={'close': [('readonly', True)]},
+        domain=[('customer', '=', True), ],
+    )
     agency_partner_id = fields.Many2one(
         'res.partner',
         string='Agency',
@@ -442,7 +448,7 @@ class ProjectProject(models.Model):
     def _compute_expense(self):
         for project in self:
             expense_lines = self.env['hr.expense.line'].search([
-                 ['analytic_account', '=', project.analytic_account_id.id],
+                 ('analytic_account', '=', project.analytic_account_id.id),
             ])
             expense = sum(expense_lines.filtered(
                 lambda r: (r.expense_id.state in ('done', 'paid')) and
@@ -453,14 +459,14 @@ class ProjectProject(models.Model):
     @api.multi
     @api.depends('remain_advance')
     def _compute_remain_advance(self):
-        for rec in self:
-            expense_line = self.env['hr.expense.line'].search([
-                ('analytic_account', '=', rec.analytic_account_id.id),
+        for project in self:
+            expense_lines = self.env['hr.expense.line'].search([
+                ('analytic_account', '=', project.analytic_account_id.id),
             ])
-            line_ids = expense_line.filtered(
+            line_ids = expense_lines.filtered(
                 lambda r: r.expense_id.is_employee_advance and
                 (r.expense_id.state in 'paid'))
-            rec.remain_advance = sum(
+            project.remain_advance = sum(
                 line_ids.expense_id.mapped('amount_to_clearing'))
 
     @api.multi

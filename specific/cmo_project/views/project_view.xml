@@ -311,7 +311,6 @@
                           <field name="active" invisible="1"/>
                           <group>
                             <field name="partner_id" string="Customer"
-                                 on_change="onchange_partner_id(partner_id)"
                                  options="{'no_open':True,'no_create':1,'no_create_edit':1}"
                             />
                             <field name="agency_partner_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
