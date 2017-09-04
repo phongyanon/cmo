@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import datetime
-from string import ascii_uppercase
 
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
@@ -215,18 +214,6 @@ class SaleOrder(models.Model):
                 order.margin_percentage = order.margin * 100 /\
                     order.amount_untaxed
 
-    @api.model
-    def _gen_ascii_seq(self, num, seq=''):
-        leng = len(ascii_uppercase)
-        digit = num / leng
-        if digit == 0:
-            seq = seq + ascii_uppercase[num]
-            return seq
-        else:
-            seq = seq + ascii_uppercase[(digit % leng) - 1]
-            num = num - (digit * leng)
-            return self._gen_ascii_seq(num, seq)
-
     @api.depends('section_code_order_line')
     def _compute_section_code_order_line(self):
         for order in self:
@@ -241,9 +228,8 @@ class SaleOrder(models.Model):
                 for c, cat_id in enumerate(cat_ids, 0):
                     lines_cat = order_lines.filtered(
                         lambda r: r.sale_layout_cat_id == cat_id)
-                    new_code = self._gen_ascii_seq(c)
-                    lines_cat.write({'section_code': new_code})
-                if not custom_group:
+                    lines_cat.write({'section_code': c})
+                if custom_groups is [False]:
                     break
 
 
@@ -285,7 +271,7 @@ class SaleOrderLine(models.Model):
     #     string='Section Code',
     #     # required=True,
     # )
-    section_code = fields.Char(
+    section_code = fields.Integer(
         string='Section Code',
     )
     product_id = fields.Many2one(
