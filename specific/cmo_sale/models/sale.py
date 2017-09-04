@@ -225,7 +225,7 @@ class SaleOrder(models.Model):
                 order_lines = lines.filtered(
                     lambda r: r.sale_layout_custom_group == custom_group)
                 cat_ids = order_lines.mapped('sale_layout_cat_id')
-                for c, cat_id in enumerate(cat_ids, 0):
+                for c, cat_id in enumerate(cat_ids, 1):
                     lines_cat = order_lines.filtered(
                         lambda r: r.sale_layout_cat_id == cat_id)
                     lines_cat.write({'section_code': c})
