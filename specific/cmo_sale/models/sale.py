@@ -53,6 +53,9 @@ class SaleOrder(models.Model):
         states={'done': [('readonly', True)]},
         required=True,
     )
+    partner_id = fields.Many2one(
+        related='project_related_id.partner_id',
+    )
     section_code_order_line = fields.Boolean(
         string='Flag Sequence',
         compute='_compute_section_code_order_line',
