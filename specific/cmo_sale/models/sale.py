@@ -53,8 +53,9 @@ class SaleOrder(models.Model):
         states={'done': [('readonly', True)]},
         required=True,
     )
-    partner_id = fields.Many2one(
-        related='project_related_id.partner_id',
+    partner_id_readonly = fields.Many2one(
+        related='partner_id',
+        readonly=True,
     )
     section_code_order_line = fields.Boolean(
         string='Flag Sequence',
@@ -156,10 +157,11 @@ class SaleOrder(models.Model):
     @api.multi
     @api.onchange('project_related_id')
     def _onchange_project_number(self):
-        for project in self:
-            Project = self.env['project.project']\
-                .browse(project.project_related_id.id)
-            project.project_id = Project.analytic_account_id.id
+        for sale_order in self:
+            project = self.env['project.project']\
+                .browse(sale_order.project_related_id.id)
+            sale_order.project_id = project.analytic_account_id.id
+            sale_order.partner_id = project.partner_id.id or False
 
     @api.model
     def _default_covenant(self):
