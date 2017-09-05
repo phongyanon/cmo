@@ -127,9 +127,9 @@ class HrExpenseLine(models.Model):
 
     @api.model
     def create(self, vals):
-        Expense = self.env['hr.expense.expense'].\
+        expense = self.env['hr.expense.expense'].\
             browse(vals['expense_id'])
-        advance = Expense.advance_expense_id
+        advance = expense.advance_expense_id
         if advance and advance.is_employee_advance:
             vals['analytic_account'] = advance.line_ids.analytic_account.id
         res = super(HrExpenseLine, self).create(vals)

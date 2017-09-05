@@ -12,7 +12,7 @@
         'cmo_hr',
     ],
     'data': [
-        'report/report_expense.xml',
+        'report/report_data.xml',
     ],
     'demo': [
     ],

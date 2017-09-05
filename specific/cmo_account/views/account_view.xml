@@ -8,19 +8,24 @@
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
                 <page string="Payments" position="after">
-                    <page string="Invoice Project">
+                    <page string="Invoice Project" name="invoice_project">
                         <group>
                             <group>
                                 <!-- <field name="project_note"/> -->
-                                <field name="project_ref_name"/>
                                 <field name="quote_ref_number" readonly="1"/>
                                 <field name="quote_ref_date" readonly="1"/>
-                                <field name="project_ref_number" readonly="1"/>
-                                <field name="quote_ref_event_date"/>
-                                <field name="quote_ref_venue"/>
+
+                                <!-- kittiu: Please move to cmo_project -->
+                                <!-- <field name="project_ref_name"/>
+                                <field name="project_ref_number" readonly="1"/> -->
+
+                                <!-- kittiu: Please move to cmo_sale -->
+                                <!-- <field name="quote_ref_event_date"/>
+                                <field name="quote_ref_venue"/> -->
                             </group>
                             <group>
-                                <field name="others_note"/>
+                                <!-- kittiu: Please move to cmo_sale -->
+                                <!-- <field name="others_note"/> -->
                             </group>
                         </group>
                     </page>
@@ -61,9 +66,10 @@
                 <field name="currency_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
-                <field name="origin" position="before">
+                <!-- kittiu: Please move to cmo_project -->
+                <!-- <field name="origin" position="before">
                     <field name="project_ref_name"/>
-                </field>
+                </field> -->
                 <field name="origin" position="after">
                     <field name="invoice_type"/>
                 </field>

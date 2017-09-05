@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cmo_sale_order_eng" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
-	<property name="ireport.zoom" value="0.9090909090909091"/>
+	<property name="ireport.zoom" value="1.1"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="192"/>
 	<property name="OPENERP_RELATIONS" value="[&quot;order_line&quot;]"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="parameter1" class="java.lang.String"/>
@@ -27,7 +27,7 @@
 	<field name="sub total" class="java.lang.Float">
 		<fieldDescription><![CDATA[order_line/price_subtotal]]></fieldDescription>
 	</field>
-	<field name="section code" class="java.lang.String">
+	<field name="section code" class="java.lang.Integer">
 		<fieldDescription><![CDATA[order_line/section_code]]></fieldDescription>
 	</field>
 	<field name="group" class="java.lang.String">
@@ -88,7 +88,10 @@
 		<fieldDescription><![CDATA[discount_rate]]></fieldDescription>
 	</field>
 	<field name="custom_group" class="java.lang.String">
-		<fieldDescription><![CDATA[order_line/sale_layout_custom_group_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[order_line/sale_layout_custom_group]]></fieldDescription>
+	</field>
+	<field name="product_section" class="java.lang.String">
+		<fieldDescription><![CDATA[order_line/sale_layout_cat_id/name]]></fieldDescription>
 	</field>
 	<variable name="sum total section" class="java.lang.Float" resetType="Group" resetGroup="section" calculation="Sum">
 		<variableExpression><![CDATA[($F{sub total} > 0) == true ? $F{sub total}: 0.0]]></variableExpression>
@@ -135,7 +138,8 @@
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
 					<textFieldExpression class="java.lang.String"><![CDATA[($F{group} == "before") == true ?
-$P{REPORT_LOCALE}.toString() == "en_US" ? "Sub Total A - " + $F{section code}  : "รวมค่าใช้จ่ายข้อ A - " + $F{section code}
+$P{REPORT_LOCALE}.toString() == "en_US" ? "Sub Total A - " + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt($F{section code} - 1).toString()
+: "รวมค่าใช้จ่ายข้อ A - " + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt($F{section code} - 1).toString()
 : null]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
@@ -169,19 +173,21 @@ $P{REPORT_LOCALE}.toString() == "en_US" ? "Before Management Fee" : "รวม�
 		<groupExpression><![CDATA[$F{section code}]]></groupExpression>
 		<groupHeader>
 			<band height="21">
-				<textField>
+				<textField isBlankWhenNull="false">
 					<reportElement mode="Opaque" x="0" y="-1" width="34" height="20" isRemoveLineWhenBlank="true" backcolor="#C3C3C3"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{section code} + ":"]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($F{group} == "manage_fee") && ($F{section code} == 1)  ? "-" :
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt($F{section code} - 1).toString() + " :"
+]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement mode="Opaque" x="34" y="-1" width="520" height="20" backcolor="#C3C3C3"/>
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{product name}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{product_section}]]></textFieldExpression>
 				</textField>
 			</band>
 		</groupHeader>
@@ -203,7 +209,9 @@ $P{REPORT_LOCALE}.toString() == "en_US" ? "Before Management Fee" : "รวม�
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 					</textElement>
-					<textFieldExpression class="java.lang.String"><![CDATA[$F{section code}]]></textFieldExpression>
+					<textFieldExpression class="java.lang.String"><![CDATA[($F{group} == "manage_fee") && ($F{section code} == 1)  ? "" :
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".charAt($F{section code} - 1).toString()
+]]></textFieldExpression>
 				</textField>
 				<textField>
 					<reportElement x="321" y="1" width="107" height="20"/>

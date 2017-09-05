@@ -11,6 +11,7 @@ class ProductTemplate(models.Model):
         string='Section',
     )
     management_fee = fields.Boolean(
+        related='sale_layout_cat_id.management_fee',
         string='Management Fee',
         default=False,
     )

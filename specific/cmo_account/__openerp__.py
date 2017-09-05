@@ -12,6 +12,7 @@
     "depends": [
         'account',
         'sale_layout',
+        'project',
     ],
     "data": [
         'views/product_view.xml',

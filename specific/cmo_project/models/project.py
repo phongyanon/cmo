@@ -9,9 +9,19 @@ from openerp.exceptions import ValidationError
 class ProjectProject(models.Model):
     _inherit = 'project.project'
 
+    use_tasks = fields.Boolean(
+        default=False,
+    )
     project_place = fields.Char(
         string='Project Place',
         states={'close': [('readonly', True)]},
+    )
+    partner_id = fields.Many2one(
+        'res.partner',
+        string='Agency',
+        states={'close': [('readonly', True)]},
+        domain=[('customer', '=', True), ],
+        required=True,
     )
     agency_partner_id = fields.Many2one(
         'res.partner',
@@ -94,7 +104,8 @@ class ProjectProject(models.Model):
         store=True,
     )
     remain_advance = fields.Float(
-        string='Remain Advance',
+        string='Advance Balance',
+        compute='_compute_remain_advance',
         states={'close': [('readonly', True)]},
     )
     expense = fields.Float(
@@ -156,7 +167,7 @@ class ProjectProject(models.Model):
          ('validate', 'Validated'),
          ('open','In Progress'),
          ('ready_billing', 'Ready to Billing'),
-         ('invoices', 'Invoices'),
+         ('invoiced', 'Invoiced'),
          ('paid', 'Paid'),
          ('cancelled', 'Incompleted'),
          ('pending','Pending'),
@@ -212,30 +223,47 @@ class ProjectProject(models.Model):
         string='Related Quotation',
         domain=[('order_type', '=', 'quotation'), ],
     )
+    quote_related_count = fields.Integer(
+        string='# of Quotation',
+        compute='_compute_quote_related_count',
+    )
     purchase_related_ids = fields.One2many(
         'purchase.order',
         'project_id',
         string='Related Project',
     )
-    invoice_related_ids = fields.One2many(
-        'account.invoice',
-        'project_ref_id',
-        string='Related Invoice',
-        domain=[('type', '=', 'out_invoice'), ],
-
-    )
-    is_paid = fields.Boolean(
-        string='is paid',
-        compute='_compute_invoice_related_ids',
+    purchase_related_count = fields.Integer(
+        string='# of Purchase',
+        compute='_compute_purchase_related_count',
     )
     remaining_cost = fields.Float(
         string='Remaining Cost',
         compute='_compute_remaining_cost',
     )
+    out_invoice_ids = fields.One2many(
+        'account.invoice',
+        'project_ref_id',
+        string='Related Invoice',
+        domain=[('type', '=', 'out_invoice'), ],
+    )
+    out_invoice_count = fields.Integer(
+        string='# of Out Invoice',
+        compute='_compute_out_invoice_count',
+    )
 
-    _defaults = {
-        'use_tasks': False
-    }
+    # is_invoiced = fields.Boolean(
+    #     string='Invoiced',
+    #     compute='_compute_is_invoiced',
+    #     help="Triggered when at least 1 invoice is opened",
+    # )
+
+    # @api.multi
+    # @api.depends('invoice_related_ids')
+    # def _compute_is_invoiced(self):
+    #     x = 1/0
+    #     for project in self:
+    #         if 'open' in project.invoice_related_ids.mapped('state'):
+    #             project._write({'state': 'invoices'})
 
     @api.model
     def create(self, vals):
@@ -270,12 +298,12 @@ class ProjectProject(models.Model):
 
     @api.multi
     def action_invoices(self):
-        res = self.write({'state': 'invoices'})
+        res = self.write({'state': 'invoiced'})
         return res
 
     @api.multi
     def action_received(self):
-        res = self.write({'state': 'received'})
+        res = self.write({'state': 'paid'})
         return res
 
     @api.multi
@@ -306,10 +334,10 @@ class ProjectProject(models.Model):
     def _get_state_before_inactive(self):
         for project in self:
             if project.state and \
-               (project.state != 'pending') and \
-               (project.state != 'close') and \
-               (project.state != 'cancelled'):
-               project.write({'state_before_inactive': project.state})
+                    (project.state != 'pending') and \
+                    (project.state != 'close') and \
+                    (project.state != 'cancelled'):
+                project.write({'state_before_inactive': project.state})
 
     @api.multi
     def _set_project_analytic_account(self):
@@ -327,18 +355,6 @@ class ProjectProject(models.Model):
                                                         "project end-date.")
 
     @api.multi
-    def quotation_relate_project_tree_view(self):
-        self.ensure_one()
-        domain = [
-            ('project_related_id', 'like', self.id),
-            ('order_type', '=', 'quotation'),
-        ]
-        action = self.env.ref('sale.action_quotations')
-        result = action.read()[0]
-        result.update({'domain': domain})
-        return result
-
-    @api.multi
     def purchase_relate_project_tree_view(self):
         self.ensure_one()
         domain = [
@@ -350,16 +366,30 @@ class ProjectProject(models.Model):
         return result
 
     @api.multi
+    @api.depends('purchase_related_ids')
+    def _compute_purchase_related_count(self):
+        self.ensure_one()
+        purchase_ids = self.env['purchase.order'].search([
+            ('project_id', 'like', self.id),
+        ])
+        self.purchase_related_count = len(purchase_ids)
+
+    @api.multi
     def invoice_relate_project_tree_view(self):
         self.ensure_one()
-        domain = [
-            ('project_ref_id', 'like', self.id),
-            ('type', '=', 'out_invoice'),
-        ]
         action = self.env.ref('account.action_invoice_tree1')
         result = action.read()[0]
-        result.update({'domain': domain})
+        result.update({'domain': [('id', 'in', self.out_invoice_ids.ids)]})
         return result
+
+    @api.multi
+    @api.depends('out_invoice_ids')
+    def _compute_out_invoice_count(self):
+        self.ensure_one()
+        invoice_ids = self.env['account.invoice'].search([
+            ('id', 'in', self.out_invoice_ids.ids)
+        ])
+        self.out_invoice_count = len(invoice_ids)
 
     @api.multi
     @api.depends(
@@ -419,31 +449,48 @@ class ProjectProject(models.Model):
     def _compute_expense(self):
         for project in self:
             expense_lines = self.env['hr.expense.line'].search([
-                 ['analytic_account', '=', project.analytic_account_id.id],
+                 ('analytic_account', '=', project.analytic_account_id.id),
             ])
             expense = sum(expense_lines.filtered(
                 lambda r: (r.expense_id.state in ('done', 'paid')) and
                           (r.expense_id.is_employee_advance is False)
-            ).mapped('total_amount'))
+                          ).mapped('total_amount'))
             project.expense = expense
 
     @api.multi
-    @api.depends('is_paid', 'invoice_related_ids', 'invoice_related_ids.state')
-    def _compute_invoice_related_ids(self):
+    @api.depends('remain_advance')
+    def _compute_remain_advance(self):
         for project in self:
-            invoice_open = project.invoice_related_ids.filtered(
-                lambda r: r.state in ('open', 'paid')
-            )
-            invoice_paid = project.invoice_related_ids.filtered(
-                lambda r: r.state in ('paid')
-            )
-            if invoice_paid and \
-                    (len(invoice_paid) == len(project.invoice_related_ids)):
-                project.write({'state': 'paid'})
-            elif invoice_open:
-                project.write({'state': 'invoices'})
-            else:
-                project.write({'state': 'ready_billing'})
+            expense_lines = self.env['hr.expense.line'].search([
+                ('analytic_account', '=', project.analytic_account_id.id),
+            ])
+            line_ids = expense_lines.filtered(
+                lambda r: r.expense_id.is_employee_advance and
+                (r.expense_id.state in 'paid'))
+            project.remain_advance = sum(
+                line_ids.expense_id.mapped('amount_to_clearing'))
+
+    @api.multi
+    def quotation_relate_project_tree_view(self):
+        self.ensure_one()
+        domain = [
+            ('project_related_id', 'like', self.id),
+            ('order_type', '=', 'quotation'),
+        ]
+        action = self.env.ref('sale.action_quotations')
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
+
+    @api.multi
+    @api.depends('quote_related_ids')
+    def _compute_quote_related_count(self):
+        self.ensure_one()
+        quote_ids = self.env['sale.order'].search([
+            ('project_related_id', 'like', self.id),
+            ('order_type', '=', 'quotation'),
+        ])
+        self.quote_related_count = len(quote_ids)
 
 
 class ProjectTeamMember(models.Model):

@@ -35,20 +35,31 @@ class SaleCovenantDescription(models.Model):
     ]
 
 
+class SaleLayoutCategory(models.Model):
+    _inherit = 'sale_layout.category'
+
+    management_fee = fields.Boolean(
+        string='Management Fee',
+        default=False,
+    )
+
+
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    project_number = fields.Char(
-        string='Project Code',
-        readonly=True,
-        compute='_compute_project_number',
-        copy=False,
-    )
     project_related_id = fields.Many2one(
         'project.project',
         string='Project',
         states={'done': [('readonly', True)]},
         required=True,
+    )
+    partner_id = fields.Many2one(
+        related='project_related_id.partner_id',
+    )
+    section_code_order_line = fields.Boolean(
+        string='Flag Sequence',
+        compute='_compute_section_code_order_line',
+        help='Flag to generate section A - F in order line',
     )
     event_date_description = fields.Char(
         string='Event Date',
@@ -116,6 +127,25 @@ class SaleOrder(models.Model):
         return new_order
 
     @api.multi
+    def action_button_convert_to_order(self):  # overwrite split2order
+        assert len(self) == 1, \
+            'This option should only be used for a single id at a time.'
+        ctx = self._context.copy()
+        current_date = fields.Date.context_today(self)
+        fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
+        ctx["fiscalyear_id"] = fiscalyear_id
+        order = self.copy({
+            'name': self.env['ir.sequence']
+                    .with_context(ctx).get('cmo.sale_order') or '/',
+            'order_type': 'sale_order',
+            'quote_id': self.id,
+            'client_order_ref': self.client_order_ref,
+        })
+        self.order_id = order.id  # Reference from this quotation to order
+        self.signal_workflow('convert_to_order')
+        return self.open_sale_order()
+
+    @api.multi
     @api.depends('amount_before_management_fee')
     def _compute_before_management_fee(self):
         total = sum(self.order_line.filtered(
@@ -130,16 +160,6 @@ class SaleOrder(models.Model):
             Project = self.env['project.project']\
                 .browse(project.project_related_id.id)
             project.project_id = Project.analytic_account_id.id
-            project.project_number = Project.project_number
-
-    @api.multi
-    @api.depends('project_number', 'project_related_id')
-    def _compute_project_number(self):
-        for quote in self:
-            parent_project = self.env['project.project']\
-                .browse(quote.project_related_id.id)
-            quote.project_id = parent_project.analytic_account_id.id
-            quote.project_number = parent_project.project_number
 
     @api.model
     def _default_covenant(self):
@@ -162,15 +182,15 @@ class SaleOrder(models.Model):
                             line must more than zero !')
                         )
 
-    @api.multi
-    def _get_amount_by_custom_group(self, custom_group):
-        self.ensure_one()
-        lines = self.order_line.filtered(
-            lambda r:
-            (r.order_lines_group == 'before') and
-            (r.sale_layout_custom_group_id.id == custom_group.id)
-        )
-        return sum(lines.mapped('price_subtotal'))
+    # @api.multi
+    # def _get_amount_by_custom_group(self, custom_group):
+    #     self.ensure_one()
+    #     lines = self.order_line.filtered(
+    #         lambda r:
+    #         (r.order_lines_group == 'before') and
+    #         (r.sale_layout_custom_group_id.id == custom_group.id)
+    #     )
+    #     return sum(lines.mapped('price_subtotal'))
 
     @api.multi
     def _compute_margin_percentage(self):
@@ -179,9 +199,28 @@ class SaleOrder(models.Model):
                 order.margin_percentage = order.margin * 100 /\
                     order.amount_untaxed
 
+    @api.depends('section_code_order_line')
+    def _compute_section_code_order_line(self):
+        for order in self:
+            lines = order.order_line.sorted(
+                key=lambda r: r.sale_layout_cat_id.sequence)
+            custom_groups = list(set(order.order_line.mapped(
+                'sale_layout_custom_group')))
+            for custom_group in custom_groups:
+                order_lines = lines.filtered(
+                    lambda r: r.sale_layout_custom_group == custom_group)
+                cat_ids = order_lines.mapped('sale_layout_cat_id')
+                for c, cat_id in enumerate(cat_ids, 1):
+                    lines_cat = order_lines.filtered(
+                        lambda r: r.sale_layout_cat_id == cat_id)
+                    lines_cat.write({'section_code': c})
+                if custom_groups is [False]:
+                    break
+
 
 class SaleOrderLine(models.Model):
-    _inherit = "sale.order.line"
+    _inherit = 'sale.order.line'
+    _order = 'order_lines_group, sale_layout_custom_group, sale_layout_cat_id'
 
     order_lines_group = fields.Selection(
         [('before','Before Management Fee'),
@@ -191,8 +230,11 @@ class SaleOrderLine(models.Model):
         default='before',
         required=True,
     )
-    sale_layout_custom_group_id = fields.Many2one(
-        'sale_layout.custom_group',
+    # sale_layout_custom_group_id = fields.Many2one(
+    #     'sale_layout.custom_group',
+    #     string='Custom Group (no use)',
+    # )
+    sale_layout_custom_group = fields.Char(
         string='Custom Group',
     )
     sale_order_line_margin = fields.Float(
@@ -204,16 +246,8 @@ class SaleOrderLine(models.Model):
         string='Percentage',
         compute='_compute_sale_order_line_margin',
     )
-    section_code = fields.Selection(
-        [('A', 'A'),
-         ('B', 'B'),
-         ('C', 'C'),
-         ('D', 'D'),
-         ('E', 'E'),
-         ('F', 'F'),
-        ],
+    section_code = fields.Integer(
         string='Section Code',
-        required=True,
     )
     product_id = fields.Many2one(
         'product.product',
@@ -248,27 +282,42 @@ class SaleOrderLine(models.Model):
         res = {}
         if self.order_lines_group == 'before':
             res['domain'] = {
-                'product_id': [
-                    '&',
+                'sale_layout_cat_id': [
                     ('management_fee', '=', False),
+                ]
+            }
+        elif self.order_lines_group == 'manage_fee':
+            res['domain'] = {
+                'sale_layout_cat_id': [
+                    ('management_fee', '=', True),
+                ]
+            }
+        self.sale_layout_custom_group = None
+        self.sale_layout_cat_id = False
+        self.product_id = False
+        self.product_uom_qty = 1
+        self.price_unit = 0
+        self.purchase_price = 0
+        return res
+
+    @api.onchange('sale_layout_cat_id')
+    def _onchange_sale_layout_cat(self):  # section
+        res = {}
+        if self.order_lines_group == 'before':
+            res['domain'] = {
+                'product_id': [
                     ('sale_ok', '=', True),
+                    ('sale_layout_cat_id', '=', self.sale_layout_cat_id.id),
                 ]
             }
         elif self.order_lines_group == 'manage_fee':
             res['domain'] = {
                 'product_id': [
-                    '&',
-                    ('management_fee', '=', True),
                     ('sale_ok', '=', True),
+                    ('sale_layout_cat_id', '=', self.sale_layout_cat_id.id),
                 ]
             }
-            default_product = self.env['product.template'].search([
-                '&',
-                ('management_fee', '=', True),
-                ('sale_ok', '=', True),
-            ])
-            if default_product:
-                self.product_id = default_product[0].id
+        self.product_id = False
         self.product_uom_qty = 1
         self.price_unit = 0
         self.purchase_price = 0
