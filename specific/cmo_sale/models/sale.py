@@ -222,12 +222,12 @@ class SaleOrder(models.Model):
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
-    _order = 'order_lines_group, sale_layout_custom_group, sale_layout_cat_id'
+    _order = 'order_lines_group, sale_layout_custom_group,' \
+             'sale_layout_cat_id, sequence'
 
     order_lines_group = fields.Selection(
-        [('before','Before Management Fee'),
-         ('manage_fee','Management and Operation Fee'),
-        ],
+        [('before', 'Before Management Fee'),
+         ('manage_fee', 'Management and Operation Fee'), ],
         string='Group',
         default='before',
         required=True,
