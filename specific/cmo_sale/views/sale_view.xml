@@ -123,7 +123,7 @@
                     <field name="order_lines_group"/>
                     <!-- <field name="sale_layout_custom_group_id"/> -->
                     <field name="sale_layout_custom_group"/>
-                    <field name="section_code" invisible="0"/>
+                    <field name="section_code" invisible="1"/>
                     <field name="sale_layout_cat_id"/>
                     <!-- <field name="section_code"/> -->
                 </xpath>
