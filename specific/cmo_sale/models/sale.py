@@ -53,14 +53,6 @@ class SaleOrder(models.Model):
         states={'done': [('readonly', True)]},
         required=True,
     )
-    # TODO: project_number field may be not used because project_related_id show project_number
-    # project_number = fields.Char(
-    #     string='Project Code',
-    #     related='project_related_id.project_number',
-    #     readonly=True,
-    #     compute='_compute_project_number',
-    #     copy=False,
-    # )
     section_code_order_line = fields.Boolean(
         string='Flag Sequence',
         compute='_compute_section_code_order_line',
@@ -165,16 +157,6 @@ class SaleOrder(models.Model):
             Project = self.env['project.project']\
                 .browse(project.project_related_id.id)
             project.project_id = Project.analytic_account_id.id
-    #         project.project_number = Project.project_number
-    #
-    # @api.multi
-    # @api.depends('project_number', 'project_related_id')
-    # def _compute_project_number(self):
-    #     for quote in self:
-    #         parent_project = self.env['project.project']\
-    #             .browse(quote.project_related_id.id)
-    #         quote.project_id = parent_project.analytic_account_id.id
-    #         quote.project_number = parent_project.project_number
 
     @api.model
     def _default_covenant(self):
@@ -197,15 +179,15 @@ class SaleOrder(models.Model):
                             line must more than zero !')
                         )
 
-    @api.multi
-    def _get_amount_by_custom_group(self, custom_group):
-        self.ensure_one()
-        lines = self.order_line.filtered(
-            lambda r:
-            (r.order_lines_group == 'before') and
-            (r.sale_layout_custom_group_id.id == custom_group.id)
-        )
-        return sum(lines.mapped('price_subtotal'))
+    # @api.multi
+    # def _get_amount_by_custom_group(self, custom_group):
+    #     self.ensure_one()
+    #     lines = self.order_line.filtered(
+    #         lambda r:
+    #         (r.order_lines_group == 'before') and
+    #         (r.sale_layout_custom_group_id.id == custom_group.id)
+    #     )
+    #     return sum(lines.mapped('price_subtotal'))
 
     @api.multi
     def _compute_margin_percentage(self):
@@ -245,10 +227,10 @@ class SaleOrderLine(models.Model):
         default='before',
         required=True,
     )
-    sale_layout_custom_group_id = fields.Many2one(
-        'sale_layout.custom_group',
-        string='Custom Group (no use)',
-    )
+    # sale_layout_custom_group_id = fields.Many2one(
+    #     'sale_layout.custom_group',
+    #     string='Custom Group (no use)',
+    # )
     sale_layout_custom_group = fields.Char(
         string='Custom Group',
     )
@@ -261,16 +243,6 @@ class SaleOrderLine(models.Model):
         string='Percentage',
         compute='_compute_sale_order_line_margin',
     )
-    # section_code = fields.Selection(
-    #     [('A', 'A'),
-    #      ('B', 'B'),
-    #      ('C', 'C'),
-    #      ('D', 'D'),
-    #      ('E', 'E'),
-    #      ('F', 'F'), ],
-    #     string='Section Code',
-    #     # required=True,
-    # )
     section_code = fields.Integer(
         string='Section Code',
     )
