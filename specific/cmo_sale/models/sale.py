@@ -152,7 +152,7 @@ class SaleOrder(models.Model):
     def _compute_before_management_fee(self):
         total = sum(self.order_line.filtered(
             lambda r: r.order_lines_group == 'before'
-            ).mapped('price_subtotal'))
+            ).mapped(lambda r: r.product_uom_qty * r.price_unit))
         self.amount_before_management_fee = total
 
     @api.multi
