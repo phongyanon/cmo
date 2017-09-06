@@ -229,7 +229,10 @@ class SaleOrder(models.Model):
             amount = self.amount_before_management_fee
             for line in management_lines:
                 fee = float_round(amount * line.manage_fee_percent / 100, 2)
-                line.write({'price_unit': fee})
+                line.write({
+                    'price_unit': fee,
+                    'product_uom_qty': 1.0,
+                })
 
 
 class SaleOrderLine(models.Model):
