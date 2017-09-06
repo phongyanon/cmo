@@ -279,9 +279,8 @@ class ProjectProject(models.Model):
                 ]
                 sale_order_states = sale_order_states + \
                     self.env['sale.order'].search(domain).mapped('state')
-            
             sale_order_states = list(set(sale_order_states))
-            if 'open' in invoice_states:
+            if 'open' in invoice_states or 'paid' in invoice_states:
                 project.is_invoiced = True
             else:
                 project.is_invoiced = False
