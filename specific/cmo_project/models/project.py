@@ -213,7 +213,6 @@ class ProjectProject(models.Model):
     project_parent_id = fields.Many2one(
         'project.project',
         string='Parent Project',
-        compute='_set_project_analytic_account',
         states={'close': [('readonly', True)]},
         store=True,
     )
@@ -250,20 +249,41 @@ class ProjectProject(models.Model):
         string='# of Out Invoice',
         compute='_compute_out_invoice_count',
     )
+    is_invoiced = fields.Boolean(
+        string='Invoiced',
+        compute='_compute_is_invoiced_and_paid',
+        help="Triggered when at least 1 invoice is opened",
+    )
+    is_paid = fields.Boolean(
+        string='Paid',
+        compute='_compute_is_invoiced_and_paid',
+        help="Triggered when at all sale order are done and cancel",
+    )
 
-    # is_invoiced = fields.Boolean(
-    #     string='Invoiced',
-    #     compute='_compute_is_invoiced',
-    #     help="Triggered when at least 1 invoice is opened",
-    # )
+    @api.multi
+    @api.depends('out_invoice_ids')
+    def _compute_is_invoiced_and_paid(self):
+        for project in self:
+            invoice_states = project.out_invoice_ids.mapped('state')
+            sale_order_states = []
 
-    # @api.multi
-    # @api.depends('invoice_related_ids')
-    # def _compute_is_invoiced(self):
-    #     x = 1/0
-    #     for project in self:
-    #         if 'open' in project.invoice_related_ids.mapped('state'):
-    #             project._write({'state': 'invoices'})
+            for quote in project.quote_related_ids:
+                domain = [
+                    ('quote_id', '=', quote.id),
+                    ('order_type', '=', 'sale_order'),
+                ]
+                sale_order_states = sale_order_states + \
+                    self.env['sale.order'].search(domain).mapped('state')
+
+            if 'open' in invoice_states:
+                project.is_invoiced = True
+            else:
+                project.is_invoiced = False
+
+            if 'done' in sale_order_states or 'cancel' in sale_order_states:
+                project.is_paid = True
+            else:
+                project.is_paid = False
 
     @api.model
     def create(self, vals):
@@ -339,8 +359,8 @@ class ProjectProject(models.Model):
                     (project.state != 'cancelled'):
                 project.write({'state_before_inactive': project.state})
 
-    @api.multi
-    def _set_project_analytic_account(self):
+    @api.onchange('project_parent_id')
+    def _onchange_project_parent_id(self):
         for project in self:
             parent_project = self.env['project.project'].browse(
                 project.project_parent_id.id)
