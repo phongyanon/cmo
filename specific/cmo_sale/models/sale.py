@@ -223,11 +223,11 @@ class SaleOrder(models.Model):
     @api.multi
     def action_calculate_manage_fee(self):
         self.ensure_one()
-        manage_line = self.order_line.filtered(
+        management_lines = self.order_line.filtered(
             lambda r: r.manage_fee_percent > 0)
-        if manage_line:
+        if management_lines:
             amount = self.amount_before_management_fee
-            for line in manage_line:
+            for line in management_lines:
                 fee = float_round(amount * line.manage_fee_percent / 100, 2)
                 line.write({'price_unit': fee})
 
