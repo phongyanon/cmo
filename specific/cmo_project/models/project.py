@@ -263,7 +263,10 @@ class ProjectProject(models.Model):
     )
 
     @api.multi
-    @api.depends('out_invoice_ids')
+    @api.depends('out_invoice_ids',
+                 'out_invoice_ids.state',
+                 'quote_related_ids.sale_order_ids',
+                 'quote_related_ids.sale_order_ids.state')
     def _compute_is_invoiced_and_paid(self):
         for project in self:
             invoice_states = project.out_invoice_ids.mapped('state')
@@ -276,13 +279,16 @@ class ProjectProject(models.Model):
                 ]
                 sale_order_states = sale_order_states + \
                     self.env['sale.order'].search(domain).mapped('state')
-
+            
+            sale_order_states = list(set(sale_order_states))
             if 'open' in invoice_states:
                 project.is_invoiced = True
             else:
                 project.is_invoiced = False
 
-            if 'done' in sale_order_states or 'cancel' in sale_order_states:
+            if ['done'] == sale_order_states or \
+                    ['cancel'] in sale_order_states or \
+                    ['done', 'cancel'] in sale_order_states:
                 project.is_paid = True
             else:
                 project.is_paid = False
