@@ -45,6 +45,11 @@ class sale_order(models.Model):
         states={'done': [('readonly', True)]},
         default='change_price',
     )
+    sale_order_ids = fields.One2many(
+        'sale.order',
+        'quote_id',
+        string='Sale Orders',
+    )
 
     @api.depends('customer_amount')
     @api.onchange('order_plan_ids')
