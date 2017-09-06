@@ -103,12 +103,15 @@
                     <field name="sale_layout_cat_id" required="1"/>
                     <!-- <field name="section_code" style="width:20%" /> -->
                 </xpath>
-                <xpath expr="//field[@name='order_line']/form//field[@name='state']" position="before">
+                <xpath expr="//field[@name='order_line']/form/group/group/field[@name='product_id']" position="after">
+                    <field name="manage_fee_percent" style="width:20%" attrs="{'invisible':[('order_lines_group', '!=', 'manage_fee')]}" class="oe_inline"/> %%
+                </xpath>
+                <!-- <xpath expr="//field[@name='order_line']/form//field[@name='state']" position="before">
                     <button name="action_cal_management_fee"
                             string="Calculate" type="object"
                             attrs="{'invisible':[('order_lines_group', '!=', 'manage_fee')]}"
                             />
-                </xpath>
+                </xpath> -->
                 <xpath expr="//field[@name='order_line']/form/group/group/field[@name='address_allotment_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
@@ -181,6 +184,9 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale_split_quote2order.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//header[@name='quotation']/button[@name='cancel']" position="after">
+                    <button name="action_calculate_manage_fee" states="draft" string="Calculate Management Fee" type="object" groups="base.group_user"/>
+                </xpath>
                 <xpath expr="//header[@name='quotation']/button[@name='cancel']" position="attributes">
                     <attribute name="confirm">Are you sure to cancel this order?</attribute>
                 </xpath>

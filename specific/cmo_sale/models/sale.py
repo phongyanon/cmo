@@ -3,6 +3,7 @@ import datetime
 
 from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
+from openerp.tools.float_utils import float_round
 
 class SaleCovenantDescription(models.Model):
     _name = 'sale.covenant.description'
@@ -151,7 +152,7 @@ class SaleOrder(models.Model):
     def _compute_before_management_fee(self):
         total = sum(self.order_line.filtered(
             lambda r: r.order_lines_group == 'before'
-            ).mapped('price_unit'))
+            ).mapped('price_subtotal'))
         self.amount_before_management_fee = total
 
     @api.multi
@@ -219,6 +220,20 @@ class SaleOrder(models.Model):
                 if custom_groups is [False]:
                     break
 
+    @api.multi
+    def action_calculate_manage_fee(self):
+        self.ensure_one()
+        management_lines = self.order_line.filtered(
+            lambda r: r.manage_fee_percent > 0)
+        if management_lines:
+            amount = self.amount_before_management_fee
+            for line in management_lines:
+                fee = float_round(amount * line.manage_fee_percent / 100, 2)
+                line.write({
+                    'price_unit': fee,
+                    'product_uom_qty': 1.0,
+                })
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
@@ -255,6 +270,20 @@ class SaleOrderLine(models.Model):
         'product.product',
         required=True,
     )
+    manage_fee_percent = fields.Float(
+        string='Management Fee (%)',
+        states={'draft': [('readonly', False)]},
+        default=0.0,
+    )
+
+    _sql_constraints = [
+        ('manage_fee_percent_no_negative', 'CHECK (manage_fee_percent >= 0)',
+         'Percent Management Fee must more than zero.'),
+        ('product_uom_qty_no_negative', 'CHECK (product_uom_qty >= 0)',
+         'Quantity must more than zero.'),
+        ('purchase_price_no_negative', 'CHECK (purchase_price >= 0)',
+         'Estimate Cost must more than zero.'),
+    ]
 
     @api.multi
     def action_cal_management_fee(self):
