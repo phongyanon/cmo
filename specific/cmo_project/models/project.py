@@ -252,11 +252,13 @@ class ProjectProject(models.Model):
     is_invoiced = fields.Boolean(
         string='Invoiced',
         compute='_compute_is_invoiced_and_paid',
+        store=True,
         help="Triggered when at least 1 invoice is opened",
     )
     is_paid = fields.Boolean(
         string='Paid',
         compute='_compute_is_invoiced_and_paid',
+        store=True,
         help="Triggered when at all sale order are done and cancel",
     )
 
