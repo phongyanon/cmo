@@ -86,12 +86,14 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
         compute='_compute_price_and_cost',
         store=True,
+        help="Sum of all amount untaxed quotation.",
     )
     estimate_cost = fields.Float(
         string='Estimate Cost',
         states={'close': [('readonly', True)]},
         compute='_compute_price_and_cost',
         store=True,
+        help="Sum of all amount estimate cost quotation.",
     )
     pre_cost = fields.Float(
         string='Pre-Project',
@@ -102,16 +104,19 @@ class ProjectProject(models.Model):
         states={'close': [('readonly', True)]},
         compute='_compute_actual_po',
         store=True,
+        help="Sum of all amount untaxed purchase order.",
     )
     remain_advance = fields.Float(
         string='Advance Balance',
         compute='_compute_remain_advance',
         states={'close': [('readonly', True)]},
+        help="Sum of amount to clearing related project.",
     )
     expense = fields.Float(
         string='Expense',
         states={'close': [('readonly', True)]},
         compute='_compute_expense',
+        help="Sum of expense related project.",
     )
     date_brief = fields.Date(
         string='Brief Date',
@@ -238,6 +243,7 @@ class ProjectProject(models.Model):
     remaining_cost = fields.Float(
         string='Remaining Cost',
         compute='_compute_remaining_cost',
+        help="(Estimate Cost + Pre Cost) - (Purchase Order + Expense)"
     )
     out_invoice_ids = fields.One2many(
         'account.invoice',
@@ -310,7 +316,7 @@ class ProjectProject(models.Model):
 
     @api.multi
     def action_validate(self):
-        res = self.write({'state':'validate'})
+        res = self.write({'state': 'validate'})
         return res
 
     @api.multi
@@ -495,7 +501,7 @@ class ProjectProject(models.Model):
                 lambda r: r.expense_id.is_employee_advance and
                 (r.expense_id.state in 'paid'))
             project.remain_advance = sum(
-                line_ids.expense_id.mapped('amount_to_clearing'))
+                line_ids.mapped('expense_id').mapped('amount_to_clearing'))
 
     @api.multi
     def quotation_relate_project_tree_view(self):
