@@ -9,6 +9,7 @@
                 <tree string="Project Position" editable="top">
                     <field name="level"/>
                     <field name="limit_amount"/>
+                    <field name="operating_unit_id"/>
                     <field name="user_ids" widget="many2many_tags" placeholder="Users..."/>
                 </tree>
             </field>
@@ -32,5 +33,22 @@
                   parent="purchase.menu_purchase_config_purchase"
                   sequence="60"
                   groups="purchase.group_purchase_manager"/>
+
+        <record id="purchase_order_form" model="ir.ui.view">
+            <field name="name">purchase.order.form</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header/button[@name='purchase_approve']" position="after">
+                    <button name="recheck_approve" type="workflow"
+                            string="purchase approve"
+                            states="confirmed"
+                            />
+                </xpath>
+                <field name="date_order" position="before">
+                    <field name="approve_level"/>
+                </field>
+            </field>
+        </record>
     </data>
 </openerp>

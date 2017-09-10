@@ -5,8 +5,35 @@
             <field name="wkf_id" ref="purchase.purchase_order"/>
             <field name="name">CheckForApproval</field>
             <field name="split_mode">OR</field>
+            <!-- <field name="kind">dummy</field> -->
+            <field name="kind">function</field>
+            <field name="action">action_check_approval()</field>
+        </record>
+
+        <record id="act_wait_approval" model="workflow.activity">
+            <field name="wkf_id" ref="purchase.purchase_order"/>
+            <field name="name">WaitForApproval</field>
+            <field name="split_mode">OR</field>
             <field name="kind">dummy</field>
         </record>
+
+        <record id="trans_check_approval_done" model="workflow.transition">
+            <field name="act_from" ref="act_level_check"/>
+            <field name="act_to" ref="purchase.act_router"/>
+            <field name="condition">len(level_id) == 0</field>
+        </record>
+
+        <record id="trans_check_approval" model="workflow.transition">
+            <field name="act_from" ref="act_level_check"/>
+            <field name="act_to" ref="act_wait_approval"/>
+            <field name="condition">len(level_id) != 0</field>
+        </record>
+
+        <!-- <record id="trans_level_check_cancel" model="workflow.transition">
+            <field name="act_from" ref="act_wait_approval"/>
+            <field name="act_to" ref="purchase.act_cancel"/>
+            <field name="signal">purchase_cancel</field>
+        </record> -->
 
         <!-- <record id="trans_check_approval" model="workflow.transition">
             <field name="act_from" ref="act_level_check"/>
@@ -15,23 +42,31 @@
             <field name="group_id" ref="purchase.group_purchase_manager"/>
         </record> -->
 
-        <record id="trans_check_approval_done" model="workflow.transition">
+        <!-- <record id="trans_check_approval_done" model="workflow.transition">
             <field name="act_from" ref="act_level_check"/>
             <field name="act_to" ref="purchase.act_router"/>
             <field name="condition">action_check_approval()</field>
-        </record>
+            <field name="condition">(level_id == False) and (approval_ids == False)</field>
+        </record> -->
 
-        <record id="trans_check_approval" model="workflow.transition">
+        <!-- <record id="trans_re_approval" model="workflow.transition">
             <field name="act_from" ref="act_level_check"/>
-            <field name="act_to" ref="purchase.act_confirmed"/>
-            <field name="condition">not action_check_approval()</field>
+            <field name="act_to" ref="act_level_check"/>
+            <field name="signal">re_check_approve</field>
+            <field name="condition">action_check_approval()</field>
+        </record> -->
+
+        <record id="trans_recheck_approval" model="workflow.transition">
+            <field name="act_from" ref="act_wait_approval"/>
+            <field name="act_to" ref="act_level_check"/>
+            <field name="signal">recheck_approve</field>
+            <!-- <field name="condition">action_check_approval()</field> -->
         </record>
 
-        <!-- <record id="act_check_approval" model="workflow.activity">
-            <field name="wkf_id" ref="purchase.purchase_order"/>
-            <field name="name">check_approval</field>
-            <field name="kind">function</field>
-            <field name="action">action_check_approval()</field>
+        <!-- <record id="trans_check_approval" model="workflow.transition">
+            <field name="act_from" ref="act_wait_approval"/>
+            <field name="act_to" ref="act_level_check"/>
+            <field name="condition">not action_check_approval()</field>
         </record> -->
 
         <record id="trans_confirmed_level_check" model="workflow.transition">

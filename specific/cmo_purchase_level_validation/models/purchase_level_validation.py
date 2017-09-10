@@ -33,27 +33,66 @@ class PurchaseOrder(models.Model):
         'purchase.level.validation',
         string='Level Validation',
         track_visibility='onchange',
+        copy=False,
     )
-    approve_ids = fields.Many2many(
+    approval_ids = fields.Many2many(
         'res.users',
-        'res_user_rel', 'purchase_id', 'user_id',
+        'res_approval_rel', 'purchase_id', 'user_id',
         string='Approval',
         track_visibility='onchange',
+        copy=False,
     )
+    approve_level = fields.Char(
+        string='Approve Level ',
+        compute='_compute_approve_level',
+    )
+
+    @api.depends('level_id', 'approve_level')
+    def _compute_approve_level(self):
+        for order in self:
+            if order.level_id:
+                order.approve_level = str(order.level_id.level)
 
     @api.multi
     def action_check_approval(self):
         amount_untaxed = self.amount_untaxed
         target_levels = self.env['purchase.level.validation'].search([
+            ('operating_unit_id', 'in',
+                self.env.user.operating_unit_ids.mapped('id')),
             ('limit_amount', '<=', amount_untaxed),
-        ]).sorted(key=lambda r: r.limit_amount)
-        print('>>>', target_levels)
+        ]).sorted(key=lambda r: r.level)
+        if self.approval_ids and self.env.user not in self.approval_ids:
+            raise ValidationError(_("Your user is not allow to "
+                                    "approve this document."))
         if target_levels:
-            if level_id:
-                # check approve level
+            if self.level_id:
+                min_level = min(filter(
+                        lambda r: r >= self.level_id.level,
+                        target_levels.mapped('level')))
+                target_level = target_levels.filtered(
+                    lambda r: r.level == min_level + 1
+                )
+                if target_level:
+                    self.write({
+                        'level_id': target_level.id,
+                        'approval_ids': [
+                            (6, 0, target_level.user_ids.mapped('id'))
+                        ],
+                    })
+                else:
+                    self.write({
+                        'level_id': False,
+                        'approval_ids': False,
+                    })
             else:
-                # if no have level_id and
-            target_limit = max(target_levels.mapped('limit_amount'))
-        else:
-            return False
-        x=1/0
+                if not self.level_id and not self.approval_ids:
+                    target_level = target_levels.filtered(
+                        lambda r: r.level == min(target_levels.mapped('level'))
+                    )
+                    self.write({
+                        'level_id': target_level.id,
+                        'approval_ids': [
+                            (6, 0, target_level.user_ids.mapped('id'))
+                        ],
+                    })
+        return True

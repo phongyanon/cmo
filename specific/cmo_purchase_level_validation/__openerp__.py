@@ -13,7 +13,8 @@
     ],
     'data': [
         'views/purchase_level_validation_view.xml',
-        'workflow/purchase_level_validation_workflow.xml'
+        'workflow/purchase_level_validation_workflow.xml',
+        'security/ir.model.access.csv',
     ],
     'demo': [
     ],
