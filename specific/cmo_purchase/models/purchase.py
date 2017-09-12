@@ -148,7 +148,6 @@ class PurchaseOrderLine(models.Model):
         readonly=True,
     )
 
-
     @api.onchange('product_ref_custom_group')
     def _onchange_product_ref_custom_group(self):
         if not self.sale_order_line_ref_id:
