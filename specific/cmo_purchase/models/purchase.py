@@ -26,7 +26,7 @@ class PurchaseOrder(models.Model):
         string='Venue',
         size=250,
     )
-    po_type_id = fields.Many2one(
+    po_type_id = fields.Many2one(  # no use
         'purchase.order.type.config',
         string='PO Type',
         required=True,
@@ -117,14 +117,55 @@ class PurchaseOrderLine(models.Model):
     date_planned = fields.Date(
         required=False,
     )
-    group_id = fields.Many2one(
+    product_ref_custom_group = fields.Char(
+        string='Custom Group',
+    )
+    product_ref_cat_id = fields.Many2one(
+        'sale_layout.category',
+        string='Section',
+    )
+    group_id = fields.Many2one(  # no use
         'sale_layout.custom_group',
         string='Custom Group',
     )
+    sale_order_line_ref_id = fields.Many2one(
+        'sale.order.line',
+        string='Sale Order Line Ref.',
+    )
+    custom_group_readonly = fields.Char(
+        related='product_ref_custom_group',
+        string='Custome Group',
+        readonly=True,
+    )
+    section_readonly = fields.Many2one(
+        related='product_ref_cat_id',
+        string='Section',
+        readonly=True,
+    )
+    product_ref_readonly = fields.Many2one(
+        related='product_ref',
+        string='Product Ref.',
+        readonly=True,
+    )
 
-    @api.onchange('group_id')
-    def _onchange_group_id(self):
-        self.product_ref = False
+
+    @api.onchange('product_ref_custom_group')
+    def _onchange_product_ref_custom_group(self):
+        if not self.sale_order_line_ref_id:
+            self.product_ref_cat_id = False
+            self.product_ref = False
+
+    @api.onchange('product_ref_cat_id')
+    def _onchange_product_ref_cat_id(self):
+        if not self.sale_order_line_ref_id:
+            self.product_ref = False
+
+    @api.onchange('sale_order_line_ref_id')
+    def _onchange_sale_order_line_ref_id(self):
+        self.product_ref_custom_group = self.sale_order_line_ref_id.\
+            sale_layout_custom_group
+        self.product_ref_cat_id = self.sale_order_line_ref_id.sale_layout_cat_id
+        self.product_ref = self.sale_order_line_ref_id.product_id
 
 
 class PurchaseOrderTypeConfig(models.Model):
