@@ -172,8 +172,8 @@ class ProjectProject(models.Model):
          ('validate', 'Validated'),
          ('open','In Progress'),
          ('ready_billing', 'Ready to Billing'),
-         ('invoiced', 'Invoiced'),
-         ('paid', 'Paid'),
+         ('invoiced', 'Invoiced'),   # no use state invoiced and paid
+         ('paid', 'Paid'),  # no use state invoiced and paid
          ('cancelled', 'Incompleted'),
          ('pending','Pending'),
          ('close','Completed'), ],
@@ -298,6 +298,9 @@ class ProjectProject(models.Model):
             else:
                 project.is_paid = False
 
+            if project.is_paid and project.is_invoiced:
+                project.state = 'close'
+
     @api.model
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
@@ -330,12 +333,12 @@ class ProjectProject(models.Model):
         return res
 
     @api.multi
-    def action_invoices(self):
+    def action_invoices(self):  # no use state invoiced and paid
         res = self.write({'state': 'invoiced'})
         return res
 
     @api.multi
-    def action_received(self):
+    def action_received(self):  # no use state invoiced and paid
         res = self.write({'state': 'paid'})
         return res
 

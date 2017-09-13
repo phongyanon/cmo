@@ -52,6 +52,9 @@ class SaleOrder(models.Model):
         'project.project',
         string='Project',
         states={'done': [('readonly', True)]},
+        domain=[
+            ('state', 'not in', ['pending', 'close', 'cancelled']),
+        ],
         required=True,
     )
     partner_id_readonly = fields.Many2one(

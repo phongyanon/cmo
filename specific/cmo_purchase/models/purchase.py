@@ -12,6 +12,9 @@ class PurchaseOrder(models.Model):
         'project.project',
         string='Project Name',
         ondelete='restrict',
+        domain=[
+            ('state', 'not in', ['pending', 'close', 'cancelled']),
+        ],
     )
     order_ref = fields.Many2one(
         'sale.order',
