@@ -22,8 +22,8 @@
                         <filter string="Latest" name="Latest" domain="[('date_start','&gt;',(context_today()-relativedelta(months=6)).strftime('%%Y-%%m-01'))]"/>
                         <filter string="Draft" name="Draft" domain="[('state','=','draft')]"/>
                         <filter string="Ready to Billing" name="Ready_billing" domain="[('state','=','ready_billing')]"/>
-                        <filter string="Invoices" name="Invoices" domain="[('state','=','invoices')]"/>
-                        <filter string="Received" name="Received" domain="[('state','=','received')]"/>
+                        <!-- <filter string="Invoices" name="Invoices" domain="[('state','=','invoices')]"/>
+                        <filter string="Received" name="Received" domain="[('state','=','received')]"/> -->
                         <filter string="Cancelled" name="Cancelled" domain="[('state','=','cancelled')]"/>
                         <filter string="Completed" name="Completed" domain="['&amp;',('state','=','close'),('close_reason','=','close')]"/>
                         <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>

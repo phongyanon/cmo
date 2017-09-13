@@ -298,8 +298,18 @@ class ProjectProject(models.Model):
             else:
                 project.is_paid = False
 
-            if project.is_paid and project.is_invoiced:
-                project.state = 'close'
+            # if project.is_invoiced and project.is_paid:
+            #     project.state = 'close'
+            #     # project.update({'state': 'close'})
+            #     print('>>', project.state)
+
+    # @api.depends('is_invoiced', 'is_paid')
+    # def _compute_project_state_complete(self):
+    #     for project in self:
+    #         if project.is_paid and project.is_invoiced:
+    #             project.write({'state': 'close'})
+    #         print('========', project.is_paid, project.is_invoiced)
+    #     x=1/0
 
     @api.model
     def create(self, vals):
