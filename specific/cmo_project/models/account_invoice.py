@@ -24,14 +24,14 @@ class AccountInvoice(models.Model):
         readonly=True,
     )
 
-    @api.multi
-    def write(self, vals):
-        res = super(AccountInvoice, self).write(vals)
-        if 'state' in vals and vals['state'] != 'draft':
-            for rec in self:
-                if rec.project_ref_id:
-                    for invoice in rec.project_ref_id.out_invoice_ids:
-                        if invoice.state in ('open', 'paid'):
-                            rec.project_ref_id.state = 'invoiced'
-                            break
-        return res
+    # @api.multi
+    # def write(self, vals):
+    #     res = super(AccountInvoice, self).write(vals)
+    #     if 'state' in vals and vals['state'] != 'draft':
+    #         for rec in self:
+    #             if rec.project_ref_id:
+    #                 for invoice in rec.project_ref_id.out_invoice_ids:
+    #                     if invoice.state in ('open', 'paid'):
+    #                         rec.project_ref_id.state = 'invoiced'
+    #                         break
+    #     return res

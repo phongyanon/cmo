@@ -22,11 +22,13 @@
                         <filter string="Latest" name="Latest" domain="[('date_start','&gt;',(context_today()-relativedelta(months=6)).strftime('%%Y-%%m-01'))]"/>
                         <filter string="Draft" name="Draft" domain="[('state','=','draft')]"/>
                         <filter string="Ready to Billing" name="Ready_billing" domain="[('state','=','ready_billing')]"/>
-                        <filter string="Invoices" name="Invoices" domain="[('state','=','invoices')]"/>
-                        <filter string="Received" name="Received" domain="[('state','=','received')]"/>
+                        <!-- <filter string="Invoices" name="Invoices" domain="[('state','=','invoices')]"/>
+                        <filter string="Received" name="Received" domain="[('state','=','received')]"/> -->
                         <filter string="Cancelled" name="Cancelled" domain="[('state','=','cancelled')]"/>
                         <filter string="Completed" name="Completed" domain="['&amp;',('state','=','close'),('close_reason','=','close')]"/>
                         <filter string="Lost" name="Lost" domain="[('close_reason','=','lost')]"/>
+                        <filter string="Invoiced" name="Invoiced" domain="[('is_invoiced', '=', True)]"/>
+                        <filter string="Paid" name="Paid" domain="[('is_paid', '=', True)]"/>
                         <!-- # TODO: filter won = close_reason != cancel, reject, lost
                         <filter string="Won" name="Won" domain="[('state','!=','cancelled'),('state','!=','draft')]"/> -->
                   </xpath>
@@ -140,7 +142,7 @@
                     <button name="action_back_to_draft" type="object"
                             string="Back to draft"
                             states="validate,open,received,invoices"
-                            attrs="{'invisible':[['state', 'not in', ['open'],['pending'], ['complete']]]}"
+                            attrs="{'invisible':[['state', 'not in', ['open', 'pending', 'complete']]]}"
                             groups="project.group_project_admin,project.group_project_manager"/>
                     <button name="action_ready_billing" type="object"
                             string="Ready to Billing"
@@ -150,7 +152,8 @@
                             string="Back to In-Progress"
                             states="ready_billing"
                             groups="project.group_project_admin,project.group_project_manager"/>
-                    <button name="action_invoices" type="object"
+                    <!-- no use state invoiced and paid -->
+                    <!-- <button name="action_invoices" type="object"
                             string="Invoice"
                             states="ready_billing,received,invoices"
                             class="oe_highlight"
@@ -159,7 +162,7 @@
                             string="Receive"
                             states="ready_billing,received,invoices"
                             class="oe_highlight"
-                            groups="project.group_project_admin"/>
+                            groups="project.group_project_admin"/> -->
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="after">
                     <button name="%(action_project_close_reason)d"

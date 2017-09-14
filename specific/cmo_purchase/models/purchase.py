@@ -12,6 +12,9 @@ class PurchaseOrder(models.Model):
         'project.project',
         string='Project Name',
         ondelete='restrict',
+        domain=[
+            ('state', 'not in', ['pending', 'close', 'cancelled']),
+        ],
     )
     order_ref = fields.Many2one(
         'sale.order',
@@ -98,7 +101,8 @@ class PurchaseOrder(models.Model):
             if po_project and remaining_cost is not False:
                 if float_compare(order.amount_untaxed, remaining_cost, 2) > 0:
                     raise ValidationError(
-                        _("PO value is over project cost please change value"))
+                        _("PO value is over remaining cost please change value")
+                    )
 
     @api.multi
     def _update_analytic_by_project(self):

@@ -168,19 +168,21 @@ class ProjectProject(models.Model):
     )
     state = fields.Selection(
         [('template', 'Template'),
-         ('draft','Draft'),
+         ('draft', 'Draft'),
          ('validate', 'Validated'),
-         ('open','In Progress'),
+         ('open', 'In Progress'),
          ('ready_billing', 'Ready to Billing'),
-         ('invoiced', 'Invoiced'),
-         ('paid', 'Paid'),
+         ('invoiced', 'Invoiced'),   # no use state invoiced and paid
+         ('paid', 'Paid'),  # no use state invoiced and paid
          ('cancelled', 'Incompleted'),
-         ('pending','Pending'),
-         ('close','Completed'), ],
-         string='Status',
-         required=True,
-         copy=False,
-         default='draft',
+         ('pending', 'Pending'),
+         ('close', 'Completed'), ],
+        string='Status',
+        required=True,
+        copy=False,
+        default='draft',
+        compute='_compute_is_invoiced_and_paid',
+        store=True,
     )
     state_before_inactive = fields.Char(
         string='Latest State',
@@ -227,6 +229,12 @@ class ProjectProject(models.Model):
         string='Related Quotation',
         domain=[('order_type', '=', 'quotation'), ],
     )
+    sale_order_related_ids = fields.One2many(
+        'sale.order',
+        'project_related_id',
+        string='Related Sale Order',
+        domain=[('order_type', '=', 'sale_order'), ],
+    )
     quote_related_count = fields.Integer(
         string='# of Quotation',
         compute='_compute_quote_related_count',
@@ -271,8 +279,8 @@ class ProjectProject(models.Model):
     @api.multi
     @api.depends('out_invoice_ids',
                  'out_invoice_ids.state',
-                 'quote_related_ids.sale_order_ids',
-                 'quote_related_ids.sale_order_ids.state')
+                 'sale_order_related_ids.state',
+                 'state')
     def _compute_is_invoiced_and_paid(self):
         for project in self:
             invoice_states = project.out_invoice_ids.mapped('state')
@@ -298,6 +306,14 @@ class ProjectProject(models.Model):
             else:
                 project.is_paid = False
 
+            if project.is_invoiced and project.is_paid:
+                project.state = 'close'
+            else:
+                if not project.state_before_inactive:
+                    project.state = 'draft'
+                else:
+                    project.state = project.state_before_inactive
+
     @api.model
     def create(self, vals):
         if vals.get('project_number', '/') == '/':
@@ -309,10 +325,6 @@ class ProjectProject(models.Model):
                 .with_context(ctx).get('cmo.project') # create sequence number
         project = super(ProjectProject, self).create(vals)
         return project
-
-    @api.multi
-    def write(self, vals):
-        return super(ProjectProject, self).write(vals)
 
     @api.multi
     def action_validate(self):
@@ -330,12 +342,12 @@ class ProjectProject(models.Model):
         return res
 
     @api.multi
-    def action_invoices(self):
+    def action_invoices(self):  # no use state invoiced and paid
         res = self.write({'state': 'invoiced'})
         return res
 
     @api.multi
-    def action_received(self):
+    def action_received(self):  # no use state invoiced and paid
         res = self.write({'state': 'paid'})
         return res
 
