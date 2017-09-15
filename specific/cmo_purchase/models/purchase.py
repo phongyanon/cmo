@@ -82,7 +82,6 @@ class PurchaseOrder(models.Model):
             vals['name'] = self.env['ir.sequence'].\
                 with_context(ctx).get('cmo.purchase')
         order = super(PurchaseOrder, self).create(vals)
-        order._check_amount_untaxed()
         order._update_analytic_by_project()
         return order
 
