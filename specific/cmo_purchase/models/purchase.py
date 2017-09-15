@@ -89,7 +89,8 @@ class PurchaseOrder(models.Model):
     @api.multi
     def write(self, vals):
         res = super(PurchaseOrder, self).write(vals)
-        self._check_amount_untaxed()
+        if self.state not in 'draft':
+            self._check_amount_untaxed()
         self._update_analytic_by_project()
         return res
 

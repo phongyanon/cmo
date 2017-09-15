@@ -25,6 +25,11 @@ class PurchaseLevelValidataion(models.Model):
         string='Users',
     )
 
+    _sql_constraints = [
+        ('operating_unit_and_level_uniq', 'UNIQUE(operating_unit_id, level)',
+         'Operating Unit and Level must be unique!'),
+    ]
+
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
@@ -42,22 +47,33 @@ class PurchaseOrder(models.Model):
         track_visibility='onchange',
         copy=False,
     )
-    approve_level = fields.Integer(
-        related='level_id.level',
-        string='Validation Level',
-        store=False,
-        readonly=True,
+    approve_permission = fields.Boolean(
+        string='Approve Permission',
+        compute='_compute_approve_permission',
     )
 
     @api.multi
     def action_check_approval(self):
         self.ensure_one
         amount_untaxed = self.amount_untaxed
-        target_levels = self.env['purchase.level.validation'].search([
-            ('operating_unit_id', 'in',
-                self.env.user.operating_unit_ids.ids),
-            ('limit_amount', '<=', amount_untaxed),
+        levels = self.env['purchase.level.validation'].search([
+            ('operating_unit_id', '=', self.operating_unit_id.id),
         ]).sorted(key=lambda r: r.level)
+        levels_lt_amount = levels.filtered(
+            lambda r: r.limit_amount < amount_untaxed)
+        levels_gt_amount = levels.filtered(
+            lambda r: r.limit_amount >= amount_untaxed)
+
+        if levels_gt_amount:
+            target_levels = levels_lt_amount + levels.filtered(
+                lambda r: r.level == min(levels_gt_amount.mapped('level')))
+        else:
+            target_levels = levels_lt_amount
+            if not target_levels.filtered(
+                    lambda r: r.limit_amount >= amount_untaxed):
+                raise ValidationError(_("Amount Untaxed is over "
+                                        "maximum limited amount."))
+
         if self.approver_ids and self.env.user not in self.approver_ids:
             raise ValidationError(_("Your user is not allow to "
                                     "approve this document."))
@@ -67,8 +83,7 @@ class PurchaseOrder(models.Model):
                         lambda r: r >= self.level_id.level,
                         target_levels.mapped('level')))
                 target_level = target_levels.filtered(
-                    lambda r: r.level == min_level + 1
-                )
+                    lambda r: r.level == min_level + 1)
                 if target_level:
                     self.write({
                         'level_id': target_level.id,
@@ -93,3 +108,8 @@ class PurchaseOrder(models.Model):
                         ],
                     })
         return True
+
+    @api.depends('approver_ids')
+    def _compute_approve_permission(self):
+        for order in self:
+            order.approve_permission = bool(self.env.user in order.approver_ids)
