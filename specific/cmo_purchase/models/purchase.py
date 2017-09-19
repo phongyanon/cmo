@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+
 from openerp import models, fields, api
 from openerp.exceptions import ValidationError
 from openerp.tools import float_compare
 from openerp.tools.translate import _
+
 
 
 class PurchaseOrder(models.Model):
@@ -88,7 +90,7 @@ class PurchaseOrder(models.Model):
     @api.multi
     def write(self, vals):
         res = super(PurchaseOrder, self).write(vals)
-        if self.state not in 'draft':
+        if self.state not in ['draft', 'approved']:
             self._check_amount_untaxed()
         self._update_analytic_by_project()
         return res

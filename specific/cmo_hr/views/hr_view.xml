@@ -16,23 +16,27 @@
             <field name="model">hr.expense.expense</field>
             <field name="inherit_id" ref="hr_expense.view_expenses_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='confirm']" position="before">
+                <!-- <xpath expr="//button[@name='confirm']" position="before">
                     <button name="draft_to_validate" type="workflow"
                             string="Submit to Director"
                             states="draft"
                             attrs="{'invisible':[['state', 'not in', ['draft']]]}"/>
-                </xpath>
+                </xpath> -->
                 <xpath expr="//button[@name='confirm']" position="attributes">
-                    <attribute name="groups">base.group_hr_user,hr.group_hr_director</attribute>
+                    <attribute name="groups">base.group_hr_user,hr.group_hr_director,base.group_user</attribute>
                 </xpath>
                 <xpath expr="//button[@name='refuse']" position="attributes">
                     <attribute name="states">draft,validate,confirm,accepted</attribute>
                 </xpath>
-                <button name="confirm" position="attributes">
+                <!-- <button name="confirm" position="attributes">
                     <attribute name="states">validate</attribute>
-                </button>
+                </button> -->
                 <field name="department_id" position="after">
+                    <field name="department_readonly_id"/>
                     <field name="employee_request_id"/>
+                </field>
+                <field name="department_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </field>
                 <field name="currency_id" position="after">
                     <field name="request_date"/>

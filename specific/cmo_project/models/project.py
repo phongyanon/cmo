@@ -251,7 +251,7 @@ class ProjectProject(models.Model):
     remaining_cost = fields.Float(
         string='Remaining Cost',
         compute='_compute_remaining_cost',
-        help="(Estimate Cost + Pre Cost) - (Purchase Order + Expense)"
+        help="(Estimate Cost + Pre Cost) - (Purchase Order + Expense)",
     )
     out_invoice_ids = fields.One2many(
         'account.invoice',
