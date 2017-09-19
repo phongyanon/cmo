@@ -56,28 +56,33 @@ class HrExpenseExpense(models.Model):
             'confirm': [('readonly', False)],
         },
     )
-    state = fields.Selection(
-        selection=[
-            ('draft', 'New'),
-            ('validate', 'Waiting Validate'),
-            ('cancelled', 'Refused'),
-            ('confirm', 'Waiting Approval'),
-            ('accepted', 'Approved'),
-            ('done', 'Waiting Payment'),
-            ('paid', 'Paid'),
-        ],
-    )
+    # state = fields.Selection(
+    #     selection=[
+    #         ('draft', 'New'),
+    #         ('validate', 'Waiting Validate'),
+    #         ('cancelled', 'Refused'),
+    #         ('confirm', 'Waiting Approval'),
+    #         ('accepted', 'Approved'),
+    #         ('done', 'Waiting Payment'),
+    #         ('paid', 'Paid'),
+    #     ],
+    # )
     employee_id = fields.Many2one(
         states={
             'draft': [('readonly', True)],
             'confirm': [('readonly', True)],
         },
     )
-    department_id = fields.Many2one(
-        states={
-            'draft': [('readonly', True)],
-            'confirm': [('readonly', True)],
-        },
+    # department_id = fields.Many2one(
+    #     states={
+    #         'draft': [('readonly', True)],
+    #         'confirm': [('readonly', True)],
+    #     },
+    # )
+    department_readonly_id = fields.Char(
+        string='Department',
+        related='department_id.name',
+        readonly=True,
     )
 
     @api.onchange('payment_by')
@@ -105,8 +110,8 @@ class HrExpenseExpense(models.Model):
     @api.onchange('line_ids', 'advance_expense_id')
     def _onchange_hr_line_analytic(self):
         advance = self.advance_expense_id
-        self.employee_request_id = advance.employee_request_id
         if advance and advance.is_employee_advance:
+            self.employee_request_id = advance.employee_request_id
             for line in self.line_ids:
                 line.analytic_account = advance.line_ids.analytic_account
 
