@@ -4,8 +4,8 @@ from openerp import fields, models, api, _
 from openerp.exceptions import ValidationError
 
 
-class PurchaseOrder(models.Model):
-    _inherit = 'purchase.order'
+class HrExpenseExpense(models.Model):
+    _inherit = 'hr.expense.expense'
 
     level_id = fields.Many2one(
         'level.validation',
@@ -15,8 +15,8 @@ class PurchaseOrder(models.Model):
     )
     approver_ids = fields.Many2many(
         'res.users',
-        'purchase_approver_rel', 'purchase_id', 'user_id',
-        string='Approval',
+        'hr_approver_rel', 'expense_id', 'user_id',
+        string='Approver',
         track_visibility='onchange',
         copy=False,
     )
@@ -24,27 +24,47 @@ class PurchaseOrder(models.Model):
         string='Approve Permission',
         compute='_compute_approve_permission',
     )
+    state = fields.Selection(
+        selection=[
+            ('draft', 'New'),
+            ('cancelled', 'Refused'),
+            ('confirm', 'Waiting Approval'),
+            ('validate', 'Waiting Validate'),
+            ('accepted', 'Approved'),
+            ('done', 'Waiting Payment'),
+            ('paid', 'Paid'),
+        ],
+    )
 
     @api.multi
     def action_check_approval(self):
-        self.ensure_one
-        amount_untaxed = self.amount_untaxed
+        self.ensure_one()
+        amount = self.amount
+        doctype = ''
+        if self.is_employee_advance:
+            doctype = 'employee_advance'
+        elif self.is_advance_clearing:
+            doctype = 'employee_clearing'
+        elif not self.is_advance_clearing and not self.is_employee_advance:
+            doctype = 'employee_expense'
+
         levels = self.env['level.validation'].search([
             ('operating_unit_id', '=', self.operating_unit_id.id),
-            ('doctype', 'like', 'purchase_order'),
+            ('doctype', 'like', doctype),
         ]).sorted(key=lambda r: r.level)
         levels_lt_amount = levels.filtered(
-            lambda r: r.limit_amount < amount_untaxed)
+            lambda r: r.limit_amount < amount)
         levels_gt_amount = levels.filtered(
-            lambda r: r.limit_amount >= amount_untaxed)
+            lambda r: r.limit_amount >= amount)
+
         if levels_gt_amount:
             target_levels = levels_lt_amount + levels.filtered(
                 lambda r: r.level == min(levels_gt_amount.mapped('level')))
         else:
             target_levels = levels_lt_amount
             if not target_levels.filtered(
-                    lambda r: r.limit_amount >= amount_untaxed):
-                raise ValidationError(_("Amount Untaxed is over "
+                    lambda r: r.limit_amount >= amount):
+                raise ValidationError(_("Amount is over "
                                         "maximum limited amount."))
 
         if self.approver_ids and self.env.user not in self.approver_ids:
@@ -86,3 +106,27 @@ class PurchaseOrder(models.Model):
     def _compute_approve_permission(self):
         for order in self:
             order.approve_permission = bool(self.env.user in order.approver_ids)
+
+    @api.multi
+    def action_validated(self):
+        self.ensure_one()
+        return self.write({'state': 'validate'})
+
+    @api.multi
+    def expense_accept(self):
+        self.ensure_one()
+        res = super(HrExpenseExpense, self).expense_accept()
+        product_lines = self.env['hr.expense.line'].search([
+            ('expense_id', '=', self.id)
+        ]).mapped('product_id')
+        hr_category_id = self.env['product.category'].search([
+            ('name', 'like', 'HR Products'),
+        ])
+        hr_product = product_lines.filtered(
+            lambda r: r.categ_id == hr_category_id
+        )
+        group_hr = self.env.ref('base.group_hr_manager')
+        if hr_product and self.env.user not in group_hr.users:
+            raise ValidationError(_("Your user is not allowed to "
+                                    "validate this document."))
+        return res

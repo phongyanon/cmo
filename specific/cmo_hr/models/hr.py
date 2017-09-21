@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from openerp import fields, models, api, _
+from openerp import fields, models, api
 from openerp.exceptions import ValidationError
+from openerp.tools import float_compare
+from openerp.tools.translate import _
 
 
 class HrExpenseExpense(models.Model):
@@ -56,17 +58,6 @@ class HrExpenseExpense(models.Model):
             'confirm': [('readonly', False)],
         },
     )
-    # state = fields.Selection(
-    #     selection=[
-    #         ('draft', 'New'),
-    #         ('validate', 'Waiting Validate'),
-    #         ('cancelled', 'Refused'),
-    #         ('confirm', 'Waiting Approval'),
-    #         ('accepted', 'Approved'),
-    #         ('done', 'Waiting Payment'),
-    #         ('paid', 'Paid'),
-    #     ],
-    # )
     employee_id = fields.Many2one(
         states={
             'draft': [('readonly', True)],
@@ -114,6 +105,37 @@ class HrExpenseExpense(models.Model):
             self.employee_request_id = advance.employee_request_id
             for line in self.line_ids:
                 line.analytic_account = advance.line_ids.analytic_account
+
+    @api.multi
+    def expense_confirm(self):
+        res = super(HrExpenseExpense, self).expense_confirm()
+        self._check_expense_amount()
+        return res
+
+    @api.multi
+    def _check_expense_amount(self):
+        for expense in self:
+            expense_lines = self.env['hr.expense.line'].search([
+                ('expense_id', '=', expense.id),
+            ])
+            error_names = []
+            for analytic_account in expense_lines.mapped('analytic_account'):
+                project_id = self.env['project.project'].search([
+                    ('analytic_account_id', '=', analytic_account.id),
+                ])
+                amount_lines = sum(expense_lines.filtered(
+                    lambda r: r.analytic_account == analytic_account
+                ).mapped('amount_line_untaxed'))
+                if project_id:
+                    remaining_cost = project_id.remaining_cost or 0.0
+                    if float_compare(amount_lines, remaining_cost, 2) > 0:
+                        error_names.append(project_id.name)
+            if error_names:
+                raise ValidationError(
+                    _("Document value is over remaining "
+                      "cost please change value in line that "
+                      "select analytic account %s" % ', '.join(error_names))
+                )
 
 
 class HrExpenseLine(models.Model):

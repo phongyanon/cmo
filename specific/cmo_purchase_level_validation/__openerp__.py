@@ -10,12 +10,12 @@
     'depends': [
         'purchase',
         'purchase_operating_unit',
+        'cmo_level_validation',
     ],
     'data': [
         'views/purchase_level_validation_view.xml',
         'workflow/purchase_level_validation_workflow.xml',
-        'security/ir.model.access.csv',
-        'data/purchase_level_validation_data.xml',
+        # 'data/level_validation_data.xml',
     ],
     'demo': [
     ],

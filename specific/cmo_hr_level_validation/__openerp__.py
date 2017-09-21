@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "CMO :: Human Resource Extension",
+    'name': "CMO :: HR Level Validation",
     'summary': "",
-    'author': "Phongyanon Y.",
+    'author': "Phongyanon Yan.",
     'website': "http://ecosoft.co.th",
     'category': 'Tools',
     "version": "1.0",
     'depends': [
         'hr_expense_auto_invoice',
         'hr_expense_advance_clearing',
-        'l10n_th_doctype_expense',
+        'hr_expense_operating_unit',
+        'cmo_level_validation',
     ],
     'data': [
-        'views/hr_view.xml',
+        'views/hr_level_validation_view.xml',
+        'workflow/hr_level_validation_workflow.xml',
     ],
     'demo': [
     ],
     'installable': True,
 }
-
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
