@@ -10,12 +10,17 @@
                     <attribute name="string">Submit To Approval</attribute>
                 </xpath>
                 <xpath expr="//header/button[@name='confirm']" position="after">
-                    <button name="accepted" type="workflow" string="Validate" states="validate"/>
+                    <button name="accepted"
+                            type="workflow"
+                            string="Validate"
+                            states="validate"
+                            groups="base.group_hr_manager,account.group_account_manager"
+                            />
                 </xpath>
                 <xpath expr="//header/button[@name='validate']" position="replace">
                     <button name="recheck_approve" type="workflow"
                             string="Approve"
-                            attrs="{'invisible':['|', ['approve_permission','=',False], ['state', 'not in', ['confirm', 'done', 'paid']]]}"
+                            attrs="{'invisible':['|', ['approve_permission','=',False], ['state', 'not in', ['confirm']]]}"
                             groups="base.group_hr_user"
                             />
                 </xpath>
