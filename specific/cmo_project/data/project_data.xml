@@ -607,65 +607,65 @@
             <field name="active" eval="True"/>
         </record>
         # operating_unit
-        <!-- <record model="operating.unit" id="operating_unit_1">
+        <record model="operating.unit" id="operating_unit_ceo">
             <field name="name">CEO OFFICE(CEO)</field>
             <field name="code">CEO</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_2">
+        <record model="operating.unit" id="operating_unit_cmex">
             <field name="name">CMEX</field>
             <field name="code">CMEX</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_3">
+        <record model="operating.unit" id="operating_unit_museun">
             <field name="name">Museum</field>
             <field name="code">Museum</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_4">
+        <record model="operating.unit" id="operating_unit_it">
             <field name="name">Information Technology</field>
             <field name="code">IT</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_5">
+        <record model="operating.unit" id="operating_unit_odyssey">
             <field name="name">Odyssey</field>
             <field name="code">Odyssey</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_6">
+        <record model="operating.unit" id="operating_unit_cm_play">
             <field name="name">CM Play</field>
             <field name="code">CM Play</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_7">
+        <record model="operating.unit" id="operating_unit_cm_join">
             <field name="name">CM Join</field>
             <field name="code">CM Join</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_8">
+        <record model="operating.unit" id="operating_unit_bd">
             <field name="name">Business Development</field>
             <field name="code">BD</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_9">
+        <record model="operating.unit" id="operating_unit_cm_one">
             <field name="name">CM One</field>
             <field name="code">CM One</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
         </record>
-        <record model="operating.unit" id="operating_unit_10">
+        <record model="operating.unit" id="operating_unit_fa">
             <field name="name">Accounting &amp; Finance</field>
             <field name="code">FA</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
-        </record> -->
+        </record>
     </data>
 </openerp>
