@@ -53,7 +53,7 @@ class SaleOrder(models.Model):
         string='Project',
         states={'done': [('readonly', True)]},
         domain=[
-            ('state', 'not in', ['pending', 'close', 'cancelled']),
+            ('state', 'in', ['validate', 'open', 'ready_billing']),
         ],
         required=True,
     )

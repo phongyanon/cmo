@@ -169,6 +169,7 @@
                             type="action"
                             string="Close Project"
                             states="draft,validate,open,received,invoices,ready_billing"
+                            confirm="Are you sure to close this project ?"
                             groups="project.group_project_admin,project.group_project_manager,project.group_project_user"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_cancel']" position="attributes">
@@ -196,6 +197,7 @@
                             string="Re-open Project"
                             states="pending,cancelled,close"
                             class="oe_highlight"
+                            confirm="Are you sure to re-open this project ?"
                             groups="project.group_project_admin,project.group_project_manager"/>
                 </xpath>
                 <xpath expr="/form/header/button[@name='set_open']" position="attributes">
