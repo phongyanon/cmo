@@ -292,7 +292,7 @@ class ProjectProject(models.Model):
                     ('order_type', '=', 'sale_order'),
                 ]
                 sale_order_states = sale_order_states + \
-                    self.env['sale.order'].search(domain).mapped('state')
+                    self.env['sale.order'].sudo().search(domain).mapped('state')
             sale_order_states = list(set(sale_order_states))
             if 'open' in invoice_states or 'paid' in invoice_states:
                 project.is_invoiced = True
@@ -493,7 +493,7 @@ class ProjectProject(models.Model):
     @api.depends('expense')
     def _compute_expense(self):
         for project in self:
-            expense_lines = self.env['hr.expense.line'].search([
+            expense_lines = self.env['hr.expense.line'].sudo().search([
                  ('analytic_account', '=', project.analytic_account_id.id),
             ])
             expense = sum(expense_lines.filtered(
@@ -506,7 +506,7 @@ class ProjectProject(models.Model):
     @api.depends('remain_advance')
     def _compute_remain_advance(self):
         for project in self:
-            expense_lines = self.env['hr.expense.line'].search([
+            expense_lines = self.env['hr.expense.line'].sudo().search([
                 ('analytic_account', '=', project.analytic_account_id.id),
             ])
             line_ids = expense_lines.filtered(
