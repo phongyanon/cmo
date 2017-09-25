@@ -195,7 +195,7 @@
                 <xpath expr="/form/header/button[@name='set_open']" position="replace">
                     <button name="action_released" type="object"
                             string="Re-open Project"
-                            states="pending,cancelled,close"
+                            states="pending,cancelled"
                             class="oe_highlight"
                             confirm="Are you sure to re-open this project ?"
                             groups="project.group_project_admin,project.group_project_manager"/>

@@ -12,7 +12,6 @@
         'operating_unit',
     ],
     'data': [
-        'security/security.xml',
         'security/ir.model.access.csv',
         'views/level_validation_view.xml',
         # 'data/level_validation_data.xml',
