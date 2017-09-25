@@ -52,6 +52,7 @@ class HrExpenseExpense(models.Model):
             ('operating_unit_id', '=', self.operating_unit_id.id),
             ('doctype', 'like', doctype),
         ]).sorted(key=lambda r: r.level)
+
         if not levels:
             raise ValidationError(_("This operating unit does not "
                                     "set approver."))

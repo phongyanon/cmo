@@ -175,7 +175,7 @@ class ProjectProject(models.Model):
          ('invoiced', 'Invoiced'),   # no use state invoiced and paid
          ('paid', 'Paid'),  # no use state invoiced and paid
          ('cancelled', 'Incompleted'),
-         ('pending', 'Pending'),
+         ('pending', 'Hold'),
          ('close', 'Completed'), ],
         string='Status',
         required=True,
@@ -359,6 +359,16 @@ class ProjectProject(models.Model):
     @api.multi
     def action_back_to_open(self):
         res = self.write({'state': 'open'})
+        return res
+
+    @api.multi
+    def set_cancel(self):
+        res = super(ProjectProject, self).set_cancel()
+        draft_invoices = self.out_invoice_ids.sudo().filtered(
+            lambda r: r.state == 'draft'
+        )
+        if draft_invoices:
+            draft_invoices.sudo().write({'state': 'cancel'})
         return res
 
     @api.multi
