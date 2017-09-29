@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;line_cr_ids&quot;]"/>
 	<property name="ireport.zoom" value="1.1"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="336"/>
+	<property name="ireport.y" value="316"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -183,9 +183,7 @@ $F{others_note}]]></textFieldExpression>
 				<textElement>
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_note} + "  " + $F{project_name}
-
-]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{project_note} + "  " + $F{project_name}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement isPrintRepeatedValues="false" x="15" y="20" width="385" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
@@ -242,7 +240,7 @@ $F{others_note}]]></textFieldExpression>
 				<textFieldExpression class="java.lang.String"><![CDATA["(" + (new Scriptlet()).getAmtInWords((new BigDecimal($V{string_total}==""?0:$V{string_total})).setScale(2).toString(),"THB") + ")"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="1" y="0" width="399" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="15" y="0" width="385" height="20" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box leftPadding="2"/>
 				<textElement>
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
