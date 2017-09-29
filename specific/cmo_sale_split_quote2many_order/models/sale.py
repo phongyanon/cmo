@@ -215,6 +215,7 @@ class SaleOrderCustomerPlan(models.Model):
         'res.partner',
         string='Customer',
         index=True,
+        domain=[('customer', '=', True), ],
         required=True,
         ondelete='cascade',
     )

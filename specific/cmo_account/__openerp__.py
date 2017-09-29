@@ -11,6 +11,8 @@
     "license": "AGPL-3",
     "depends": [
         'account',
+        'account_operating_unit',
+        'hr_expense_advance_clearing',
         'sale_layout',
         'project',
     ],
