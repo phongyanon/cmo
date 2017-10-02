@@ -85,5 +85,26 @@
            <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_customer_payment)"/>
         </record>
         <delete id="account.account_invoices" model="ir.actions.report.xml"/>
+
+        <record id="cmo_supplier_payment_cheque" model="ir.actions.report.xml">
+           <field name="string">Supplier/Payment(Cheque)</field>
+           <field name="auto">True</field>
+           <field name="model">account.voucher</field>
+           <field name="jasper_model_id" ref="account.model_account_invoice"/>
+           <field name="name">Supplier/Payment(Cheque)</field>
+           <field name="report_name">cmo.supplier.payment.cheque</field>
+           <field name="report_rml">cmo_customer_invoice_report/report/cmo_supplier_payment_cheque.jrxml</field>
+           <field name="force_locale">th_TH</field>
+           <field name="menu">True</field>
+           <field name="header">False</field>
+           <field name="jasper_report">True</field>
+           <field name="jasper_output">pdf</field>
+        </record>
+        <record id="cmo_supplier_payment_cheque_values" model="ir.values">
+           <field name="name">Supplier/Payment(Cheque)</field>
+           <field name="model">account.voucher</field>
+           <field name="key2" eval="'client_print_multi'"/>
+           <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_supplier_payment_cheque)"/>
+        </record>
     </data>
 </openerp>
