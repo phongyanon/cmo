@@ -14,6 +14,7 @@
     ],
     "data": [
         'views/product_category_view.xml',
+        'views/account_asset_view.xml',
     ],
     "application": False,
     "installable": True,
