@@ -17,11 +17,11 @@
         <record id="doctype_purchase_order_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Purchase Order</field>
             <field name="code"></field>
-            <field name="prefix">POCM%(fy)s</field>
-            <field eval="4" name="padding"/>
+            <field name="prefix">PO%(fy)s</field>
+            <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>
-            <field name="implementation">no_gap</field>
+            <field name="implementation">standard</field>
             <field name="special_type">doctype</field>
         </record>
 
@@ -29,22 +29,22 @@
         <record id="doctype_sale_quotation_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Sales Quotation</field>
             <field name="code"></field>
-            <field name="prefix">QOCM%(fy)s</field>
-            <field eval="4" name="padding"/>
+            <field name="prefix">QT%(fy)s</field>
+            <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>
-            <field name="implementation">no_gap</field>
+            <field name="implementation">standard</field>
             <field name="special_type">doctype</field>
         </record>
         # Sales Order
         <record id="doctype_sale_order_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Sales Order</field>
             <field name="code"></field>
-            <field name="prefix">SOCM%(fy)s</field>
-            <field eval="4" name="padding"/>
+            <field name="prefix">SO%(fy)s</field>
+            <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>
-            <field name="implementation">no_gap</field>
+            <field name="implementation">standard</field>
             <field name="special_type">doctype</field>
         </record>
 
