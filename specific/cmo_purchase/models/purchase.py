@@ -77,12 +77,6 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('name', '/') == '/':
-            ctx = self._context.copy()
-            fiscalyear_id = self.env['account.fiscalyear'].find()
-            ctx["fiscalyear_id"] = fiscalyear_id
-            vals['name'] = self.env['ir.sequence'].\
-                with_context(ctx).get('cmo.purchase')
         order = super(PurchaseOrder, self).create(vals)
         order._update_analytic_by_project()
         return order

@@ -112,25 +112,6 @@ class SaleOrder(models.Model):
         compute='_compute_margin_percentage',
     )
 
-    @api.model
-    def create(self, vals):
-        ctx = self._context.copy()
-        current_date = fields.Date.context_today(self)
-        fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
-        ctx["fiscalyear_id"] = fiscalyear_id
-        if (vals.get('order_type', False) or
-            self._context.get('order_type', False)) == 'quotation' \
-                and vals.get('name', '/') == '/':
-            vals['name'] = self.env['ir.sequence']\
-                .with_context(ctx).get('cmo.quotation')
-        elif (vals.get('order_type', False) or
-            self._context.get('order_type', False)) == 'sale_order' \
-                and vals.get('name', '/') == '/':
-            vals['name'] = self.env['ir.sequence']\
-                .with_context(ctx).get('cmo.sale_order')
-        new_order = super(SaleOrder, self).create(vals)
-        return new_order
-
     @api.multi
     def action_button_convert_to_order(self):  # overwrite split2order
         assert len(self) == 1, \

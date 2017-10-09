@@ -55,6 +55,12 @@
 				</textElement>
 				<text><![CDATA[A/C PAYEE ONLY]]></text>
 			</staticText>
+			<line>
+				<reportElement x="777" y="108" width="43" height="1"/>
+			</line>
+			<line>
+				<reportElement x="766" y="121" width="55" height="1"/>
+			</line>
 		</band>
 	</title>
 	<pageHeader>
