@@ -16,7 +16,6 @@
         'hr',
     ],
     'data': [
-        'data/cmo_purchase_sequence.xml',
         'security/ir.model.access.csv',
         'views/purchase_view.xml',
         'reports/purchase_report.xml',
