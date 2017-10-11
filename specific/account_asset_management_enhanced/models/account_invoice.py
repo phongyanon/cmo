@@ -9,17 +9,6 @@ from openerp.tools.float_utils import float_round
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    @api.onchange('invoice_line')
-    def _onchange_invoice_line_with_asset(self):
-        for line in self.invoice_line:
-            if line.asset_profile_id and line.quantity:
-                quantity = line.quantity
-                if not quantity.is_integer():
-                    raise ValidationError(_("Asset Quantity must be integer."))
-                if quantity <= 0.0:
-                    raise ValidationError(
-                        _("Asset Quantity must more than zero."))
-
     @api.multi
     def finalize_invoice_move_lines(self, move_lines):
         move_lines = super(AccountInvoice,
@@ -27,10 +16,12 @@ class AccountInvoice(models.Model):
         new_move_lines = []
 
         for line_tuple in move_lines:
-            if line_tuple[2].get('asset_profile_id') and \
-                    line_tuple[2].get('quantity'):
+            if line_tuple[2].get('asset_profile_id', False) and \
+                    line_tuple[2].get('quantity', False):
                 quantity = line_tuple[2]['quantity']
-                if not quantity.is_integer():
+                if quantity is False:
+                    raise ValidationError(_('Please insert asset quantity.'))
+                if not float(quantity).is_integer():
                     raise ValidationError(_("Asset Quantity must be integer."))
                 if quantity <= 0.0:
                     raise ValidationError(
@@ -54,3 +45,20 @@ class AccountInvoice(models.Model):
             else:
                 new_move_lines.append(line_tuple)
         return new_move_lines
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    @api.constrains('quantity')
+    def _constraints_invoice_line_with_asset(self):
+        for line in self:
+            if line.asset_profile_id and line.quantity:
+                quantity = float(line.quantity)
+                if quantity is False:
+                    raise ValidationError(_('Please insert asset quantity.'))
+                if not quantity.is_integer():
+                    raise ValidationError(_("Asset Quantity must be integer."))
+                if quantity <= 0.0:
+                    raise ValidationError(
+                        _("Asset Quantity must more than zero."))
