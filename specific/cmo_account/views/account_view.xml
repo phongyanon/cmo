@@ -117,17 +117,6 @@
         </record>
 
         <!-- supplier invoice form -->
-        <record id="invoice_supplier_form" model="ir.ui.view">
-            <field name="name">account.invoice.supplier.form</field>
-            <field name="model">account.invoice</field>
-            <field name="inherit_id" ref="account.invoice_supplier_form"/>
-            <field name="priority">2</field>
-            <field name="arch" type="xml">
-                <form string="Supplier Invoice" position="attributes">
-                    <attribute name="create">false</attribute>
-                </form>
-            </field>
-        </record>
         <record id="view_invoice_supplier" model="ir.ui.view">
             <field name="name">account.invoice.supplier.pay</field>
             <field name="model">account.invoice</field>
