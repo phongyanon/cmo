@@ -84,18 +84,18 @@ class SaleOrder(models.Model):
     )
     payment_term_description = fields.Text(
         string='Payment Term',
-        states={'done': [('readonly', True)]},
+        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
     )
     covenant_description = fields.Text(
         string='Covenant',
         translate=True,
         default=lambda self: self._default_covenant(),
-        states={'done': [('readonly', True)]},
+        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
     )
     quote_ref_id = fields.Many2one(
         'sale.order',
         string='Ref.Quotation',
-        states={'done': [('readonly', True)]},
+        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
         domain=[
             '&', ('order_type', 'like', 'quotation'),
             ('state', 'not like', 'cancel'),
