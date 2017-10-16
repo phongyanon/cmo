@@ -215,13 +215,13 @@
                 </xpath>
                 <xpath expr="//div[@name='buttons']" position="after">
                     <div class="oe_right oe_button_box" name="sale_purchase_buttons" groups="base.group_user">
-                        <button class="oe_inline oe_stat_button" type="object" name="quotation_relate_project_tree_view" icon="fa-strikethrough">
+                        <button class="oe_inline oe_stat_button" type="object" name="quotation_relate_project_tree_view" icon="fa-strikethrough" groups="base.group_sale_salesman,base.group_sale_salesman_all_leads,project.group_project_readonly">
                             <field string="Sale Quotation" name="quote_related_count" widget="statinfo"/>
                         </button>
-                        <button class="oe_inline oe_stat_button" type="object" name="purchase_relate_project_tree_view" icon="fa-shopping-cart">
+                        <button class="oe_inline oe_stat_button" type="object" name="purchase_relate_project_tree_view" icon="fa-shopping-cart" groups="purchase.group_purchase_user,project.group_project_readonly">
                             <field string="Purchase Order" name="purchase_related_count" widget="statinfo"/>
                         </button>
-                        <button class="oe_inline oe_stat_button" type="object" name="invoice_relate_project_tree_view" icon="fa-pencil-square-o">
+                        <button class="oe_inline oe_stat_button" type="object" name="invoice_relate_project_tree_view" icon="fa-pencil-square-o" groups="project.group_project_readonly">
                             <field string="Invoices" name="out_invoice_count" widget="statinfo"/>
                         </button>
                     </div>

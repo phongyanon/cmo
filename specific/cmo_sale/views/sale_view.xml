@@ -51,7 +51,7 @@
                 <!-- sale order -->
                 <field name="partner_id" position="before">
                     <field name="project_related_id"
-                           attrs="{'readonly': [('order_type','=','sale_order')]}"
+                           attrs="{'readonly': ['|',('order_type','=','sale_order'),('state','=','cancel')]}"
                            context="{'tree_view_ref':'cmo_project.inherit_view_project_tree'}"
                            />
                     <field name="partner_id_readonly"/>
@@ -60,8 +60,8 @@
                     <attribute name="invisible">1</attribute>
                 </field>
                 <xpath expr="//field[@name='project_id']" position="before">
-                    <field name="event_date_description" attrs="{'readonly': [('order_type','=','sale_order')]}"/>
-                    <field name="venue_description" attrs="{'readonly': [('order_type','=','sale_order')]}"/>
+                    <field name="event_date_description" attrs="{'readonly': ['|',('order_type','=','sale_order'),('state','=','cancel')]}"/>
+                    <field name="venue_description" attrs="{'readonly': ['|',('order_type','=','sale_order'),('state','=','cancel')]}"/>
                     <field name="amount_before_management_fee" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='project_id']" position="attributes">

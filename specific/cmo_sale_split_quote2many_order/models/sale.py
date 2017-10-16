@@ -18,7 +18,7 @@ class sale_order(models.Model):
     )
     use_multi_customer = fields.Boolean(
         string='Use Multiple Customer',
-        states={'done': [('readonly', True)]},
+        states={'done': [('readonly', True)], 'cancel': [('readonly', True)]},
         default=False,
         help="It indicates that the sale order has been sent.",
     )
@@ -173,8 +173,9 @@ class sale_order(models.Model):
             ('quote_id', 'like', self.id),
             ('order_type', '=', 'sale_order'),
         ]
-        action['domain'] = domain
-        return action.read()[0]
+        result = action.read()[0]
+        result.update({'domain': domain})
+        return result
 
     @api.multi
     def action_cancel_draft_sale_orders(self):
