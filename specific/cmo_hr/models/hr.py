@@ -137,6 +137,13 @@ class HrExpenseExpense(models.Model):
                       "select analytic account %s" % ', '.join(error_names))
                 )
 
+    @api.model
+    def _prepare_inv_line(self, account_id, exp_line):
+        res = super(HrExpenseExpense, self)._prepare_inv_line(
+            account_id, exp_line)
+        if exp_line.analytic_account:
+            res['account_analytic_id'] = exp_line.analytic_account.id or False
+        return res
 
 class HrExpenseLine(models.Model):
     _inherit = 'hr.expense.line'
