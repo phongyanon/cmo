@@ -33,28 +33,53 @@ class PurchaseOrder(models.Model):
         domain=[
             ('state', 'in', ['validate', 'open', 'ready_billing']),
         ],
-        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
+        states={
+            'confirmed': [('readonly', True)],
+            'approved': [('readonly', True)],
+            'done': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
     )
     order_ref = fields.Many2one(
         'sale.order',
         string='Quotation Number',
-        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
+        states={
+            'confirmed': [('readonly', True)],
+            'approved': [('readonly', True)],
+            'done': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
         ondelete='restrict',
     )
     event_date_description = fields.Char(
         string='Event Date',
         size=250,
-        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
+        states={
+            'confirmed': [('readonly', True)],
+            'approved': [('readonly', True)],
+            'done': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
     )
     venue_description = fields.Char(
         string='Venue',
         size=250,
-        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
+        states={
+            'confirmed': [('readonly', True)],
+            'approved': [('readonly', True)],
+            'done': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
     )
     po_type_id = fields.Many2one(
         'purchase.order.type.config',
         string='PO Type',
-        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
+        states={
+            'confirmed': [('readonly', True)],
+            'approved': [('readonly', True)],
+            'done': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
         required=True,
     )
     po_project = fields.Boolean(
@@ -64,7 +89,12 @@ class PurchaseOrder(models.Model):
     approve_id = fields.Many2one(
         'hr.employee',
         string='PO Approve',
-        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
+        states={
+            'confirmed': [('readonly', True)],
+            'approved': [('readonly', True)],
+            'done': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
         required=True,
     )
     operating_unit_id = fields.Many2one(

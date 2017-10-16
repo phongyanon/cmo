@@ -13,7 +13,7 @@
             <field name="operating_unit_id" ref="cmo_project.operating_unit_ceo"/>
             <field name="doctype">purchase_order</field>
         </record>
-        <record model="level.validation" id="purchase_level_validation_2">
+        <record model="level.validation" id="purchase_level_validation_3">
             <field name="level">3</field>
             <field name="limit_amount">99999999</field>
             <field name="operating_unit_id" ref="cmo_project.operating_unit_ceo"/>
@@ -42,19 +42,19 @@
         <record model="level.validation" id="purchase_level_validation_7">
             <field name="level">1</field>
             <field name="limit_amount">150000</field>
-            <field name="operating_unit_id" ref="cmo_project.operating_unit_museun"/>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_museum"/>
             <field name="doctype">purchase_order</field>
         </record>
         <record model="level.validation" id="purchase_level_validation_8">
             <field name="level">2</field>
             <field name="limit_amount">300000</field>
-            <field name="operating_unit_id" ref="cmo_project.operating_unit_museun"/>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_museum"/>
             <field name="doctype">purchase_order</field>
         </record>
         <record model="level.validation" id="purchase_level_validation_9">
             <field name="level">3</field>
             <field name="limit_amount">99999999</field>
-            <field name="operating_unit_id" ref="cmo_project.operating_unit_museun"/>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_museum"/>
             <field name="doctype">purchase_order</field>
         </record>
 
@@ -191,5 +191,42 @@
             <field name="doctype">purchase_order</field>
         </record>
 
+        <record model="level.validation" id="purchase_level_validation_31">
+            <field name="level">1</field>
+            <field name="limit_amount">150000</field>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_fm"/>
+            <field name="doctype">purchase_order</field>
+        </record>
+        <record model="level.validation" id="purchase_level_validation_32">
+            <field name="level">2</field>
+            <field name="limit_amount">300000</field>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_fm"/>
+            <field name="doctype">purchase_order</field>
+        </record>
+        <record model="level.validation" id="purchase_level_validation_33">
+            <field name="level">3</field>
+            <field name="limit_amount">99999999</field>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_fm"/>
+            <field name="doctype">purchase_order</field>
+        </record>
+
+        <record model="level.validation" id="purchase_level_validation_34">
+            <field name="level">1</field>
+            <field name="limit_amount">150000</field>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_hr"/>
+            <field name="doctype">purchase_order</field>
+        </record>
+        <record model="level.validation" id="purchase_level_validation_35">
+            <field name="level">2</field>
+            <field name="limit_amount">300000</field>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_hr"/>
+            <field name="doctype">purchase_order</field>
+        </record>
+        <record model="level.validation" id="purchase_level_validation_36">
+            <field name="level">3</field>
+            <field name="limit_amount">99999999</field>
+            <field name="operating_unit_id" ref="cmo_project.operating_unit_hr"/>
+            <field name="doctype">purchase_order</field>
+        </record>
     </data>
 </openerp>
