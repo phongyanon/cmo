@@ -90,13 +90,13 @@
 		<fieldDescription><![CDATA[partner_id/zip]]></fieldDescription>
 	</field>
 	<field name="approve_name" class="java.lang.String">
-		<fieldDescription><![CDATA[approve_ids/name]]></fieldDescription>
+		<fieldDescription><![CDATA[approve_id/name]]></fieldDescription>
 	</field>
 	<field name="notes" class="java.lang.String">
 		<fieldDescription><![CDATA[notes]]></fieldDescription>
 	</field>
 	<field name="jop_title" class="java.lang.String">
-		<fieldDescription><![CDATA[approve_ids/job_id/name]]></fieldDescription>
+		<fieldDescription><![CDATA[approve_id/job_id/name]]></fieldDescription>
 	</field>
 	<field name="project_number" class="java.lang.String">
 		<fieldDescription><![CDATA[project_id/project_number]]></fieldDescription>

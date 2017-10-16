@@ -16,6 +16,7 @@
     'data': [
         'views/hr_level_validation_view.xml',
         'workflow/hr_level_validation_workflow.xml',
+        'data/level_validation_data.xml',
     ],
     'demo': [
     ],
