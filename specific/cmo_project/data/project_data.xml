@@ -607,7 +607,7 @@
             <field name="active" eval="True"/>
         </record>
         # operating_unit
-        <!-- <record model="operating.unit" id="operating_unit_ceo">
+        <record model="operating.unit" id="operating_unit_ceo">
             <field name="name">CEO OFFICE(CEO)</field>
             <field name="code">CEO</field>
             <field name="active" eval="True"/>
@@ -662,10 +662,34 @@
             <field name="partner_id">1</field>
         </record>
         <record model="operating.unit" id="operating_unit_fa">
-            <field name="name">Accounting &amp; Finance</field>
+            <field name="name">Accounting&amp;Finance</field>
             <field name="code">FA</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
-        </record> -->
+        </record>
+        <record model="operating.unit" id="operating_unit_hr">
+            <field name="name">Human Resource</field>
+            <field name="code">HR</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_fm">
+            <field name="name">Facility Management</field>
+            <field name="code">FM</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_it_issue">
+            <field name="name">IT ISSUE</field>
+            <field name="code">IT ISSUE</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
+        <record model="operating.unit" id="operating_unit_fm_issue">
+            <field name="name">FM ISSUE</field>
+            <field name="code">FM ISSUE</field>
+            <field name="active" eval="True"/>
+            <field name="partner_id">1</field>
+        </record>
     </data>
 </openerp>
