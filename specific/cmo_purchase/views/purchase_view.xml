@@ -133,7 +133,7 @@
                 <field name="notes" position="before">
                     <group>
                         <group>
-                            <field name="approve_ids"/>
+                            <field name="approve_id"/>
                         </group>
                         <group></group>
                     </group>

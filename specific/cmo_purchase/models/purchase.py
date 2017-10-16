@@ -10,6 +10,22 @@ from openerp.tools.translate import _
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    partner_id = fields.Many2one(
+        states={
+            'confirmed': [('readonly', True)],
+            'approved': [('readonly', True)],
+            'done': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
+    )
+    order_line = fields.One2many(
+        states={
+            'confirmed': [('readonly', True)],
+            'approved': [('readonly', True)],
+            'done': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
+    )
     project_id = fields.Many2one(
         'project.project',
         string='Project Name',
@@ -17,36 +33,46 @@ class PurchaseOrder(models.Model):
         domain=[
             ('state', 'in', ['validate', 'open', 'ready_billing']),
         ],
+        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
     )
     order_ref = fields.Many2one(
         'sale.order',
         string='Quotation Number',
+        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
         ondelete='restrict',
     )
     event_date_description = fields.Char(
         string='Event Date',
         size=250,
+        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
     )
     venue_description = fields.Char(
         string='Venue',
         size=250,
+        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
     )
-    po_type_id = fields.Many2one(  # no use
+    po_type_id = fields.Many2one(
         'purchase.order.type.config',
         string='PO Type',
+        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
         required=True,
     )
     po_project = fields.Boolean(
         string='PO Project',
         related='po_type_id.po_project',
     )
-    approve_ids = fields.Many2one(
+    approve_id = fields.Many2one(
         'hr.employee',
         string='PO Approve',
+        readonly=['state', 'in', ['done', 'confirmed', 'approved', 'cancel']],
         required=True,
     )
     operating_unit_id = fields.Many2one(
         change_default=True,
+        readonly=['state', 'in', ['done', 'confirm', 'approved', 'cancel']],
+    )
+    requesting_operating_unit_id = fields.Many2one(
+        readonly=['state', 'in', ['done', 'confirm', 'approved', 'cancel']],
     )
 
     @api.onchange('po_type_id')

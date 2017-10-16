@@ -28,6 +28,7 @@
                     <button name="refuse" type="workflow"
                             string="Refuse"
                             attrs="{'invisible':['|', ['approve_permission','=',False], ['state', 'not in', ['confirm']]]}"
+                            confirm="Are you sure to refuse this document?"
                             groups="base.group_hr_user"
                             />
                 </xpath>
