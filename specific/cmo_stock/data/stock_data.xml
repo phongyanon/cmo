@@ -101,13 +101,13 @@
         </record>
 
         <record model="stock.location" id="stock_location_fa">
-            <field name="name">Accounting&amp;Finance</field>
+            <field name="name">Finance&amp;Accounting</field>
             <field name="usage">production</field>
             <field name="active" eval="True"/>
         </record>
         <record model="stock.warehouse" id="warehouse_fa">
-            <field name="name">Accounting&amp;Finance</field>
-            <field name="code">Accounting&amp;Finance</field>
+            <field name="name">Finance&amp;Accounting</field>
+            <field name="code">Finance&amp;Accounting</field>
             <field name="operating_unit_id" ref="cmo_project.operating_unit_fa"/>
         </record>
 

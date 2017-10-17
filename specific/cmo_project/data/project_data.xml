@@ -662,7 +662,7 @@
             <field name="partner_id">1</field>
         </record>
         <record model="operating.unit" id="operating_unit_fa">
-            <field name="name">Accounting&amp;Finance</field>
+            <field name="name">Finance&amp;Accounting</field>
             <field name="code">FA</field>
             <field name="active" eval="True"/>
             <field name="partner_id">1</field>
