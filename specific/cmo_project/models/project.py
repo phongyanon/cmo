@@ -423,11 +423,11 @@ class ProjectProject(models.Model):
     @api.multi
     @api.depends('purchase_related_ids')
     def _compute_purchase_related_count(self):
-        self.ensure_one()
-        purchase_ids = self.env['purchase.order'].search([
-            ('project_id', 'like', self.id),
-        ])
-        self.purchase_related_count = len(purchase_ids)
+        for project in self:
+            purchase_ids = self.env['purchase.order'].search([
+                ('project_id', 'like', project.id),
+            ])
+            project.purchase_related_count = len(purchase_ids)
 
     @api.multi
     def invoice_relate_project_tree_view(self):
@@ -440,11 +440,11 @@ class ProjectProject(models.Model):
     @api.multi
     @api.depends('out_invoice_ids')
     def _compute_out_invoice_count(self):
-        self.ensure_one()
-        invoice_ids = self.env['account.invoice'].search([
-            ('id', 'in', self.out_invoice_ids.ids)
-        ])
-        self.out_invoice_count = len(invoice_ids)
+        for project in self:
+            invoice_ids = self.env['account.invoice'].search([
+                ('id', 'in', project.out_invoice_ids.ids)
+            ])
+            project.out_invoice_count = len(invoice_ids)
 
     @api.multi
     @api.depends(
@@ -540,12 +540,12 @@ class ProjectProject(models.Model):
     @api.multi
     @api.depends('quote_related_ids')
     def _compute_quote_related_count(self):
-        self.ensure_one()
-        quote_ids = self.env['sale.order'].search([
-            ('project_related_id', 'like', self.id),
-            ('order_type', '=', 'quotation'),
-        ])
-        self.quote_related_count = len(quote_ids)
+        for project in self:
+            quote_ids = self.env['sale.order'].search([
+                ('project_related_id', 'like', project.id),
+                ('order_type', '=', 'quotation'),
+            ])
+            project.quote_related_count = len(quote_ids)
 
 
 class ProjectTeamMember(models.Model):

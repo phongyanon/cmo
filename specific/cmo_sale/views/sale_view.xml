@@ -157,7 +157,7 @@
             <field name="arch" type="xml">
                 <!-- order line -->
                 <xpath expr="//field[@name='order_line']/form//field[@name='purchase_price']" position="attributes">
-                    <attribute name="string">Estimate Cost</attribute>
+                    <attribute name="string">Estimate Unit Cost</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']/form//field[@name='purchase_price']" position="after">
                     <field name="sale_order_line_margin"/>
