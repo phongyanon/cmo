@@ -106,5 +106,26 @@
            <field name="key2" eval="'client_print_multi'"/>
            <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_supplier_payment_cheque)"/>
         </record>
+
+        <record id="cmo_supplier_billing" model="ir.actions.report.xml">
+           <field name="string">Supplier Billing</field>
+           <field name="auto">True</field>
+           <field name="model">supplier.billing</field>
+           <field name="jasper_model_id" ref="cmo_supplier_billing.model_supplier_billing"/>
+           <field name="name">Supplier Billing</field>
+           <field name="report_name">cmo.supplier.billing</field>
+           <field name="report_rml">cmo_customer_invoice_report/report/cmo_supplier_billing.jrxml</field>
+           <field name="force_locale">th_TH</field>
+           <field name="menu">True</field>
+           <field name="header">False</field>
+           <field name="jasper_report">True</field>
+           <field name="jasper_output">pdf</field>
+        </record>
+        <record id="cmo_supplier_billing_values" model="ir.values">
+           <field name="name">Supplier Billing</field>
+           <field name="model">supplier.billing</field>
+           <field name="key2" eval="'client_print_multi'"/>
+           <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_supplier_billing)"/>
+        </record>
     </data>
 </openerp>
