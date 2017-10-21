@@ -10,3 +10,7 @@ class AccountInvoice(models.Model):
         'supplier.billing',
         string='Supplier Billing',
     )
+    supplier_billing_number = fields.Char(
+        related='supplier_billing_id.number',
+        string='Supplier Billing',
+    )

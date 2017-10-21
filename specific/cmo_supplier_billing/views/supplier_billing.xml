@@ -15,7 +15,18 @@
             </field>
         </record>
 
-        <record id="inherit_view_invoice_tree" model="ir.ui.view">
+        <record id="view_invoice_supplier_billing" model="ir.ui.view">
+            <field name="name">account.invoice.supplier.form</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_supplier_form"/>
+            <field name="arch" type="xml">
+                <field name="supplier_invoice_number" position="after">
+                    <field name="supplier_billing_id" invisible="1"/>
+                    <field name="supplier_billing_number"/>
+                </field>
+            </field>
+        </record>
+        <!-- <record id="inherit_view_invoice_tree" model="ir.ui.view">
             <field name="name">project.project.invoice.tree</field>
             <field name="model">account.invoice</field>
             <field eval="17" name="priority"/>
@@ -30,10 +41,10 @@
                     <field name="state"/>
                 </tree>
             </field>
-        </record>
+        </record> -->
 
         <record id="view_supplier_billing_form" model="ir.ui.view">
-			<field name="name">view.supplier.billing.form</field>
+			<field name="name">Supplier Billing Form</field>
 			<field name="model">supplier.billing</field>
 			<field name="arch" type="xml">
                 <form string="Billing">
@@ -46,12 +57,13 @@
                                 string="Cancel" />
                         <field name="state" widget="statusbar" statusbar_visible="draft,billed"/>
                     </header>
-                    <sheet>
+                    <sheet string="Supplier Billing">
                         <div class="oe_right oe_button_box" name="invoice_relate_buttons" attrs="{'invisible':[['state', 'not in', ['billed']]]}">
                             <button class="oe_inline oe_stat_button" type="object" name="invoice_relate_billing_tree_view" icon="fa-pencil-square-o">
                                 <field string="Invoices" name="invoice_related_count" widget="statinfo"/>
                             </button>
                         </div>
+                        <field name="name" invisible="1"/>
                         <h1>
                             <label for="name" string="Supplier Billing"/>
                             <field name="number" string="Supplier Billing" class="oe_inline" readonly="1"/>
@@ -68,8 +80,8 @@
                         <notebook>
                             <page string="Billing">
                                 <field name="invoice_ids" nolabel="1" widget="many2many"
-                                    context="{'limit': 20,'tree_view_ref':'cmo_supplier_billing.inherit_view_invoice_tree'}"
                                     domain="[
+                                        ('partner_id', '=', partner_id),
                                         ('state', '=', 'draft'),
                                         ('supplier_billing_id', '=', False),
                                         '|',
