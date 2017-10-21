@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from openerp import fields, models, api
+from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
 
 
 class SupplierBilling(models.Model):
     _name = 'supplier.billing'
     _order = 'date desc, id desc'
 
+    name = fields.Char(
+        string='Name',
+        default='Supplier Billing',
+    )
     number = fields.Char(
         string='Number',
         size=32,
@@ -64,7 +70,7 @@ class SupplierBilling(models.Model):
     @api.multi
     def invoice_relate_billing_tree_view(self):
         self.ensure_one()
-        action = self.env.ref('account.action_invoice_tree1')
+        action = self.env.ref('account.action_invoice_tree2')
         result = action.read()[0]
         result.update({'domain': [('id', 'in', self.invoice_ids.ids)]})
         return result
@@ -72,6 +78,12 @@ class SupplierBilling(models.Model):
     @api.multi
     def action_billed(self):
         self.ensure_one()
+        if self.invoice_ids:
+            for invoice in self.invoice_ids:
+                invoice.update({'date_due': self.due_date})
+        else:
+            raise ValidationError(_('Should select at least 1 invoice.'))
+
         ctx = self._context.copy()
         current_date = fields.Date.context_today(self)
         fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
@@ -81,11 +93,8 @@ class SupplierBilling(models.Model):
         res = self.write({
             'state': 'billed',
             'number': billing_number,
+            'name': billing_number,
         })
-
-        if self.invoice_ids:
-            for invoice in self.invoice_ids:
-                invoice.update({'date_due': self.due_date})
         return res
 
     @api.multi
