@@ -22,26 +22,28 @@
             <field name="arch" type="xml">
                 <field name="supplier_invoice_number" position="after">
                     <field name="supplier_billing_id" invisible="1"/>
-                    <field name="supplier_billing_number"/>
+                    <field name="supplier_billing_number" invisible="1"/>
                 </field>
             </field>
         </record>
-        <!-- <record id="inherit_view_invoice_tree" model="ir.ui.view">
+
+        <record id="inherit_view_invoice_tree" model="ir.ui.view">
             <field name="name">project.project.invoice.tree</field>
             <field name="model">account.invoice</field>
             <field eval="17" name="priority"/>
             <field name="arch" type="xml">
                 <tree string="Supplier Invoice">
                     <field name="supplier_billing_id" invisible="1"/>
-                    <field name="origin"/>
-                    <field name="supplier_invoice_number"/>
+                    <field name="partner_id_name"/>
                     <field name="date_invoice"/>
-                    <field name="date_due"/>
+                    <field name="supplier_invoice_number"/>
+                    <field name="origin"/>
+                    <!-- <field name="super_origin"/> -->
                     <field name="amount_total" sum="Total Amount"/>
                     <field name="state"/>
                 </tree>
             </field>
-        </record> -->
+        </record>
 
         <record id="view_supplier_billing_form" model="ir.ui.view">
 			<field name="name">Supplier Billing Form</field>
@@ -87,7 +89,7 @@
                                         '|',
                                         ('type', '=', 'in_invoice'),
                                         ('type', '=', 'in_refund')
-                                    ]"
+                                    ]" context="{'tree_view_ref':'cmo_supplier_billing.inherit_view_invoice_tree'}"
                                     />
                             </page>
                         </notebook>
