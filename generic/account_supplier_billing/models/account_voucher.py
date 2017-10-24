@@ -33,6 +33,7 @@ class AccountVoucher(models.Model):
         if not partner_id or not journal_id:
             return {}
         billing_id = self.supplier_billing_id.id
+        self.date_value = self.supplier_billing_id.due_date
         res = self.with_context(supplier_billing_id=billing_id).\
             recompute_voucher_lines(partner_id, journal_id, amount,
                                     currency_id, ttype, date)
