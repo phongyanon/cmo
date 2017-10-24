@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 {
-    'name': "CMO :: Supplier Billing",
+    'name': "Account Supplier Billing",
     'summary': "",
     'author': "Phongyanon Y.",
     'website': "http://ecosoft.co.th",
@@ -9,12 +9,14 @@
     "version": "1.0",
     'depends': [
         'account',
+        'account_voucher',
+        'account_auto_fy_sequence',
     ],
     'data': [
         'data/billing_sequence.xml',
         'security/ir.model.access.csv',
         'views/supplier_billing.xml',
-        'views/account_invoice.xml',
+        'views/voucher_payment_receipt_view.xml',
     ],
     'demo': [
     ],

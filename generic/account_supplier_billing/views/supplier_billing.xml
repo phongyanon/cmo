@@ -89,7 +89,7 @@
                                         '|',
                                         ('type', '=', 'in_invoice'),
                                         ('type', '=', 'in_refund')
-                                    ]" context="{'tree_view_ref':'cmo_supplier_billing.inherit_view_invoice_tree'}"
+                                    ]" context="{'tree_view_ref':'account_supplier_billing.inherit_view_invoice_tree'}"
                                     />
                             </page>
                         </notebook>
