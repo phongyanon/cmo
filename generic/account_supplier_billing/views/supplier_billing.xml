@@ -132,6 +132,7 @@
                   id="menu_action_supplier_billing"
                   string="Supplier Billing"
                   parent="account.menu_finance_payables"
+                  groups="account.group_account_invoice,account.group_account_manager"
                   sequence="11" />
 
     </data>
