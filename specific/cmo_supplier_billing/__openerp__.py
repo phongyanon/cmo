@@ -14,6 +14,7 @@
         'data/billing_sequence.xml',
         'security/ir.model.access.csv',
         'views/supplier_billing.xml',
+        'views/account_invoice.xml',
     ],
     'demo': [
     ],
