@@ -21,8 +21,7 @@
             <field name="inherit_id" ref="account.invoice_supplier_form"/>
             <field name="arch" type="xml">
                 <field name="supplier_invoice_number" position="after">
-                    <field name="supplier_billing_id" invisible="1"/>
-                    <field name="supplier_billing_number" invisible="1"/>
+                    <field name="supplier_billing_id"/>
                 </field>
             </field>
         </record>

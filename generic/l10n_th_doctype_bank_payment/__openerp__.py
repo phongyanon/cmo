@@ -20,7 +20,7 @@ List of Doctype
     "installable": True,
     "depends": [
         'l10n_th_doctype_base',
-        'account_bank_receipt',
+        'account_bank_payment',
     ],
     "data": [
         "data/ir_sequence_data.xml",
