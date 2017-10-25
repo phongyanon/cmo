@@ -7,12 +7,9 @@ from openerp.tools.translate import _
 
 class SupplierBilling(models.Model):
     _name = 'supplier.billing'
+    _rec_name = 'number'
     _order = 'date desc, id desc'
 
-    name = fields.Char(
-        string='Name',
-        default='Supplier Billing',
-    )
     number = fields.Char(
         string='Number',
         size=32,
@@ -79,12 +76,9 @@ class SupplierBilling(models.Model):
     def action_billed(self):
         self.ensure_one()
         if self.invoice_ids:
-            # if self.invoice_ids.filtered(lambda r: r.is_bill is True):
-            #     raise ValidationError(_('Some invoice was selected already.'))
             for invoice in self.invoice_ids:
                 invoice.update({
                     'date_due': self.due_date,
-                    # 'is_bill': True,
                 })
         else:
             raise ValidationError(_('Should select at least 1 invoice.'))
@@ -98,7 +92,6 @@ class SupplierBilling(models.Model):
         res = self.write({
             'state': 'billed',
             'number': billing_number,
-            'name': billing_number,
         })
         return res
 

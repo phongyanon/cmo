@@ -6,8 +6,8 @@
         <record id="doctype_customer_invoice_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Customer Invoice</field>
             <field name="code"></field>
-            <field name="prefix">CIV%(fy)s</field>
-            <field eval="6" name="padding"/>
+            <field name="prefix">IVCM%(fy)s-</field>
+            <field eval="4" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>
             <field name="implementation">no_gap</field>
@@ -18,7 +18,7 @@
         <record id="doctype_supplier_invoice_seq" model="ir.sequence">
             <field name="name">DOCTYPE: Supplier Invoice</field>
             <field name="code"></field>
-            <field name="prefix">SIV%(fy)s</field>
+            <field name="prefix">PDCM%(fy)s-</field>
             <field eval="6" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>

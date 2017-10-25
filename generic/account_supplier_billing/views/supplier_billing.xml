@@ -34,7 +34,7 @@
             <field name="arch" type="xml">
                 <tree string="Supplier Invoice">
                     <field name="supplier_billing_id" invisible="1"/>
-                    <field name="partner_id_name"/>
+                    <field name="partner_id" string="XXXX"/>
                     <field name="date_invoice"/>
                     <field name="supplier_invoice_number"/>
                     <field name="origin"/>
@@ -65,7 +65,6 @@
                                 <field string="Invoices" name="invoice_related_count" widget="statinfo"/>
                             </button>
                         </div>
-                        <field name="name" invisible="1"/>
                         <h1>
                             <label for="name" string="Supplier Billing"/>
                             <field name="number" string="Supplier Billing" class="oe_inline" readonly="1"/>
@@ -89,8 +88,20 @@
                                         '|',
                                         ('type', '=', 'in_invoice'),
                                         ('type', '=', 'in_refund')
-                                    ]" context="{'tree_view_ref':'account_supplier_billing.inherit_view_invoice_tree'}"
-                                    />
+                                    ]"
+                                    >
+                                    <tree>
+                                    <field name="supplier_billing_id" invisible="1"/>
+                                    <field name="partner_id" string="Supplier"/>
+                                    <field name="date_invoice"/>
+                                    <field name="supplier_invoice_number"/>
+                                    <field name="origin"/>
+                                    <!-- <field name="super_origin"/> -->
+                                    <field name="amount_total" sum="Total Amount"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+
                             </page>
                         </notebook>
                     </sheet>
