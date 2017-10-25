@@ -19,7 +19,7 @@
             <field name="name">DOCTYPE: Supplier Invoice</field>
             <field name="code"></field>
             <field name="prefix">PDCM%(fy)s-</field>
-            <field eval="6" name="padding"/>
+            <field eval="4" name="padding"/>
             <field eval="1" name="number_next"/>
             <field eval="1" name="number_increment"/>
             <field name="implementation">no_gap</field>
