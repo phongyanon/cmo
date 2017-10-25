@@ -17,6 +17,7 @@
         'security/ir.model.access.csv',
         'views/supplier_billing.xml',
         'views/voucher_payment_receipt_view.xml',
+        'views/account_invoice.xml',
     ],
     'demo': [
     ],
