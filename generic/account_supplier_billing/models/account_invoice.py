@@ -16,7 +16,3 @@ class AccountInvoice(models.Model):
         related='supplier_billing_id.number',
         string='Supplier Billing Number',
     )
-    # is_bill = fields.Boolean(
-    #     string="Is Billed",
-    #     default=False,
-    # )
