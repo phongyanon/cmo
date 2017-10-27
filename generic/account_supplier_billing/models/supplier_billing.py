@@ -20,24 +20,28 @@ class SupplierBilling(models.Model):
         'res.partner',
         string='Supplier',
         domain=[('supplier', '=', True), ],
-        states={'billed': [('readonly', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         required=True,
     )
     date = fields.Date(
         string='Billing Date',
-        states={'billed': [('readonly', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         default=lambda self: fields.Date.context_today(self),
     )
     due_date = fields.Date(
         string='Due Date',
-        states={'billed': [('readonly', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         default=lambda self: fields.Date.context_today(self),
         required=True,
     )
     invoice_ids = fields.One2many(
         'account.invoice',
         'supplier_billing_id',
-        states={'billed': [('readonly', True)]},
+        readonly=True,
+        states={'draft': [('readonly', False)]},
         strgin='Invoices',
     )
     invoice_related_count = fields.Integer(
@@ -66,34 +70,34 @@ class SupplierBilling(models.Model):
 
     @api.multi
     def invoice_relate_billing_tree_view(self):
-        self.ensure_one()
-        action = self.env.ref('account.action_invoice_tree2')
-        result = action.read()[0]
-        result.update({'domain': [('id', 'in', self.invoice_ids.ids)]})
-        return result
+        for rec in self:
+            action = self.env.ref('account.action_invoice_tree2')
+            result = action.read()[0]
+            result.update({'domain': [('id', 'in', rec.invoice_ids.ids)]})
+            return result
 
     @api.multi
     def action_billed(self):
-        self.ensure_one()
-        if self.invoice_ids:
-            for invoice in self.invoice_ids:
-                invoice.update({
-                    'date_due': self.due_date,
-                })
-        else:
-            raise ValidationError(_('Should select at least 1 invoice.'))
+        for rec in self:
+            if rec.invoice_ids:
+                for invoice in rec.invoice_ids:
+                    invoice.update({
+                        'date_due': rec.due_date,
+                    })
+            else:
+                raise ValidationError(_('Should select at least 1 invoice.'))
 
-        ctx = self._context.copy()
-        current_date = fields.Date.context_today(self)
-        fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
-        ctx["fiscalyear_id"] = fiscalyear_id
-        billing_number = self.env['ir.sequence']\
-            .with_context(ctx).get('supplier.billing')
-        res = self.write({
-            'state': 'billed',
-            'number': billing_number,
-        })
-        return res
+            ctx = rec._context.copy()
+            current_date = fields.Date.context_today(rec)
+            fiscalyear_id = self.env['account.fiscalyear'].find(dt=current_date)
+            ctx["fiscalyear_id"] = fiscalyear_id
+            billing_number = self.env['ir.sequence']\
+                .with_context(ctx).get('supplier.billing')
+            res = rec.write({
+                'state': 'billed',
+                'number': billing_number,
+            })
+            return res
 
     @api.multi
     def action_cancel(self):

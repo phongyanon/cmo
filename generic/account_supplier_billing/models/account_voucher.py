@@ -61,10 +61,10 @@ class AccountVoucher(models.Model):
         res = super(AccountVoucher, self).recompute_voucher_lines(
             partner_id, journal_id,
             price, currency_id, ttype, date)
-        line_cr_ids = res['value']['line_cr_ids']
-        line_dr_ids = res['value']['line_dr_ids']
         # Only scope down to selected invoices
         if self._context.get('supplier_billing_id', False):
+            line_cr_ids = res['value']['line_cr_ids']
+            line_dr_ids = res['value']['line_dr_ids']
             # Get Invoices from billing
             billing_id = self._context.get('supplier_billing_id', False)
             billing = self.env['supplier.billing'].browse(billing_id)

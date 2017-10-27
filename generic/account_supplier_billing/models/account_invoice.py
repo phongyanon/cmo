@@ -10,16 +10,9 @@ class AccountInvoice(models.Model):
         'supplier.billing',
         string='Supplier Billing',
         copy=False,
+        states={'draft': [('readonly', False)]},
     )
     supplier_billing_number = fields.Char(
         related='supplier_billing_id.number',
         string='Supplier Billing Number',
     )
-    partner_id_name = fields.Char(
-        related='partner_id.name',
-        string='Supplier',
-    )
-    # is_bill = fields.Boolean(
-    #     string="Is Billed",
-    #     default=False,
-    # )

@@ -32,33 +32,42 @@ class AccountVoucher(models.Model):
         readonly=True,
         states={'draft': [('readonly', False)]})
 
-    @api.one
+    @api.multi
     def proforma_voucher(self):
         # Write payment id back to Billing Document
-        if self.billing_id:
-            billing = self.billing_id
-            billing.payment_id = self.id
-            billing.state = 'billed'
-        return super(AccountVoucher, self).proforma_voucher()
+        for rec in self:
+            if rec.billing_id:
+                billing = rec.billing_id
+                billing.payment_id = rec.id
+                billing.state = 'billed'
+            return super(AccountVoucher, rec).proforma_voucher()
 
-    @api.one
+    @api.multi
     def cancel_voucher(self):
         # Set payment_id in Billing back to False
-        if self.billing_id:
-            billing = self.billing_id
-            billing.payment_id = False
-        return super(AccountVoucher, self).cancel_voucher()
+        for rec in self:
+            if rec.billing_id:
+                billing = rec.billing_id
+                billing.payment_id = False
+            return super(AccountVoucher, rec).cancel_voucher()
 
-    def onchange_billing_id(self, cr, uid, ids, partner_id, journal_id,
-                            amount, currency_id, ttype, date, context=None):
+    @api.onchange('billing_id')
+    def onchange_billing_id(self):
+        partner_id = self.partner_id.id
+        journal_id = self.journal_id.id
+        amount = self.amount
+        currency_id = self.currency_id.id
+        ttype = self.type
+        date = self.date
         if not partner_id or not journal_id:
             return {}
-        res = self.recompute_voucher_lines(cr, uid, ids, partner_id,
-                                           journal_id, amount, currency_id,
-                                           ttype, date, context=context)
-        vals = self.recompute_payment_rate(cr, uid, ids, res, currency_id,
-                                           date, ttype, journal_id,
-                                           amount)
+        billing_id = self.billing_id.id
+        res = self.with_context(billing_id=billing_id).\
+            recompute_voucher_lines(partner_id, journal_id, amount,
+                                    currency_id, ttype, date)
+        vals = self.with_context(billing_id=billing_id).\
+            recompute_payment_rate(res, currency_id, date, ttype,
+                                   journal_id, amount)
         for key in vals.keys():
             res[key].update(vals[key])
         if ttype == 'sale':
@@ -69,74 +78,37 @@ class AccountVoucher(models.Model):
             del(res['value']['line_cr_ids'])
             del(res['value']['pre_line'])
             del(res['value']['payment_rate'])
-        if context.get('billing_id', False):
-            bill_obj = self.pool.get('account.billing')
-            billing = bill_obj.browse(cr, uid, context.get('billing_id'))
-            res['value'].update({'amount': billing.billing_amount})
+        self.line_dr_ids = res['value']['line_dr_ids']
+        self.line_cr_ids = res['value']['line_cr_ids']
+
+    @api.multi
+    def recompute_voucher_lines(self, partner_id, journal_id,
+                                price, currency_id, ttype, date):
+        res = super(AccountVoucher, self).recompute_voucher_lines(
+            partner_id, journal_id,
+            price, currency_id, ttype, date)
+        # Only scope down to selected invoices
+        if self._context.get('billing_id', False):
+            line_cr_ids = res['value']['line_cr_ids']
+            line_dr_ids = res['value']['line_dr_ids']
+            # Get Invoices from billing
+            billing_id = self._context.get('billing_id', False)
+            billing = self.env['account.billing'].browse(billing_id)
+            move_line_ids = [self.env['account.move.line'].browse(
+                line.move_line_id.id).id for line in billing.line_cr_ids]
+            print('>>>', move_line_ids, type(move_line_ids))
+            # invoice_ids = billing.invoice_ids.ids
+            # move_line_ids = self.env['account.move.line'].\
+            #     search([('invoice', 'in', invoice_ids)]).ids
+            line_cr_ids = filter(lambda l: isinstance(l, dict) and
+                                 l.get('move_line_id') in move_line_ids,
+                                 line_cr_ids)
+            line_dr_ids = filter(lambda l: isinstance(l, dict) and
+                                 l.get('move_line_id') in move_line_ids,
+                                 line_dr_ids)
+            res['value']['line_cr_ids'] = line_cr_ids
+            res['value']['line_dr_ids'] = line_dr_ids
         return res
-
-    def finalize_voucher_move_lines(self, cr, uid, ids, account_move_lines,
-                                    partner_id, journal_id, price,
-                                    currency_id, ttype, date, context=None):
-
-        super(AccountVoucher, self).finalize_voucher_move_lines(
-            cr, uid, ids, account_move_lines,
-            partner_id, journal_id, price,
-            currency_id, ttype, date, context=None)
-
-        if context is None:
-            context = {}
-
-        # Rewrite code from get account type.
-        account_type = None
-        if context.get('account_id'):
-            account_type = self.pool['account.account'].browse(
-                cr, uid,
-                context['account_id'],
-                context=context).type
-        if ttype == 'payment':
-            if not account_type:
-                account_type = 'payable'
-        else:
-            if not account_type:
-                account_type = 'receivable'
-
-        move_line_pool = self.pool.get('account.move.line')
-        if not context.get('move_line_ids', False):
-            billing_id = context.get('billing_id', False)
-            if billing_id > 0:
-                billing_obj = self.pool.get('account.billing')
-                billing = billing_obj.browse(cr, uid,
-                                             billing_id, context=context)
-                ids = move_line_pool.search(
-                    cr, uid, [
-                        ('state', '=', 'valid'),
-                        ('account_id.type', '=', account_type),
-                        ('reconcile_id', '=', False),
-                        ('partner_id', '=', partner_id),
-                        ('id', 'in', [
-                            line.reconcile and
-                            line.move_line_id.id or
-                            False
-                            for line in billing.line_cr_ids])
-                    ], context=context)
-            else:  # -- ecosoft
-                ids = move_line_pool.search(
-                    cr, uid, [
-                        ('state', '=', 'valid'),
-                        ('account_id.type', '=', account_type),
-                        ('reconcile_id', '=', False),
-                        ('partner_id', '=', partner_id)],
-                    context=context)
-        else:
-            ids = context['move_line_ids']
-        # Or the lines by most old first
-        ids.reverse()
-        account_move_lines = move_line_pool.browse(
-            cr, uid, ids, context=context)
-
-        return account_move_lines
-
 
 class account_voucher_line(models.Model):
 

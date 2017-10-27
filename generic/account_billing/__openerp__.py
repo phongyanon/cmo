@@ -27,7 +27,6 @@
     'depends': ['account',
                 'account_voucher',
                 'account_accountant',
-                'account_billing_hook_recompute_vline',
                 ],
     'data': [
         'data/account_billing_data.xml',
