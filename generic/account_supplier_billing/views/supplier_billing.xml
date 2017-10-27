@@ -33,7 +33,7 @@
             <field name="arch" type="xml">
                 <tree string="Supplier Invoice">
                     <field name="supplier_billing_id" invisible="1"/>
-                    <field name="partner_id" string="XXXX"/>
+                    <field name="partner_id" string="Supplier"/>
                     <field name="date_invoice"/>
                     <field name="supplier_invoice_number"/>
                     <field name="origin"/>
@@ -71,6 +71,7 @@
                         <group>
                             <group>
                                 <field name="partner_id" options="{'no_create':1,'no_create_edit':1}"/>
+                                <field name="billing_amount" invisible="1"/>
                             </group>
                             <group>
                                 <field name="date"/>
@@ -89,12 +90,12 @@
                                         ('type', '=', 'in_refund')
                                     ]"
                                     >
-                                    <tree>
+                                <tree editable="buttom">
                                     <field name="supplier_billing_id" invisible="1"/>
-                                    <field name="partner_id" string="Supplier"/>
-                                    <field name="date_invoice"/>
-                                    <field name="supplier_invoice_number"/>
-                                    <field name="origin"/>
+                                    <field name="partner_id" string="Supplier" readonly="1"/>
+                                    <field name="date_invoice" readonly="1"/>
+                                    <field name="supplier_invoice_number" readonly="1"/>
+                                    <field name="origin" readonly="1"/>
                                     <!-- <field name="super_origin"/> -->
                                     <field name="amount_total" sum="Total Amount"/>
                                     <field name="state"/>

@@ -231,9 +231,7 @@ class AccountBankReceipt(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('name', '/') == '/':
-            vals['name'] = self.env['ir.sequence'].\
-                next_by_code('account.bank.receipt')
+        vals['name'] = ''
         return super(AccountBankReceipt, self).create(vals)
 
     @api.model

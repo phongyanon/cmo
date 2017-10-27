@@ -20,29 +20,45 @@ class SupplierBilling(models.Model):
         'res.partner',
         string='Supplier',
         domain=[('supplier', '=', True), ],
-        states={'billed': [('readonly', True)]},
+        states={
+            'billed': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
         required=True,
     )
     date = fields.Date(
         string='Billing Date',
-        states={'billed': [('readonly', True)]},
+        states={
+            'billed': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
         default=lambda self: fields.Date.context_today(self),
     )
     due_date = fields.Date(
         string='Due Date',
-        states={'billed': [('readonly', True)]},
+        states={
+            'billed': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
         default=lambda self: fields.Date.context_today(self),
         required=True,
     )
     invoice_ids = fields.One2many(
         'account.invoice',
         'supplier_billing_id',
-        states={'billed': [('readonly', True)]},
+        states={
+            'billed': [('readonly', True)],
+            'cancel': [('readonly', True)],
+        },
         strgin='Invoices',
     )
     invoice_related_count = fields.Integer(
         string='# of Invoice',
         compute='_compute_invoice_related_count',
+    )
+    billing_amount = fields.Float(
+        string='Billing Amount',
+        compute='_compute_billing_amount',
     )
     state = fields.Selection(
         [('draft', 'Draft'),
@@ -105,3 +121,10 @@ class SupplierBilling(models.Model):
                     'supplier_billing_id': False,
                 })
         return res
+
+    @api.multi
+    def _compute_billing_amount(self):
+        for billing in self:
+            billing.billing_amount = sum(self.env['account.invoice'].search([
+                ('supplier_billing_id', '=', billing.id),
+            ]).mapped('amount_total'))
