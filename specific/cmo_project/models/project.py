@@ -547,6 +547,15 @@ class ProjectProject(models.Model):
             ])
             project.quote_related_count = len(quote_ids)
 
+    @api.constrains('project_member_ids')
+    def _check_date_start_end(self):
+        for rec in self:
+            for member_id in rec.project_member_ids.ids:
+                member = self.env['project.team.member'].browse(member_id)
+                if member.date_start > member.date_end:
+                    raise ValidationError("team member start date must be "
+                                          "lower than end date.")
+
 
 class ProjectTeamMember(models.Model):
     _name = 'project.team.member'
