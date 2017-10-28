@@ -96,7 +96,6 @@ class AccountVoucher(models.Model):
             billing = self.env['account.billing'].browse(billing_id)
             move_line_ids = [self.env['account.move.line'].browse(
                 line.move_line_id.id).id for line in billing.line_cr_ids]
-            print('>>>', move_line_ids, type(move_line_ids))
             # invoice_ids = billing.invoice_ids.ids
             # move_line_ids = self.env['account.move.line'].\
             #     search([('invoice', 'in', invoice_ids)]).ids

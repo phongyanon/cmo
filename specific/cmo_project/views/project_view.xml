@@ -18,6 +18,9 @@
             <field name="model">project.project</field>
             <field name="inherit_id" ref="project.view_project_project_filter"/>
             <field name="arch" type="xml">
+                  <field name="partner_id" position="after">
+                      <field name="project_number" string="Project Number"/>
+                  </field>
                   <xpath expr="//field[@name='name']" position="before">
                         <filter string="Latest" name="Latest" domain="[('date_start','&gt;',(context_today()-relativedelta(months=6)).strftime('%%Y-%%m-01'))]"/>
                         <filter string="Draft" name="Draft" domain="[('state','=','draft')]"/>
@@ -248,7 +251,9 @@
                             <field name="date_brief"/>
                             <field name="date_start"/>
                             <field name="date" string="End Date"/>
-                            <field name="project_parent_id" context="{'tree_view_ref':'cmo_project.inherit_view_project_tree'}"/>
+                            <field name="project_parent_id"
+                                context="{'tree_view_ref':'cmo_project.inherit_view_project_tree'}"
+                                options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
                             <field name="operating_unit_id" string="Department" readonly="1"/>
                             <field name="state_before_inactive" invisible="1"/>
                             <field name="is_active_state" invisible="1"/>
@@ -269,8 +274,8 @@
                     <page string="Team" name="team_tab">
                         <field name="project_member_ids" nolabel="1" widget="one2many_list">
                             <tree string="Team member" editable="bottom">
-                                <field name="position_id"/>
-                                <field name="employee_id"/>
+                                <field name="position_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
+                                <field name="employee_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
                                 <field name="date_start"/>
                                 <field name="date_end"/>
                                 <field name="remark"/>
@@ -286,7 +291,10 @@
                     </page>
                     <page string="Billing Info" states="ready_billing,cancelled,close,pending,received,invoices">
                         <group>
-                            <field name="assign_id" options="{'no_open':True,'no_create':1,'no_create_edit':1}"/>
+                            <field name="assign_id"
+                                options="{'no_open':True,'no_create':1,'no_create_edit':1}"
+                                domain="[('default_operating_unit_id','=','Finance&amp;Accounting')]"
+                                />
                             <field name="assign_description" string="Note to FA"/>
                         </group>
                     </page>
