@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from openerp import models, fields, api
+from openerp import models, fields, api, _
+from openerp.exceptions import ValidationError
 
 
 class StockPicking(models.Model):
@@ -87,6 +88,12 @@ class StockMove(models.Model):
     #             move.location_id = res.get('location_id', False)
     #             move.location_dest_id = res.get('location_dest_id', False)
 
+    @api.constrains('location_id', 'location_dest_id')
+    def _constrains_location_dest_id(self):
+        for rec in self:
+            if rec.location_id == rec.location_dest_id:
+                raise ValidationError(_("Source location and destination "
+                                        "location should not be the same."))
 
 class StockPickingType(models.Model):
     _inherit = 'stock.picking.type'

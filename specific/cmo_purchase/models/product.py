@@ -28,15 +28,15 @@ class ProductProduct(models.Model):
             args = [('id', 'in', [])]
 
         # Search products by category
-        # if context.get('po_type_id', False):
-        #     po_type_id = context.get('po_type_id', [])
-        #     PoTypeConfig = self.env['purchase.order.type.config']
-        #     po_type_config = PoTypeConfig.browse(po_type_id)
-        #     categ_ids = po_type_config.category_id.ids
-        #     product = self.search([('categ_id', 'in', categ_ids)])
-        #     args = [('id', 'in', product.ids)] + args
-        # elif 'po_type_id' in context:
-        #     args = [('id', 'in', [])]
+        if context.get('po_type_id', False):
+            po_type_id = context.get('po_type_id', [])
+            PoTypeConfig = self.env['purchase.order.type.config']
+            po_type_config = PoTypeConfig.browse(po_type_id)
+            categ_ids = po_type_config.category_id.ids
+            product = self.search([('categ_id', 'in', categ_ids)])
+            args = [('id', 'in', product.ids)] + args
+        elif 'po_type_id' in context:
+            args = [('id', 'in', [])]
 
         return super(ProductProduct, self).name_search(
             name, args=args, operator=operator, limit=limit)
