@@ -30,6 +30,12 @@
                     <field name="request_date"/>
                     <field name="due_date"/>
                 </field>
+                <xpath expr="//tree[@string='Expense Lines']/field[@name='product_id']" position="attributes">
+                    <attribute name="options">{'no_open':True,'no_create':1,'no_create_edit':1}</attribute>
+                </xpath>
+                <xpath expr="//tree[@string='Expense Lines']/field[@name='analytic_account']" position="attributes">
+                    <attribute name="options">{'no_open':True,'no_create':1,'no_create_edit':1}</attribute>
+                </xpath>
                 <field name="line_ids" position="attributes">
                     <attribute name="context">{'is_advance_clearing': context.get('is_advance_clearing'),'currency_id': currency_id, 'default_analytic_account': context.get('analytic_account', '')}</attribute>
                 </field>
@@ -63,6 +69,9 @@
 			<field name="arch" type="xml">
                 <xpath expr="//tree[@string='Expense Lines']/field[@name='tax_ids']" position="after">
                     <field name="amount_line_untaxed" sum="Total Untaxed"/>
+                </xpath>
+                <xpath expr="//tree[@string='Expense Lines']/field[@name='tax_ids']" position="attributes">
+                    <attribute name="options">{'no_open':True,'no_create':1,'no_create_edit':1}</attribute>
                 </xpath>
             </field>
         </record>

@@ -145,6 +145,13 @@ class HrExpenseExpense(models.Model):
             res['account_analytic_id'] = exp_line.analytic_account.id or False
         return res
 
+    @api.constrains('line_ids')
+    def _constrains_expense_line(self):
+        for rec in self:
+            if not rec.line_ids:
+                raise ValidationError(_('Must have at least 1 line!'))
+
+
 class HrExpenseLine(models.Model):
     _inherit = 'hr.expense.line'
 
