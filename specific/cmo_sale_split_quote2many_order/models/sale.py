@@ -200,6 +200,13 @@ class sale_order(models.Model):
         self.create_workflow()
         return True
 
+    @api.model
+    def _prepare_invoice(self, order, lines):
+        invoice_vals = super(sale_order, self)._prepare_invoice(order, lines)
+        if order.partner_id:
+            invoice_vals['partner_id'] = order.partner_id.id
+        return invoice_vals
+
 
 class SaleOrderCustomerPlan(models.Model):
     _name = 'sale.order.customer.plan'
