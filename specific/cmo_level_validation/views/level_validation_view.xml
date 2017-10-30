@@ -91,8 +91,7 @@
         <menuitem id="menu_approval_level_validation"
                   name="Approval"
                   parent="base.menu_config"
-                  sequence="100"
-                  groups="group_manager"/>
+                  sequence="100"/>
 
         <menuitem action="action_purchase_order_level_validation"
                   id="menu_action_purchase_order_level_validation"
