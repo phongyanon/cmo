@@ -17,6 +17,10 @@ class WizAccountAssetReport(models.TransientModel):
     parent_asset_id = fields.Many2one(
         comodel_name='account.asset',
         string='Asset Filter', domain=[('type', '=', 'view')])
+    period_id = fields.Many2one(
+        'account.period',
+        string="Period",
+    )
 
     @api.multi
     def xls_export(self):
@@ -55,6 +59,7 @@ class WizAccountAssetReport(models.TransientModel):
             'model': 'account.asset',
             'fiscalyear_id': self.fiscalyear_id.id,
             'ids': [parent_asset.id],
+            'period_id': self.period_id.id or False,
         }
         return {'type': 'ir.actions.report.xml',
                 'report_name': 'account.depreciation.xls',
