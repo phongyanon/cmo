@@ -379,7 +379,11 @@ class AssetReportXls(report_xls):
         cr = self.cr
         uid = self.uid
         context = self.context
-        fy = self.fiscalyear
+        if data['period_id']:  # fy will be peroid instead.
+            fy = self.pool['account.period'].browse(
+                cr, uid, data['period_id'], context=context)
+        else:
+            fy = self.fiscalyear
         wl_act = _p.wanted_list_active
         template = self.active_template
         asset_obj = self.pool['account.asset']
