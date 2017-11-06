@@ -86,21 +86,21 @@ class AssetReportXls(report_xls):
 
         self.active_template = {
             'account': {
-                'header': [1, 20, 'text', _render("_('Account')")],
+                'header': [1, 20, 'text', _render("_('รหัส')")],
                 'asset_view': [1, 0, 'text', None],
                 'asset': [
                     1, 0, 'text',
                     _render("asset.profile_id.account_asset_id.code")],
                 'totals': [
-                    1, 0, 'text', _render("_('Totals')"),
+                    1, 0, 'text', _render("_('รวม')"),
                     None, self.rt_cell_style]},
             'name': {
-                'header': [1, 40, 'text', _render("_('Name')")],
+                'header': [1, 40, 'text', _render("_('ชื่อสินทรัพย์')")],
                 'asset_view': [1, 0, 'text', _render("asset.name")],
                 'asset': [1, 0, 'text', _render("asset.name or ''")],
                 'totals': [1, 0, 'text', None]},
             'date_purchase': {
-                'header': [1, 20, 'text', _render("_('Asset Purchase Date')")],
+                'header': [1, 20, 'text', _render("_('วันที่ซื้อหรือได้มา')")],
                 'asset_view': [1, 0, 'text', None],
                 'asset': [
                     1, 0, 'date',
@@ -110,7 +110,7 @@ class AssetReportXls(report_xls):
                     None, self.an_cell_style_date],
                 'totals': [1, 0, 'text', None]},
             'date_start': {
-                'header': [1, 20, 'text', _render("_('Asset Start Date')")],
+                'header': [1, 20, 'text', _render("_('วันที่เริ่มคำนวณค่าเสื่อม')")],
                 'asset_view': [1, 0, 'text', None],
                 'asset': [
                     1, 0, 'date',
@@ -121,7 +121,7 @@ class AssetReportXls(report_xls):
                 'totals': [1, 0, 'text', None]},
             'purchase_value': {
                 'header': [
-                    1, 18, 'text', _render("_('Purchase Value')"),
+                    1, 18, 'text', _render("_('ราคาทรัพย์สินที่ซื้อหรือได้มา')"),
                     None, self.rh_cell_style_right],
                 'asset_view': [
                     1, 0, 'number', None, _render("purchase_formula"),
@@ -134,7 +134,7 @@ class AssetReportXls(report_xls):
                     self.rt_cell_style_decimal]},
             'asset_value_previous': {
                 'header': [
-                    1, 22, 'text', _render("_('Previous Asset Value')"),
+                    1, 22, 'text', _render("_('มูลค่าต้นทุนในวันสุดท้ายของรอบระยะบัญชีก่อน')"),
                     None, self.rh_cell_style_right],
                 'asset_view': [
                     1, 0, 'number', None, _render("asset_value_previous_formula"),
@@ -147,7 +147,7 @@ class AssetReportXls(report_xls):
                     self.rt_cell_style_decimal]},
             'residual_value': {
                 'header': [
-                    1, 18, 'text', _render("_('Residual Value')"),
+                    1, 18, 'text', _render("_('มูลค่าต้นทุนหลังจากค่าเสื่อมราคาแล้วจนถึงปัจจุบัน')"),
                     None, self.rh_cell_style_right],
                 'asset_view': [
                     1, 0, 'number', None, _render("value_residual_formula"),
@@ -160,7 +160,7 @@ class AssetReportXls(report_xls):
                     self.rt_cell_style_decimal]},
             'percent': {
                 'header': [
-                    1, 18, 'text', _render("_('Percent')"),
+                    1, 18, 'text', _render("_('อัตราร้อยละ')"),
                     None, self.rh_cell_style_right],
                 'asset_view': [1, 0, 'text', None],
                 'asset': [
@@ -168,7 +168,7 @@ class AssetReportXls(report_xls):
                     None, self.an_cell_style_decimal],
                 'totals': [1, 0, 'text', None]},
             'code': {
-                'header': [1, 20, 'text', _render("_('Reference')")],
+                'header': [1, 20, 'text', _render("_('เอกสารอ้างอิง')")],
                 'asset_view': [1, 0, 'text', None],
                 'asset': [1, 0, 'text', _render("asset.code or ''")],
                 'totals': [1, 0, 'text', None]},
@@ -187,7 +187,7 @@ class AssetReportXls(report_xls):
             #         self.rt_cell_style_decimal]},
             'salvage_value': {
                 'header': [
-                    1, 18, 'text', _render("_('Salvage Value')"),
+                    1, 18, 'text', _render("_('ราคาค่าซาก')"),
                     None, self.rh_cell_style_right],
                 'asset_view': [
                     1, 0, 'number', None, _render("salvage_formula"),
@@ -200,7 +200,7 @@ class AssetReportXls(report_xls):
                     self.rt_cell_style_decimal]},
             'asset_line_amount': {
                 'header': [
-                    1, 22, 'text', _render("_('Depreciation in latest period')"),
+                    1, 22, 'text', _render("_('ค่าเสื่อมราคาที่หักในรอบระยะเวลาบัญชีนี้')"),
                     None, self.rh_cell_style_right],
                 'asset_view': [
                     1, 0, 'number', None, _render("asset_line_amount_formula"),
@@ -213,7 +213,7 @@ class AssetReportXls(report_xls):
                     self.rt_cell_style_decimal]},
             'fy_start_value': {
                 'header': [
-                    1, 18, 'text', _render("_('Depreciated Value')"),
+                    1, 18, 'text', _render("_('ค่าเสื่อมราคาสะสมจนถึงปัจจุบัน')"),
                     None, self.rh_cell_style_right],
                 'asset_view': [
                     1, 0, 'number', None, _render("fy_start_formula"),
@@ -290,7 +290,7 @@ class AssetReportXls(report_xls):
             #     'totals': [1, 0, 'text', None]},
             'note': {
                 'header': [
-                    1, 20, 'text', _render("_('Note')"),
+                    1, 20, 'text', _render("_('หมายเหตุ')"),
                     None, self.rh_cell_style_center],
                 'asset_view': [1, 0, 'text', None],
                 'asset': [1, 0, 'text', _render("asset.note")],
