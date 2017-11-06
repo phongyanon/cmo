@@ -26,7 +26,7 @@ class AccountAssetProfile(models.Model):
         if account_asset_id:
             account_id = self.env['account.account'].browse(account_asset_id)
             sequence_id = self.env['ir.sequence'].search([
-                ('prefix', '=', account_id.code),
+                ('prefix', '=', account_id.code + '-'),
             ])
             if sequence_id and account_id:
                 vals['sequence_id'] = sequence_id[0].id
