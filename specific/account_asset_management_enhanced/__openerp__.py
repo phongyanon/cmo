@@ -11,10 +11,12 @@
     "license": "AGPL-3",
     "depends": [
         'account_asset_management',
+        'account_auto_fy_sequence',
     ],
     "data": [
         'views/product_category_view.xml',
         'views/account_asset_view.xml',
+        'views/account_asset_profile_view.xml',
     ],
     "application": False,
     "installable": True,
