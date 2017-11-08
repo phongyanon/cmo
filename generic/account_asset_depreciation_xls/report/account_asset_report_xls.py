@@ -27,14 +27,18 @@ class AssetReportXlsParser(report_sxw.rml_parse):
         self.context = context
         wl_acq = asset_obj._xls_acquisition_fields(cr, uid, context)
         wl_act = asset_obj._xls_active_fields(cr, uid, context)
+        wl_rem = asset_obj._xls_removal_fields(cr, uid, context)
         tmpl_acq_upd = asset_obj._xls_acquisition_template(cr, uid, context)
         tmpl_act_upd = asset_obj._xls_active_template(cr, uid, context)
+        tmpl_rem_upd = asset_obj._xls_removal_template(cr, uid, context)
         self.localcontext.update({
             'datetime': datetime,
             'wanted_list_acquisition': wl_acq,
             'wanted_list_active': wl_act,
+            'wanted_list_removal': wl_rem,
             'template_update_acquisition': tmpl_acq_upd,
             'template_update_active': tmpl_act_upd,
+            'template_update_removal': tmpl_rem_upd,
             '_': self._,
         })
 
@@ -358,6 +362,64 @@ class AssetReportXls(report_xls):
                 'asset_view': [1, 0, 'text', None],
                 'asset': [1, 0, 'text', _render("asset.note")],
                 'totals': [1, 0, 'text', None]},
+        }
+
+        self.removal_template = {
+            'account': {
+                'header': [1, 20, 'text', _render("_('รหัส')")],
+                'asset_view': [1, 0, 'text', None],
+                'asset': [
+                    1, 0, 'text',
+                    _render("asset.profile_id.account_asset_id.code")],
+                'totals': [
+                    1, 0, 'text', _render("_('รวม')"),
+                    None, self.rt_cell_style]},
+            'name': {
+                'header': [1, 40, 'text', _render("_('ชื่อสินทรัพย์')")],
+                'asset_view': [1, 0, 'text', _render("asset.name")],
+                'asset': [1, 0, 'text', _render("asset.name or ''")],
+                'totals': [1, 0, 'text', None]},
+            'code': {
+                'header': [1, 20, 'text', _render("_('เอกสารอ้างอิง')")],
+                'asset_view': [1, 0, 'text', None],
+                'asset': [1, 0, 'text', _render("asset.code or ''")],
+                'totals': [1, 0, 'text', None]},
+            'date_remove': {
+                'header': [1, 20, 'text', _render("_('วันที่ตัดจำหน่ายสินทรัพย์')")],
+                'asset_view': [1, 0, 'text', None],
+                'asset': [
+                    1, 0, 'date',
+                    _render("asset.date_remove and "
+                            "datetime.strptime(asset.date_remove,'%Y-%m-%d') "
+                            "or None"),
+                    None, self.an_cell_style_date],
+                'totals': [1, 0, 'text', None]},
+            'depreciation_base': {
+                'header': [
+                    1, 18, 'text', _render("_('ราคาทรัพย์สินที่ซื้อหรือได้มา')"),
+                    None, self.rh_cell_style_right],
+                'asset_view': [
+                    1, 0, 'number', None,
+                    _render("asset_formula"), self.av_cell_style_decimal],
+                'asset': [
+                    1, 0, 'number', _render("asset.depreciation_base"),
+                    None, self.an_cell_style_decimal],
+                'totals': [
+                    1, 0, 'number', None, _render("asset_total_formula"),
+                    self.rt_cell_style_decimal]},
+            'salvage_value': {
+                'header': [
+                    1, 18, 'text', _render("_('ราคาซาก')"),
+                    None, self.rh_cell_style_right],
+                'asset_view': [
+                    1, 0, 'number', None, _render("salvage_formula"),
+                    self.av_cell_style_decimal],
+                'asset': [
+                    1, 0, 'number', _render("asset.salvage_value"),
+                    None, self.an_cell_style_decimal],
+                'totals': [
+                    1, 0, 'number', None, _render("salvage_total_formula"),
+                    self.rt_cell_style_decimal]},
         }
 
     def _get_title(self, report, format='normal'):
@@ -761,7 +823,7 @@ class AssetReportXls(report_xls):
                     value_line_previous = \
                         value_line_amount + asset.value_residual
                     value_line_remaining = asset.value_residual
-                    value_line_depreciated = asset.value_line_depreciated
+                    value_line_depreciated = asset.value_depreciated
                 asset.asset_line_amount = value_line_amount
                 asset.asset_value_previous = value_line_previous
                 asset.remaining_value = value_line_remaining
@@ -889,10 +951,133 @@ class AssetReportXls(report_xls):
         row_pos = self.xls_write_row(
             ws, row_pos, row_data, row_style=self.rt_cell_style_right)
 
+    def _removal_report(self, _p, _xs, data, objects, wb):
+        cr = self.cr
+        uid = self.uid
+        context = self.context
+        if data['period_id']:  # fy will be peroid instead.
+            fy = self.pool['account.period'].browse(
+                cr, uid, data['period_id'], context=context)
+        else:
+            fy = self.fiscalyear
+        wl_dsp = _p.wanted_list_removal
+        template = self.removal_template
+        asset_obj = self.pool['account.asset']
+
+        title = self._get_title('removal', 'normal')
+        title_short = self._get_title('removal', 'short')
+        sheet_name = title_short[:31].replace('/', '-')
+        ws = wb.add_sheet(sheet_name)
+        ws.panes_frozen = True
+        ws.remove_splits = True
+        ws.portrait = 0  # Landscape
+        ws.fit_width_to_pages = 1
+        row_pos = 0
+        ws.header_str = self.xls_headers['standard']
+        ws.footer_str = self.xls_footers['standard']
+        row_pos = self._report_title(ws, _p, row_pos, _xs, title)
+
+        cr.execute(
+            "SELECT id FROM account_asset "
+            "WHERE date_remove >= %s AND date_remove <= %s"
+            "AND id IN %s AND type = 'normal' "
+            "ORDER BY date_remove ASC",
+            (fy.date_start, fy.date_stop, tuple(self.asset_ids)))
+        dsp_ids = [x[0] for x in cr.fetchall()]
+
+        if not dsp_ids:
+            return self._empty_report(ws, _p, row_pos, _xs, 'removal')
+
+        c_specs = map(
+            lambda x: self.render(
+                x, template, 'header',
+                render_space={'_': _p._}),
+            wl_dsp)
+        row_data = self.xls_row_template(
+            c_specs, [x[0] for x in c_specs])
+        row_pos = self.xls_write_row(
+            ws, row_pos, row_data, row_style=self.rh_cell_style,
+            set_column_size=True)
+        ws.set_horz_split_pos(row_pos)
+
+        row_pos_start = row_pos
+        if 'account' not in wl_dsp:
+            raise UserError(_('Customization Error'), _(
+                "The 'account' field is a mandatory entry of the "
+                "'_xls_removal_fields' list !"))
+        depreciation_base_pos = 'depreciation_base' in wl_dsp and \
+            wl_dsp.index('depreciation_base')
+        salvage_value_pos = 'salvage_value' in wl_dsp and \
+            wl_dsp.index('salvage_value')
+
+        dsps = filter(lambda x: x[0] in dsp_ids, self.assets)
+        dsps_and_parents = []
+        for dsp in dsps:
+            self._view_add(dsp, dsps_and_parents)
+
+        entries = []
+        for asset_i, data in enumerate(dsps_and_parents):
+            entry = {}
+            asset = asset_obj.browse(cr, uid, data[0], context=context)
+            if data[1] == 'view':
+                cp_i = asset_i + 1
+                cp = []
+                for a in dsps_and_parents[cp_i:]:
+                    if a[2] == data[0]:
+                        cp.append(cp_i)
+                    cp_i += 1
+                entry['child_pos'] = cp
+            entry['asset'] = asset
+            entries.append(entry)
+
+        for entry in entries:
+            asset = entry['asset']
+            if asset.type == 'view':
+                depreciation_base_cells = [
+                    rowcol_to_cell(row_pos_start + x, depreciation_base_pos)
+                    for x in entry['child_pos']]
+                asset_formula = '+'.join(depreciation_base_cells)  # noqa: disable F841, report_xls namespace trick
+                salvage_value_cells = [
+                    rowcol_to_cell(row_pos_start + x, salvage_value_pos)
+                    for x in entry['child_pos']]
+                salvage_formula = '+'.join(salvage_value_cells)  # noqa: disable F841, report_xls namespace trick
+                c_specs = map(
+                    lambda x: self.render(
+                        x, template, 'asset_view'),
+                    wl_dsp)
+                row_data = self.xls_row_template(
+                    c_specs, [x[0] for x in c_specs])
+                row_pos = self.xls_write_row(
+                    ws, row_pos, row_data, row_style=self.av_cell_style)
+            else:
+                c_specs = map(
+                    lambda x: self.render(
+                        x, template, 'asset'),
+                    wl_dsp)
+                row_data = self.xls_row_template(
+                    c_specs, [x[0] for x in c_specs])
+                row_pos = self.xls_write_row(
+                    ws, row_pos, row_data, row_style=self.an_cell_style)
+
+        asset_total_formula = rowcol_to_cell(row_pos_start, depreciation_base_pos)  # noqa: disable F841, report_xls namespace trick
+        salvage_total_formula = rowcol_to_cell(row_pos_start,   # noqa: disable F841, report_xls namespace trick
+                                               salvage_value_pos)
+
+        c_specs = map(
+            lambda x: self.render(
+                x, template, 'totals'),
+            wl_dsp)
+        row_data = self.xls_row_template(
+            c_specs, [x[0] for x in c_specs])
+        row_pos = self.xls_write_row(
+            ws, row_pos, row_data, row_style=self.rt_cell_style_right)
+
     def generate_xls_report(self, _p, _xs, data, objects, wb):
         wl_act = _p.wanted_list_active  # noqa: disable F841, report_xls namespace trick
+        wl_rem = _p.wanted_list_removal  # noqa: disable F841, report_xls namespace trick
         self.acquisition_template.update(_p.template_update_acquisition)
         self.active_template.update(_p.template_update_active)
+        self.removal_template.update(_p.template_update_removal)
         fy = self.pool.get('account.fiscalyear').browse(
             self.cr, self.uid, data['fiscalyear_id'], context=self.context)
         self.fiscalyear = fy
@@ -901,6 +1086,7 @@ class AssetReportXls(report_xls):
 
         self._acquisition_report(_p, _xs, data, objects, wb)
         self._active_report(_p, _xs, data, objects, wb)
+        self._removal_report(_p, _xs, data, objects, wb)
 
 
 AssetReportXls(
