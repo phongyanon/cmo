@@ -32,6 +32,16 @@ class AccountAsset(models.Model):
         # 'fy_end_depr', 'method', 'method_number', 'prorata', 'residual_value'
 
     @api.model
+    def _xls_removal_fields(self):
+        """
+        Update list in custom module to add/drop columns or change order
+        """
+        return [
+            'account', 'name', 'code', 'date_remove', 'depreciation_base',
+            'salvage_value',
+        ]
+
+    @api.model
     def _xls_acquisition_template(self):
         """
         Template updates
@@ -41,6 +51,14 @@ class AccountAsset(models.Model):
 
     @api.model
     def _xls_active_template(self):
+        """
+        Template updates
+
+        """
+        return {}
+
+    @api.model
+    def _xls_removal_template(self):
         """
         Template updates
 
