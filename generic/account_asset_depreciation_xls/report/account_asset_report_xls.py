@@ -370,7 +370,7 @@ class AssetReportXls(report_xls):
                 'asset_view': [1, 0, 'text', None],
                 'asset': [
                     1, 0, 'text',
-                    _render("asset.profile_id.account_asset_id.code")],
+                    _render("asset.number")],
                 'totals': [
                     1, 0, 'text', _render("_('รวม')"),
                     None, self.rt_cell_style]},

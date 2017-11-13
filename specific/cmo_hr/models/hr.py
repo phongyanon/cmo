@@ -138,6 +138,14 @@ class HrExpenseExpense(models.Model):
                 )
 
     @api.model
+    def _prepare_inv_header(self, partner_id, expense):
+        res = super(HrExpenseExpense, self)._prepare_inv_header(
+            partner_id, expense)
+        if expense.operating_unit_id:
+            res['operating_unit_id'] = expense.operating_unit_id.id or False
+        return res
+
+    @api.model
     def _prepare_inv_line(self, account_id, exp_line):
         res = super(HrExpenseExpense, self)._prepare_inv_line(
             account_id, exp_line)
