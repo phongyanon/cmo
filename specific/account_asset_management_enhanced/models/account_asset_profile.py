@@ -42,11 +42,7 @@ class AccountAssetProfile(models.Model):
         res = super(AccountAssetProfile, self).write(vals)
         account_asset_id = vals.get('account_asset_id')
         for profile in self:
-            is_running = bool(profile.sequence_id.number_next_actual > 1)
-            if is_running:
-                raise ValidationError(
-                    _('Sequence in this asset profile was running.'))
-            elif account_asset_id:
+            if account_asset_id:
                 account_id = self.env['account.account'].browse(
                     account_asset_id)
                 sequence_id = self.env['ir.sequence'].search([
