@@ -445,11 +445,11 @@ class AssetReportXls(report_xls):
                 suffix = '-DSP'
         return prefix + suffix
 
-    def _report_title(self, ws, _p, row_pos, _xs, title, offset=0):
+    def _report_title(self, ws, _p, row_pos, _xs, title, offset=0, merge=1):
         cell_style = xlwt.easyxf(
             _xs['center'] + 'font: color blue, bold false, height 220;')
         c_specs = [
-            ('report_name', 8, 0, 'text', title),
+            ('report_name', merge, 0, 'text', title),
         ]
         row_data = self.xls_row_template(c_specs, [x[0] for x in c_specs])
         row_pos = self.xls_write_row(
@@ -531,7 +531,19 @@ class AssetReportXls(report_xls):
         row_pos = 0
         ws.header_str = self.xls_headers['standard']
         ws.footer_str = self.xls_footers['standard']
-        row_pos = self._report_title(ws, _p, row_pos, _xs, title)
+
+        start_date = self._get_buddha_datetime(fy.date_start)
+        stop_date = self._get_buddha_datetime(fy.date_stop)
+        company_id = self.pool['res.users'].browse(
+            cr, uid, uid, context=context).company_id
+        titles = [
+            # title,
+            company_id.name,
+            'รายงานตารางค่าเสื่อมราคาสะสม (แนบ ภงด.50)',
+            'ตั้งแต่วันที่ ' + start_date + ' ถึง ' + stop_date,
+        ]
+        for title in titles:
+            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=6)
 
         cr.execute(
             "SELECT id FROM account_asset "
@@ -654,14 +666,16 @@ class AssetReportXls(report_xls):
         ws.footer_str = self.xls_footers['standard']
         start_date = self._get_buddha_datetime(fy.date_start)
         stop_date = self._get_buddha_datetime(fy.date_stop)
+        company_id = self.pool['res.users'].browse(
+            cr, uid, uid, context=context).company_id
         titles = [
-            title,
-            'บริษัท ซีเอ็มโอ จำกัด (มหาชน) สำนักงานใหญ่',
+            # title,
+            company_id.name,
             'รายงานตารางค่าเสื่อมราคาสะสม (แนบ ภงด.50)',
             'ตั้งแต่วันที่ ' + start_date + ' ถึง ' + stop_date,
         ]
         for title in titles:
-            row_pos = self._report_title(ws, _p, row_pos, _xs, title)
+            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=13)
 
         cr.execute(
             "SELECT id FROM account_asset "
@@ -670,6 +684,20 @@ class AssetReportXls(report_xls):
             "AND id IN %s AND type = 'normal' "
             "ORDER BY date_start ASC",
             (fy.date_stop, fy.date_start, tuple(self.asset_ids))
+        )
+        act_ids = [x[0] for x in cr.fetchall()]
+
+        if not act_ids:
+            return self._empty_report(ws, _p, row_pos, _xs, 'active')
+
+        # filter only asset that run asset_line in period
+        cr.execute(
+            "SELECT asset_id FROM account_asset_line "
+            "WHERE move_check = true "
+            "AND type = 'depreciate' "
+            "AND line_date >= %s "
+            "AND asset_id in %s ",
+            (fy.date_start, tuple(act_ids))
         )
         act_ids = [x[0] for x in cr.fetchall()]
 
@@ -807,7 +835,7 @@ class AssetReportXls(report_xls):
                 cr.execute(
                     "SELECT amount, remaining_value, depreciated_value "
                     "FROM account_asset_line "
-                    "WHERE line_date >= %s AND "
+                    "WHERE line_date <= %s AND "
                     "asset_id = %s AND type = 'depreciate' "
                     "AND move_check=true "
                     "ORDER BY line_date DESC LIMIT 1",
@@ -975,7 +1003,19 @@ class AssetReportXls(report_xls):
         row_pos = 0
         ws.header_str = self.xls_headers['standard']
         ws.footer_str = self.xls_footers['standard']
-        row_pos = self._report_title(ws, _p, row_pos, _xs, title)
+
+        start_date = self._get_buddha_datetime(fy.date_start)
+        stop_date = self._get_buddha_datetime(fy.date_stop)
+        company_id = self.pool['res.users'].browse(
+            cr, uid, uid, context=context).company_id
+        titles = [
+            # title,
+            company_id.name,
+            'รายงานตารางค่าเสื่อมราคาสะสม (แนบ ภงด.50)',
+            'ตั้งแต่วันที่ ' + start_date + ' ถึง ' + stop_date,
+        ]
+        for title in titles:
+            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=6)
 
         cr.execute(
             "SELECT id FROM account_asset "
