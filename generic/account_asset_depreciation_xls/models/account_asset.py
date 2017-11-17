@@ -37,8 +37,12 @@ class AccountAsset(models.Model):
         Update list in custom module to add/drop columns or change order
         """
         return [
-            'account', 'name', 'code', 'date_remove', 'depreciation_base',
-            'salvage_value',
+            'account', 'name', 'date_purchase', 'date_start', 'date_remove',
+            'purchase_value', 'asset_value_previous', 'percent',
+            'salvage_value', 'asset_line_amount',
+            'depreciated_value', 'remaining_value', 'code', 'note',
+            # 'depreciation_base',
+
         ]
 
     @api.model
