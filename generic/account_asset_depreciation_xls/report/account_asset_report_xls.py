@@ -131,7 +131,7 @@ class AssetReportXls(report_xls):
                     1, 0, 'number', None,
                     _render("asset_formula"), self.av_cell_style_decimal],
                 'asset': [
-                    1, 0, 'number', _render("asset.depreciation_base"),
+                    1, 0, 'number', _render("asset.purchase_value"),
                     None, self.an_cell_style_decimal],
                 'totals': [
                     1, 0, 'number', None, _render("asset_total_formula"),
@@ -1117,7 +1117,7 @@ class AssetReportXls(report_xls):
             'ตั้งแต่วันที่ ' + start_date + ' ถึง ' + stop_date,
         ]
         for title in titles:
-            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=15)
+            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=14)
 
         cr.execute(
             "SELECT id FROM account_asset "
@@ -1194,7 +1194,7 @@ class AssetReportXls(report_xls):
                     value_line_amount = res[2]
                     value_line_previous = res[0] + res[1]
                     value_line_remaining = res[1]
-                    value_line_depreciated = res[0] + res[2]
+                    value_line_depreciated = asset.value_depreciated - res[0]
                 else:
                     value_line_amount = asset.depreciation_base
                     value_line_previous = \
