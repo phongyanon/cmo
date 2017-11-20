@@ -11,6 +11,7 @@
         'account',
         'account_voucher',
         'account_auto_fy_sequence',
+        'purchase_invoice_plan',
     ],
     'data': [
         'data/billing_sequence.xml',
