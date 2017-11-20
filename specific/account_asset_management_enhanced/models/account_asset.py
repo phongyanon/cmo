@@ -12,6 +12,13 @@ class AccountAsset(models.Model):
         states={'close': [('readonly', True)]},
         copy=False,
     )
+    operating_unit_id = fields.Many2one(
+        'operating.unit',
+        string='Operating Unit',
+        readonly=True,
+        default=lambda self:
+            self.env['res.users'].operating_unit_default_get(self._uid)
+    )
 
     @api.multi
     def validate(self):

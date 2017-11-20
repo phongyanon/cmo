@@ -108,6 +108,12 @@ class AssetReportXls(report_xls):
                 'asset_view': [1, 0, 'text', _render("asset.name")],
                 'asset': [1, 0, 'text', _render("asset.name or ''")],
                 'totals': [1, 0, 'text', None]},
+            'operating_unit_id': {
+                'header': [1, 20, 'text', _render("_('แผนก')")],
+                'asset_view': [1, 0, 'text', None],
+                'asset': [1, 0, 'text', _render(
+                    "asset.operating_unit_id.code or '-'")],
+                'totals': [1, 0, 'text', None]},
             'code': {
                 'header': [1, 20, 'text', _render("_('เอกสารอ้างอิง')")],
                 'asset_view': [1, 0, 'text', None],
@@ -233,6 +239,12 @@ class AssetReportXls(report_xls):
                 'asset': [
                     1, 0, 'number', _render("100.0 / asset.method_number"),
                     None, self.an_cell_style_decimal],
+                'totals': [1, 0, 'text', None]},
+            'operating_unit_id': {
+                'header': [1, 20, 'text', _render("_('แผนก')")],
+                'asset_view': [1, 0, 'text', None],
+                'asset': [1, 0, 'text', _render(
+                    "asset.operating_unit_id.code or '-'")],
                 'totals': [1, 0, 'text', None]},
             'code': {
                 'header': [1, 20, 'text', _render("_('เอกสารอ้างอิง')")],
@@ -430,6 +442,12 @@ class AssetReportXls(report_xls):
                 'asset': [
                     1, 0, 'number', _render("100.0 / asset.method_number"),
                     None, self.an_cell_style_decimal],
+                'totals': [1, 0, 'text', None]},
+            'operating_unit_id': {
+                'header': [1, 20, 'text', _render("_('แผนก')")],
+                'asset_view': [1, 0, 'text', None],
+                'asset': [1, 0, 'text', _render(
+                    "asset.operating_unit_id.code or '-'")],
                 'totals': [1, 0, 'text', None]},
             'code': {
                 'header': [1, 20, 'text', _render("_('เอกสารอ้างอิง')")],
@@ -640,11 +658,11 @@ class AssetReportXls(report_xls):
         titles = [
             # title,
             company_id.name,
-            'รายงานตารางค่าเสื่อมราคาสะสม (แนบ ภงด.50)',
+            'รายงานตารางทรัพย์สินที่ซื้อหรือได้มา',
             'ตั้งแต่วันที่ ' + start_date + ' ถึง ' + stop_date,
         ]
         for title in titles:
-            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=6)
+            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=7)
 
         cr.execute(
             "SELECT id FROM account_asset "
@@ -776,7 +794,7 @@ class AssetReportXls(report_xls):
             'ตั้งแต่วันที่ ' + start_date + ' ถึง ' + stop_date,
         ]
         for title in titles:
-            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=13)
+            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=14)
 
         cr.execute(
             "SELECT id FROM account_asset "
@@ -1117,7 +1135,7 @@ class AssetReportXls(report_xls):
             'ตั้งแต่วันที่ ' + start_date + ' ถึง ' + stop_date,
         ]
         for title in titles:
-            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=14)
+            row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=15)
 
         cr.execute(
             "SELECT id FROM account_asset "

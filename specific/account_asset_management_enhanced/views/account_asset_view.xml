@@ -16,6 +16,9 @@
                   <field name="salvage_value" widget="monetary" options="{'currency_field': 'company_currency_id'}"
                          attrs="{'readonly': [('state', '!=', 'draft')]}"/>
               </field>
+              <field name="account_analytic_id" position="after">
+                  <field name="operating_unit_id"/>
+              </field>
           </field>
         </record>
     </data>
