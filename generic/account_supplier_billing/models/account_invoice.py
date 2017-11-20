@@ -16,3 +16,7 @@ class AccountInvoice(models.Model):
         related='supplier_billing_id.number',
         string='Supplier Billing Number',
     )
+    invoice_plan_installment = fields.Integer(
+        related='invoice_plan_ids.installment',
+        string='Installment',
+    )
