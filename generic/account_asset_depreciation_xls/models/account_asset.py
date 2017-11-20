@@ -14,8 +14,8 @@ class AccountAsset(models.Model):
         Update list in custom module to add/drop columns or change order
         """
         return [
-            'account', 'name', 'code', 'date_start', 'depreciation_base',
-            'salvage_value',
+            'account', 'name', 'operating_unit_id', 'code', 'date_start',
+            'depreciation_base', 'salvage_value',
         ]
 
     @api.model
@@ -27,7 +27,7 @@ class AccountAsset(models.Model):
             'account', 'name', 'date_purchase', 'date_start', 'purchase_value',
             'asset_value_previous', 'percent', 'salvage_value',
             'asset_line_amount', 'depreciated_value', 'remaining_value',
-            'code', 'note',
+            'operating_unit_id', 'code', 'note',
         ]  # 'depreciation_base' 'fy_start_value' 'fy_depr', 'fy_end_value',
         # 'fy_end_depr', 'method', 'method_number', 'prorata', 'residual_value'
 
@@ -40,7 +40,8 @@ class AccountAsset(models.Model):
             'account', 'name', 'date_purchase', 'date_start', 'date_remove',
             'purchase_value', 'asset_value_previous', 'percent',
             'salvage_value', 'asset_line_amount',
-            'depreciated_value', 'remaining_value', 'code', 'note',
+            'depreciated_value', 'remaining_value',
+            'operating_unit_id', 'code', 'note',
             # 'depreciation_base',
 
         ]

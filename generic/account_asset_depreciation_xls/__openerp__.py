@@ -9,7 +9,7 @@
     'author': "Ecosoft",
     'category': 'Accounting & Finance',
     'depends': [
-        'account_asset_management',
+        'account_asset_management_enhanced',
         'report_xls',
     ],
     'data': [
