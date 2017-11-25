@@ -10,6 +10,7 @@ class AccountMoveLine(models.Model):
         res = super(AccountMoveLine, self).create(vals, **kwargs)
         if vals.get('asset_id') and vals.get('asset_profile_id'):
             res.asset_id.update({
+                'purchase_date': res.date or False,
                 'operating_unit_id': vals['operating_unit_id'] or False,
             })
         return res

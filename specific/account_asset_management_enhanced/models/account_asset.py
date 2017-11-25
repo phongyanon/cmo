@@ -12,6 +12,12 @@ class AccountAsset(models.Model):
         states={'close': [('readonly', True)]},
         copy=False,
     )
+    purchase_date = fields.Date(
+        string='Purchase Date',
+        readonly=True,
+        states={'close': [('readonly', True)]},
+        copy=False,
+    )
     operating_unit_id = fields.Many2one(
         'operating.unit',
         string='Operating Unit',
