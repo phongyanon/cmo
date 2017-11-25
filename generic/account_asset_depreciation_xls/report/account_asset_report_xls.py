@@ -105,7 +105,7 @@ class AssetReportXls(report_xls):
                     None, self.rt_cell_style]},
             'name': {
                 'header': [1, 40, 'text', _render("_('ชื่อสินทรัพย์')")],
-                'asset_view': [1, 0, 'text', _render("asset.name")],
+                'asset_view': [1, 0, 'text', _render("asset.profile_id.name")],
                 'asset': [1, 0, 'text', _render("asset.name or ''")],
                 'totals': [1, 0, 'text', None]},
             'operating_unit_id': {
@@ -169,7 +169,7 @@ class AssetReportXls(report_xls):
                     None, self.rt_cell_style]},
             'name': {
                 'header': [1, 40, 'text', _render("_('ชื่อสินทรัพย์')")],
-                'asset_view': [1, 0, 'text', _render("asset.name")],
+                'asset_view': [1, 0, 'text', _render("asset.profile_id.name")],
                 'asset': [1, 0, 'text', _render("asset.name or ''")],
                 'totals': [1, 0, 'text', None]},
             'date_purchase': {
@@ -178,7 +178,7 @@ class AssetReportXls(report_xls):
                 'asset': [
                     1, 0, 'date',
                     _render("asset.date_start and "
-                            "datetime.strptime(asset.date_start,'%Y-%m-%d') "
+                            "datetime.strptime(asset.purchase_date,'%Y-%m-%d') "
                             "or None"),
                     None, self.an_cell_style_date],
                 'totals': [1, 0, 'text', None]},
@@ -388,7 +388,7 @@ class AssetReportXls(report_xls):
                     None, self.rt_cell_style]},
             'name': {
                 'header': [1, 40, 'text', _render("_('ชื่อสินทรัพย์')")],
-                'asset_view': [1, 0, 'text', _render("asset.name")],
+                'asset_view': [1, 0, 'text', _render("asset.profile_id.name")],
                 'asset': [1, 0, 'text', _render("asset.name or ''")],
                 'totals': [1, 0, 'text', None]},
             'date_purchase': {
@@ -397,7 +397,7 @@ class AssetReportXls(report_xls):
                 'asset': [
                     1, 0, 'date',
                     _render("asset.date_start and "
-                            "datetime.strptime(asset.date_start,'%Y-%m-%d') "
+                            "datetime.strptime(asset.purchase_date,'%Y-%m-%d') "
                             "or None"),
                     None, self.an_cell_style_date],
                 'totals': [1, 0, 'text', None]},
@@ -592,6 +592,29 @@ class AssetReportXls(report_xls):
         row_pos = self.xls_write_row(
             ws, row_pos, row_data, row_style=cell_style)
 
+    def _get_profile_children(self, profile_id):
+        cr = self.cr
+
+        def _child_get(profile_id):
+            assets = []
+            # SQL in stead of child_ids since ORDER BY different from _order
+            cr.execute(
+                "SELECT id, type FROM account_asset "
+                "WHERE profile_id = %s AND state != 'draft' "
+                "ORDER BY date_start ASC, name",
+                (profile_id, ))
+            children = cr.fetchall()
+            for child in children:
+                assets.append((child[0], child[1], profile_id))
+                assets += _child_get(child[0])
+            return assets
+
+        assets = _child_get(profile_id)
+        if assets:
+            return [(profile_id, 'profile', False)] + assets
+        else:
+            return []
+
     def _get_children(self, parent_id):
         cr = self.cr
 
@@ -618,6 +641,14 @@ class AssetReportXls(report_xls):
             parent = parent[0]
             if parent not in assets:
                 self._view_add(parent, assets)
+        assets.append(acq)
+
+    def _profile_add(self, acq, assets):
+        parent = filter(lambda x: x[0] == acq[2], self.assets)
+        if parent:
+            parent = parent[0]
+            if parent not in assets:
+                self._profile_add(parent, assets)
         assets.append(acq)
 
     def _get_buddha_datetime(self, date):
@@ -700,13 +731,14 @@ class AssetReportXls(report_xls):
         acqs = filter(lambda x: x[0] in acq_ids, self.assets)
         acqs_and_parents = []
         for acq in acqs:
-            self._view_add(acq, acqs_and_parents)
+            self._profile_add(acq, acqs_and_parents)
+        # for acq in acqs:
+        #     self._view_add(acq, acqs_and_parents)
 
         entries = []
         for asset_i, data in enumerate(acqs_and_parents):
             entry = {}
-            asset = asset_obj.browse(cr, uid, data[0], context=context)
-            if data[1] == 'view':
+            if data[1] == 'view' or data[1] == 'profile':
                 cp_i = asset_i + 1
                 cp = []
                 for a in acqs_and_parents[cp_i:]:
@@ -714,12 +746,19 @@ class AssetReportXls(report_xls):
                         cp.append(cp_i)
                     cp_i += 1
                 entry['child_pos'] = cp
+            if data[1] == 'profile':
+                asset_id = asset_obj.search(self.cr, self.uid, [
+                    ('profile_id', '=', data[0]),
+                ])[0]
+                asset = asset_obj.browse(cr, uid, asset_id, context=context)
+            else:
+                asset = asset_obj.browse(cr, uid, data[0], context=context)
             entry['asset'] = asset
             entries.append(entry)
 
         for entry in entries:
             asset = entry['asset']
-            if asset.type == 'view':
+            if 'child_pos' in entry:  # asset.type == 'view':
                 depreciation_base_cells = [
                     rowcol_to_cell(row_pos_start + x, depreciation_base_pos)
                     for x in entry['child_pos']]
@@ -863,15 +902,24 @@ class AssetReportXls(report_xls):
 
         acts = filter(lambda x: x[0] in act_ids, self.assets)
         acts_and_parents = []
+        # for act in acts:
+        #     self._view_add(act, acts_and_parents)
         for act in acts:
-            self._view_add(act, acts_and_parents)
+            self._profile_add(act, acts_and_parents)
 
         entries = []
         for asset_i, data in enumerate(acts_and_parents):
             entry = {}
-            asset = asset_obj.browse(cr, uid, data[0], context=context)
+            # asset = asset_obj.browse(cr, uid, data[0], context=context)
+            if data[1] == 'profile':
+                asset_id = asset_obj.search(self.cr, self.uid, [
+                    ('profile_id', '=', data[0]),
+                ])[0]
+                asset = asset_obj.browse(cr, uid, asset_id, context=context)
+            else:
+                asset = asset_obj.browse(cr, uid, data[0], context=context)
 
-            if data[1] == 'view':
+            if data[1] == 'view' or data[1] == 'profile':
                 cp_i = asset_i + 1
                 cp = []
                 for a in acts_and_parents[cp_i:]:
@@ -989,7 +1037,7 @@ class AssetReportXls(report_xls):
             total_depr_formula = depreciation_base_cell \
                 + '-' + fy_end_value_cell
 
-            if asset.type == 'view':
+            if 'child_pos' in entry:  # asset.type == 'view':
 
                 depreciation_base_cells = [
                     rowcol_to_cell(row_pos_start + x, depreciation_base_pos)
@@ -1182,14 +1230,23 @@ class AssetReportXls(report_xls):
 
         dsps = filter(lambda x: x[0] in dsp_ids, self.assets)
         dsps_and_parents = []
+        # for dsp in dsps:
+        #     self._view_add(dsp, dsps_and_parents)
         for dsp in dsps:
-            self._view_add(dsp, dsps_and_parents)
+            self._profile_add(dsp, dsps_and_parents)
 
         entries = []
         for asset_i, data in enumerate(dsps_and_parents):
             entry = {}
-            asset = asset_obj.browse(cr, uid, data[0], context=context)
-            if data[1] == 'view':
+            # asset = asset_obj.browse(cr, uid, data[0], context=context)
+            if data[1] == 'profile':
+                asset_id = asset_obj.search(self.cr, self.uid, [
+                    ('profile_id', '=', data[0]),
+                ])[0]
+                asset = asset_obj.browse(cr, uid, asset_id, context=context)
+            else:
+                asset = asset_obj.browse(cr, uid, data[0], context=context)
+            if data[1] == 'view' or data[1] == 'profile':
                 cp_i = asset_i + 1
                 cp = []
                 for a in dsps_and_parents[cp_i:]:
@@ -1228,7 +1285,7 @@ class AssetReportXls(report_xls):
 
         for entry in entries:
             asset = entry['asset']
-            if asset.type == 'view':
+            if 'child_pos' in entry:  # asset.type == 'view':
                 depreciation_base_cells = [
                     rowcol_to_cell(row_pos_start + x, depreciation_base_pos)
                     for x in entry['child_pos']]
@@ -1316,9 +1373,22 @@ class AssetReportXls(report_xls):
         fy = self.pool.get('account.fiscalyear').browse(
             self.cr, self.uid, data['fiscalyear_id'], context=self.context)
         self.fiscalyear = fy
-        self.assets = self._get_children(objects[0].id)
-        self.asset_ids = [x[0] for x in self.assets]
 
+        profile_obj = self.pool.get('account.asset.profile')
+        if data['profile_ids']:
+            self.profiles = profile_obj.search(self.cr, self.uid, [
+                ('id', 'in', data['profile_ids']),
+            ])
+        else:
+            self.profiles = profile_obj.search(self.cr, self.uid, [])
+        asset_objects = []
+        for profile_id in self.profiles:
+            asset_objects += self._get_profile_children(profile_id)
+        self.assets = asset_objects
+        self.asset_ids = [
+            x[0] for x in filter(lambda r: r[1] == u'normal', self.assets)]
+        # self.assets = self._get_children(objects[0].id)
+        # self.asset_ids = [x[0] for x in self.assets]
         self._acquisition_report(_p, _xs, data, objects, wb)
         self._active_report(_p, _xs, data, objects, wb)
         self._removal_report(_p, _xs, data, objects, wb)
