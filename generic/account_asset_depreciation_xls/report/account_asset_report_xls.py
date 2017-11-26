@@ -125,7 +125,7 @@ class AssetReportXls(report_xls):
                 'asset': [
                     1, 0, 'date',
                     _render("asset.date_start and "
-                            "datetime.strptime(asset.date_start,'%Y-%m-%d') "
+                            "datetime.strptime(asset.purchase_date,'%Y-%m-%d') "
                             "or None"),
                     None, self.an_cell_style_date],
                 'totals': [1, 0, 'text', None]},
@@ -251,19 +251,6 @@ class AssetReportXls(report_xls):
                 'asset_view': [1, 0, 'text', None],
                 'asset': [1, 0, 'text', _render("asset.code or ''")],
                 'totals': [1, 0, 'text', None]},
-            # 'depreciation_base': {
-            #     'header': [
-            #         1, 18, 'text', _render("_('Depreciation Base')"),
-            #         None, self.rh_cell_style_right],
-            #     'asset_view': [
-            #         1, 0, 'number', None,
-            #         _render("asset_formula"), self.av_cell_style_decimal],
-            #     'asset': [
-            #         1, 0, 'number', _render("asset.depreciation_base"),
-            #         None, self.an_cell_style_decimal],
-            #     'totals': [
-            #         1, 0, 'number', None, _render("asset_total_formula"),
-            #         self.rt_cell_style_decimal]},
             'salvage_value': {
                 'header': [
                     1, 18, 'text', _render("_('ราคาซาก')"),
@@ -303,70 +290,6 @@ class AssetReportXls(report_xls):
                 'totals': [
                     1, 0, 'number', None, _render("depreciated_value_total_formula"),
                     self.rt_cell_style_decimal]},
-            # 'fy_depr': {
-            #     'header': [
-            #         1, 18, 'text', _render("_('FY Depreciation')"),
-            #         None, self.rh_cell_style_right],
-            #     'asset_view': [
-            #         1, 0, 'number', None, _render("fy_diff_formula"),
-            #         self.av_cell_style_decimal],
-            #     'asset': [
-            #         1, 0, 'number', None, _render("fy_diff_formula"),
-            #         self.an_cell_style_decimal],
-            #     'totals': [
-            #         1, 0, 'number', None, _render("fy_diff_formula"),
-            #         self.rt_cell_style_decimal]},
-            # 'fy_end_value': {
-            #     'header': [
-            #         1, 18, 'text', _render("_('FY End Value')"),
-            #         None, self.rh_cell_style_right],
-            #     'asset_view': [
-            #         1, 0, 'number', None, _render("fy_end_formula"),
-            #         self.av_cell_style_decimal],
-            #     'asset': [
-            #         1, 0, 'number', _render("asset.fy_end_value"),
-            #         None, self.an_cell_style_decimal],
-            #     'totals': [
-            #         1, 0, 'number', None, _render("fy_end_total_formula"),
-            #         self.rt_cell_style_decimal]},
-            # 'fy_end_depr': {
-            #     'header': [
-            #         1, 18, 'text', _render("_('Tot. Depreciation')"),
-            #         None, self.rh_cell_style_right],
-            #     'asset_view': [
-            #         1, 0, 'number', None, _render("total_depr_formula"),
-            #         self.av_cell_style_decimal],
-            #     'asset': [
-            #         1, 0, 'number', None, _render("total_depr_formula"),
-            #         self.an_cell_style_decimal],
-            #     'totals': [
-            #         1, 0, 'number', None, _render("total_depr_formula"),
-            #         self.rt_cell_style_decimal]},
-            # 'method': {
-            #     'header': [
-            #         1, 20, 'text', _render("_('Comput. Method')"),
-            #         None, self.rh_cell_style_center],
-            #     'asset_view': [1, 0, 'text', None],
-            #     'asset': [
-            #         1, 0, 'text', _render("asset.method or ''"),
-            #         None, self.an_cell_style_center],
-            #     'totals': [1, 0, 'text', None]},
-            # 'method_number': {
-            #     'header': [
-            #         1, 20, 'text', _render("_('Number of Years')"),
-            #         None, self.rh_cell_style_center],
-            #     'asset_view': [1, 0, 'text', None],
-            #     'asset': [
-            #         1, 0, 'number', _render("asset.method_number"),
-            #         None, self.an_cell_style_center],
-            #     'totals': [1, 0, 'text', None]},
-            # 'prorata': {
-            #     'header': [
-            #         1, 20, 'text', _render("_('Prorata Temporis')"),
-            #         None, self.rh_cell_style_center],
-            #     'asset_view': [1, 0, 'text', None],
-            #     'asset': [1, 0, 'bool', _render("asset.prorata")],
-            #     'totals': [1, 0, 'text', None]},
             'note': {
                 'header': [
                     1, 20, 'text', _render("_('หมายเหตุ')"),
@@ -756,6 +679,8 @@ class AssetReportXls(report_xls):
             entry['asset'] = asset
             entries.append(entry)
 
+        asset_formula_cells = []
+        salvage_formula_cells = []
         for entry in entries:
             asset = entry['asset']
             if 'child_pos' in entry:  # asset.type == 'view':
@@ -763,10 +688,12 @@ class AssetReportXls(report_xls):
                     rowcol_to_cell(row_pos_start + x, depreciation_base_pos)
                     for x in entry['child_pos']]
                 asset_formula = '+'.join(depreciation_base_cells)  # noqa: disable F841, report_xls namespace trick
+                asset_formula_cells += depreciation_base_cells
                 salvage_value_cells = [
                     rowcol_to_cell(row_pos_start + x, salvage_value_pos)
                     for x in entry['child_pos']]
                 salvage_formula = '+'.join(salvage_value_cells)  # noqa: disable F841, report_xls namespace trick
+                salvage_formula_cells += salvage_value_cells
                 c_specs = map(
                     lambda x: self.render(
                         x, template, 'asset_view'),
@@ -785,9 +712,8 @@ class AssetReportXls(report_xls):
                 row_pos = self.xls_write_row(
                     ws, row_pos, row_data, row_style=self.an_cell_style)
 
-        asset_total_formula = rowcol_to_cell(row_pos_start, depreciation_base_pos)  # noqa: disable F841, report_xls namespace trick
-        salvage_total_formula = rowcol_to_cell(row_pos_start,  # noqa: disable F841, report_xls namespace trick
-                                               salvage_value_pos)
+        asset_total_formula = '+'.join(asset_formula_cells)
+        salvage_total_formula = '+'.join(salvage_formula_cells)
 
         c_specs = map(
             lambda x: self.render(
@@ -1026,6 +952,13 @@ class AssetReportXls(report_xls):
             entry['asset'] = asset
             entries.append(entry)
 
+        purchase_formula_cells = []
+        asset_line_amount_formula_cells = []
+        value_residual_formula_cells = []
+        asset_value_previous_formula_cells = []
+        depreciated_value_formula_cells = []
+        remaining_value_formula_cells = []
+        salvage_formula_cells = []
         for entry in entries:
             asset = entry['asset']
 
@@ -1048,6 +981,7 @@ class AssetReportXls(report_xls):
                     rowcol_to_cell(row_pos_start + x, salvage_value_pos)
                     for x in entry['child_pos']]
                 salvage_formula = '+'.join(salvage_value_cells)  # noqa: disable F841, report_xls namespace trick
+                salvage_formula_cells += salvage_value_cells
 
                 fy_start_value_cells = [
                     rowcol_to_cell(row_pos_start + x, fy_start_value_pos)
@@ -1063,36 +997,42 @@ class AssetReportXls(report_xls):
                     for x in entry['child_pos']
                 ]
                 purchase_formula = '+'.join(purchase_value_cells)
+                purchase_formula_cells += purchase_value_cells
 
                 asset_line_amount_calls = [
                     rowcol_to_cell(row_pos_start + x, asset_line_amount_pos)
                     for x in entry['child_pos']
                 ]
                 asset_line_amount_formula = '+'.join(asset_line_amount_calls)
+                asset_line_amount_formula_cells += asset_line_amount_calls
 
                 value_residual_cells = [
                     rowcol_to_cell(row_pos_start + x, value_residual_pos)
                     for x in entry['child_pos']
                 ]
                 value_residual_formula = '+'.join(value_residual_cells)
+                value_residual_formula_cells += value_residual_cells
 
                 asset_value_previous_cells = [
                     rowcol_to_cell(row_pos_start + x, asset_value_previous_pos)
                     for x in entry['child_pos']
                 ]
                 asset_value_previous_formula = '+'.join(asset_value_previous_cells)
+                asset_value_previous_formula_cells += asset_value_previous_cells
 
                 depreciated_value_cells = [
                     rowcol_to_cell(row_pos_start + x, depreciated_value_pos)
                     for x in entry['child_pos']
                 ]
                 depreciated_value_formula = '+'.join(depreciated_value_cells)
+                depreciated_value_formula_cells += depreciated_value_cells
 
                 remaining_value_cells = [
                     rowcol_to_cell(row_pos_start + x, remaining_value_pos)
                     for x in entry['child_pos']
                 ]
                 remaining_value_formula = '+'.join(remaining_value_cells)
+                remaining_value_formula_cells += remaining_value_cells
                 c_specs = map(
                     lambda x: self.render(
                         x, template, 'asset_view'),
@@ -1113,8 +1053,7 @@ class AssetReportXls(report_xls):
                     ws, row_pos, row_data, row_style=self.an_cell_style)
 
         asset_total_formula = rowcol_to_cell(row_pos_start, depreciation_base_pos)  # noqa: disable F841, report_xls namespace trick
-        salvage_total_formula = rowcol_to_cell(row_pos_start,  # noqa: disable F841, report_xls namespace trick
-                                               salvage_value_pos)
+        salvage_total_formula = '+'.join(salvage_formula_cells)
         fy_start_total_formula = rowcol_to_cell(row_pos_start,  # noqa: disable F841, report_xls namespace trick
                                                 fy_start_value_pos)
         fy_end_total_formula = rowcol_to_cell(row_pos_start, fy_end_value_pos)  # noqa: disable F841, report_xls namespace trick
@@ -1124,18 +1063,16 @@ class AssetReportXls(report_xls):
         depreciation_base_cell = rowcol_to_cell(row_pos, depreciation_base_pos)
         fy_diff_formula = fy_start_value_cell + '-' + fy_end_value_cell  # noqa: disable F841, report_xls namespace trick
         total_depr_formula = depreciation_base_cell + '-' + fy_end_value_cell  # noqa: disable F841, report_xls namespace trick
-        purchase_total_formula = rowcol_to_cell(row_pos_start,
-                                                purchase_value_pos)
-        asset_line_amount_total_formula = rowcol_to_cell(row_pos_start,
-                                                         asset_line_amount_pos)
-        value_residual_total_formula = rowcol_to_cell(row_pos_start,
-                                                      value_residual_pos)
-        asset_value_previous_total_formula = rowcol_to_cell(row_pos_start,
-                                                            asset_value_previous_pos)
-        depreciated_value_total_formula = rowcol_to_cell(row_pos_start,
-                                                         depreciated_value_pos)
-        remaining_value_total_formula = rowcol_to_cell(row_pos_start,
-                                                         remaining_value_pos)
+
+        purchase_total_formula = '+'.join(purchase_formula_cells)
+        asset_line_amount_total_formula = '+'.join(
+            asset_line_amount_formula_cells)
+        value_residual_total_formula = '+'.join(value_residual_formula_cells)
+        asset_value_previous_total_formula = '+'.join(
+            asset_value_previous_formula_cells)
+        depreciated_value_total_formula = '+'.join(
+            depreciated_value_formula_cells)
+        remaining_value_total_formula = '+'.join(remaining_value_formula_cells)
 
         c_specs = map(
             lambda x: self.render(
@@ -1283,6 +1220,13 @@ class AssetReportXls(report_xls):
             entry['asset'] = asset
             entries.append(entry)
 
+        asset_formula_cells = []
+        salvage_formula_cells = []
+        purchase_formula_cells = []
+        asset_line_amount_formula_cells = []
+        asset_value_previous_formula_cells = []
+        depreciated_value_formula_cells = []
+        remaining_value_formula_cells = []
         for entry in entries:
             asset = entry['asset']
             if 'child_pos' in entry:  # asset.type == 'view':
@@ -1290,39 +1234,48 @@ class AssetReportXls(report_xls):
                     rowcol_to_cell(row_pos_start + x, depreciation_base_pos)
                     for x in entry['child_pos']]
                 asset_formula = '+'.join(depreciation_base_cells)  # noqa: disable F841, report_xls namespace trick
+                asset_formula_cells += depreciation_base_cells
+
                 salvage_value_cells = [
                     rowcol_to_cell(row_pos_start + x, salvage_value_pos)
                     for x in entry['child_pos']]
                 salvage_formula = '+'.join(salvage_value_cells)  # noqa: disable F841, report_xls namespace trick
+                salvage_formula_cells += salvage_value_cells
+
                 purchase_value_cells = [
                     rowcol_to_cell(row_pos_start + x, purchase_value_pos)
                     for x in entry['child_pos']
                 ]
                 purchase_formula = '+'.join(purchase_value_cells)
+                purchase_formula_cells += purchase_value_cells
 
                 asset_line_amount_calls = [
                     rowcol_to_cell(row_pos_start + x, asset_line_amount_pos)
                     for x in entry['child_pos']
                 ]
                 asset_line_amount_formula = '+'.join(asset_line_amount_calls)
+                asset_line_amount_formula_cells += asset_line_amount_calls
 
                 asset_value_previous_cells = [
                     rowcol_to_cell(row_pos_start + x, asset_value_previous_pos)
                     for x in entry['child_pos']
                 ]
                 asset_value_previous_formula = '+'.join(asset_value_previous_cells)
+                asset_value_previous_formula_cells += asset_value_previous_cells
 
                 depreciated_value_cells = [
                     rowcol_to_cell(row_pos_start + x, depreciated_value_pos)
                     for x in entry['child_pos']
                 ]
                 depreciated_value_formula = '+'.join(depreciated_value_cells)
+                depreciated_value_formula_cells += depreciated_value_cells
 
                 remaining_value_cells = [
                     rowcol_to_cell(row_pos_start + x, remaining_value_pos)
                     for x in entry['child_pos']
                 ]
                 remaining_value_formula = '+'.join(remaining_value_cells)
+                remaining_value_formula_cells += remaining_value_cells
                 c_specs = map(
                     lambda x: self.render(
                         x, template, 'asset_view'),
@@ -1341,19 +1294,16 @@ class AssetReportXls(report_xls):
                 row_pos = self.xls_write_row(
                     ws, row_pos, row_data, row_style=self.an_cell_style)
 
-        asset_total_formula = rowcol_to_cell(row_pos_start, depreciation_base_pos)  # noqa: disable F841, report_xls namespace trick
-        salvage_total_formula = rowcol_to_cell(row_pos_start,   # noqa: disable F841, report_xls namespace trick
-                                               salvage_value_pos)
-        purchase_total_formula = rowcol_to_cell(row_pos_start,
-                                                purchase_value_pos)
-        asset_line_amount_total_formula = rowcol_to_cell(row_pos_start,
-                                                         asset_line_amount_pos)
-        asset_value_previous_total_formula = rowcol_to_cell(row_pos_start,
-                                                            asset_value_previous_pos)
-        depreciated_value_total_formula = rowcol_to_cell(row_pos_start,
-                                                         depreciated_value_pos)
-        remaining_value_total_formula = rowcol_to_cell(row_pos_start,
-                                                         remaining_value_pos)
+        asset_total_formula = '+'.join(asset_formula_cells)
+        salvage_total_formula = '+'.join(salvage_formula_cells)
+        purchase_total_formula = '+'.join(purchase_formula_cells)
+        asset_line_amount_total_formula = '+'.join(
+            asset_line_amount_formula_cells)
+        asset_value_previous_total_formula = '+'.join(
+            asset_value_previous_formula_cells)
+        depreciated_value_total_formula = '+'.join(
+            depreciated_value_formula_cells)
+        remaining_value_total_formula = '+'.join(remaining_value_formula_cells)
 
         c_specs = map(
             lambda x: self.render(
