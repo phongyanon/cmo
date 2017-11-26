@@ -54,13 +54,14 @@ class WizAccountAssetReport(models.TransientModel):
                 _('Configuration Error'),
                 _("No parent asset defined for asset '%s'!") % error_name)
 
-        domain = [('type', '=', 'normal'),
-                  ('profile_id', 'child_of', profile_asset.ids)]
-        assets = asset_obj.search(domain)
-        if not assets:
-            raise UserError(
-                _('No Data Available'),
-                _('No records found for your asset profiles selection!'))
+        if profile_asset:
+            domain = [('type', '=', 'normal'),
+                      ('profile_id', 'child_of', profile_asset.ids)]
+            assets = asset_obj.search(domain)
+            if not assets:
+                raise UserError(
+                    _('No Data Available'),
+                    _('No records found for your asset profiles selection!'))
 
         datas = {
             'model': 'account.asset',
