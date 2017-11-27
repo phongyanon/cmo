@@ -3,7 +3,7 @@
 	<property name="OPENERP_RELATIONS" value="[&quot;invoice_line&quot;]"/>
 	<property name="ireport.zoom" value="1.0000000000000022"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="218"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/data/record]]>
@@ -158,9 +158,9 @@ $F{partner_zip}]]></textFieldExpression>
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="20" splitType="Prevent">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement isPrintRepeatedValues="false" x="15" y="-1" width="385" height="21" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
+				<reportElement x="15" y="-1" width="385" height="21" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true"/>
 				<box topPadding="2" leftPadding="2"/>
 				<textElement>
 					<font pdfFontName="Garuda.ttf" pdfEncoding="Identity-H"/>
@@ -178,7 +178,7 @@ $F{partner_zip}]]></textFieldExpression>
 		</band>
 	</detail>
 	<columnFooter>
-		<band splitType="Stretch"/>
+		<band height="201" splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
 		<band splitType="Stretch"/>
