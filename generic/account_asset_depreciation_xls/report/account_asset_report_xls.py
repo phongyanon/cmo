@@ -617,6 +617,8 @@ class AssetReportXls(report_xls):
         ]
         for title in titles:
             row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=7)
+        if not self.asset_ids:
+            return self._empty_report(ws, _p, row_pos, _xs, 'acquisition')
 
         cr.execute(
             "SELECT id FROM account_asset "
@@ -760,6 +762,8 @@ class AssetReportXls(report_xls):
         ]
         for title in titles:
             row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=14)
+        if not self.asset_ids:
+            return self._empty_report(ws, _p, row_pos, _xs, 'active')
 
         cr.execute(
             "SELECT id FROM account_asset "
@@ -1121,6 +1125,8 @@ class AssetReportXls(report_xls):
         ]
         for title in titles:
             row_pos = self._report_title(ws, _p, row_pos, _xs, title, merge=15)
+        if not self.asset_ids:
+            return self._empty_report(ws, _p, row_pos, _xs, 'removal')
 
         cr.execute(
             "SELECT id FROM account_asset "

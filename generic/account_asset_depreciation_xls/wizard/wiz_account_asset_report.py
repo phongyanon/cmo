@@ -30,7 +30,7 @@ class WizAccountAssetReport(models.TransientModel):
     def xls_export(self):
         self.ensure_one()
         asset_obj = self.env['account.asset']
-        profile_asset = self.profile_ids
+        # profile_asset = self.profile_ids
         # parent_asset = self.parent_asset_id
         # if not parent_asset:
         #     parents = asset_obj.search(
@@ -54,14 +54,14 @@ class WizAccountAssetReport(models.TransientModel):
                 _('Configuration Error'),
                 _("No parent asset defined for asset '%s'!") % error_name)
 
-        if profile_asset:
-            domain = [('type', '=', 'normal'),
-                      ('profile_id', 'child_of', profile_asset.ids)]
-            assets = asset_obj.search(domain)
-            if not assets:
-                raise UserError(
-                    _('No Data Available'),
-                    _('No records found for your asset profiles selection!'))
+        # if profile_asset:
+        #     domain = [('type', '=', 'normal'),
+        #               ('profile_id', 'child_of', profile_asset.ids)]
+        #     assets = asset_obj.search(domain)
+        #     if not assets:
+        #         raise UserError(
+        #             _('No Data Available'),
+        #             _('No records found for your asset profiles selection!'))
 
         datas = {
             'model': 'account.asset',
