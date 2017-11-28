@@ -111,7 +111,7 @@
            <field name="string">Supplier Billing</field>
            <field name="auto">True</field>
            <field name="model">supplier.billing</field>
-           <field name="jasper_model_id" ref="cmo_supplier_billing.model_supplier_billing"/>
+           <field name="jasper_model_id" ref="account_supplier_billing.model_supplier_billing"/>
            <field name="name">Supplier Billing</field>
            <field name="report_name">cmo.supplier.billing</field>
            <field name="report_rml">cmo_customer_invoice_report/report/cmo_supplier_billing.jrxml</field>
