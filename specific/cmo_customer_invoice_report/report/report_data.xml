@@ -107,6 +107,27 @@
            <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_supplier_payment_cheque)"/>
         </record>
 
+        <record id="cmo_supplier_payment_voucher" model="ir.actions.report.xml">
+           <field name="string">Payment/Voucher</field>
+           <field name="auto">True</field>
+           <field name="model">account.voucher</field>
+           <field name="jasper_model_id" ref="account.model_account_invoice"/>
+           <field name="name">Payment/Voucher</field>
+           <field name="report_name">cmo.supplier.payment.voucher</field>
+           <field name="report_rml">cmo_customer_invoice_report/report/cmo_supplier_payment_voucher.jrxml</field>
+           <field name="force_locale">th_TH</field>
+           <field name="menu">True</field>
+           <field name="header">False</field>
+           <field name="jasper_report">True</field>
+           <field name="jasper_output">pdf</field>
+        </record>
+        <record id="cmo_supplier_payment_voucher_values" model="ir.values">
+           <field name="name">Payment/Voucher</field>
+           <field name="model">account.voucher</field>
+           <field name="key2" eval="'client_print_multi'"/>
+           <field name="value_unpickle" eval="'ir.actions.report.xml, ' +str(cmo_supplier_payment_voucher)"/>
+        </record>
+
         <record id="cmo_supplier_billing" model="ir.actions.report.xml">
            <field name="string">Supplier Billing</field>
            <field name="auto">True</field>
