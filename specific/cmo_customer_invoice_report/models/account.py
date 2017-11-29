@@ -85,6 +85,7 @@ class AccountVoucher(models.Model):
         elif self._context.get('type', False) == 'payment':
             reports = [
                 u'Supplier/Payment(Cheque)',
+                u'Payment/Voucher',
             ]
             self.filter_print_report(res, reports)
         # Customer Receipt
