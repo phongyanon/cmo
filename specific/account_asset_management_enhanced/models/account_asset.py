@@ -8,14 +8,10 @@ class AccountAsset(models.Model):
 
     number = fields.Char(
         string='Asset Code',
-        readonly=True,
-        states={'close': [('readonly', True)]},
         copy=False,
     )
     purchase_date = fields.Date(
         string='Purchase Date',
-        readonly=True,
-        states={'close': [('readonly', True)]},
         required=True,
         copy=False,
     )
