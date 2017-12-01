@@ -12,5 +12,6 @@ class AccountMoveLine(models.Model):
             res.asset_id.update({
                 'operating_unit_id': vals['operating_unit_id'] or False,
                 'purchase_move_id': res.move_id.id,
+                'purchase_date': res.move_id.date,
             })
         return res
