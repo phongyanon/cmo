@@ -14,8 +14,10 @@ class AccountAsset(models.Model):
     )
     purchase_date = fields.Date(
         string='Purchase Date',
-        related='purchase_move_id.date',
         readonly=True,
+        states={'close': [('readonly', True)]},
+        required=True,
+        copy=False,
     )
     purchase_move_id = fields.Many2one(
         'account.move',
