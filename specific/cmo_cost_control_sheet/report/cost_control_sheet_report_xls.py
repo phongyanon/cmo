@@ -340,10 +340,14 @@ class CostControlSheetReportXls(report_xls):
         company_id = self.pool['res.users'].browse(
             cr, uid, uid, context=context).company_id
         titles = [
-            company_id.name,
-            company_id.street,
-            'TEL. ' + company_id.phone + '  FAX ' + company_id.fax + '  WEB '
-            + company_id.website + '  E-mail ' + company_id.email,
+            company_id.name or '',
+            company_id.street or '',
+            'TEL. %s  FAX %s  WEB %s  E-mail %s ' % (
+                company_id.phone or '-',
+                company_id.fax or '-',
+                company_id.website or '-',
+                company_id.email or '-'
+                ),
             'Cost Control Sheet',
         ]
         for title in titles:
@@ -474,7 +478,8 @@ class CostControlSheetReportXls(report_xls):
         # totals
         sum_price = 'SUM(B%s:B%s)' % (str(hr_row_pos+1), str(row_pos))
         sum_estimate = 'SUM(C%s:C%s)' % (str(hr_row_pos+1), str(row_pos))
-        sum_margin = 'SUM(D%s:D%s)' % (str(hr_row_pos+1), str(row_pos))
+        sum_margin = '(B%s - C%s) * 100.0 / B%s' % (
+            str(row_pos+1), str(row_pos+1), str(row_pos+1))
         sum_po_price = 'SUM(F%s:F%s)' % (str(hr_row_pos+1), str(row_pos))
         sum_hr_price = 'SUM(K%s:K%s)' % (str(hr_row_pos+1), str(row_pos))
 
